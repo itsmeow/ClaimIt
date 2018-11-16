@@ -1,0 +1,16 @@
+[
+{
+  "modid": "claimit",
+  "name": "ClaimIt",
+  "description": "Claim areas, share with friends, and view changes.",
+  "version": "${version}",
+  "mcversion": "${mcversion}",
+  "url": "",
+  "updateUrl": "",
+  "authorList": ["its_meow"],
+  "credits": "its_meow for Programming",
+  "logoFile": "",
+  "screenshots": [],
+  "dependencies": []
+}
+]
