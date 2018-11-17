@@ -44,6 +44,12 @@ public class ClaimArea {
 		this(dimID, posX, posZ, sideLengthX, sideLengthZ, player.getName());
 	}
 	
+	public boolean isBlockPosInClaim(BlockPos blockPos) {
+		boolean isInXRange = (blockPos.getX() < this.getHXZPosition().getX()) && (blockPos.getX() > this.posX);
+		boolean isInZRange = (blockPos.getZ() < this.getHXZPosition().getZ()) && (blockPos.getZ() > this.posZ);
+		return isInXRange && isInZRange;
+	}
+	
 	/** Returns posX and posZ as BlockPos **/
 	public BlockPos getMainPosition() {
 		return new BlockPos(posX, 0, posZ);
@@ -69,6 +75,23 @@ public class ClaimArea {
 		corners[0] = this.getMainPosition();
 		corners[1] = this.getHXZPosition();
 		return corners;
+	}
+	
+	public BlockPos[] getFourCorners() {
+		BlockPos[] corners = new BlockPos[2];
+		corners[0] = this.getMainPosition();
+		corners[1] = this.getHXLZPosition();
+		corners[2] = this.getLXHZPosition();
+		corners[3] = this.getHXZPosition();
+		return corners;
+	}
+	
+	public int getSideLengthX() {
+		return sideLengthX;
+	}
+	
+	public int getSideLengthZ() {
+		return sideLengthZ;
 	}
 	
 	@Nullable
