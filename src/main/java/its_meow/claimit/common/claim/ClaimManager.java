@@ -23,6 +23,9 @@ public class ClaimManager {
 	
 	
 	public boolean isBlockInAnyClaim(BlockPos pos, World world) {
+		if(claims.size() == 0) {
+			return false;
+		}
 		for(ClaimArea claim : claims) {
 			if(claim.getWorld() == world && claim.isBlockPosInClaim(pos)) {
 				return true;
