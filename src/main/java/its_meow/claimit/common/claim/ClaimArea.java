@@ -78,7 +78,7 @@ public class ClaimArea {
 	}
 	
 	public BlockPos[] getFourCorners() {
-		BlockPos[] corners = new BlockPos[2];
+		BlockPos[] corners = new BlockPos[4];
 		corners[0] = this.getMainPosition();
 		corners[1] = this.getHXLZPosition();
 		corners[2] = this.getLXHZPosition();
