@@ -60,6 +60,14 @@ public class ClaimManager {
 						}
 					}
 				}
+				for(ClaimArea claimI : nearbyClaims) { // Check if any corners are in nearby claims
+					BlockPos[] claimCornerForThis = claimI.getFourCorners();
+					for(BlockPos corner : claimCornerForThis) {
+						if(claim.isBlockPosInClaim(corner)) {
+							overlaps++;
+						}
+					}
+				}
 				if(overlaps == 0) { // Not overlapping nearby claims, adding.
 					claims.add(claim);
 					return true;
