@@ -45,8 +45,9 @@ public class ClaimArea {
 	}
 	
 	public boolean isBlockPosInClaim(BlockPos blockPos) {
-		boolean isInXRange = (blockPos.getX() <= this.getHXZPosition().getX()) && (blockPos.getX() >= this.posX);
-		boolean isInZRange = (blockPos.getZ() <= this.getHXZPosition().getZ()) && (blockPos.getZ() >= this.posZ);
+		boolean isInXRange = (blockPos.getX() < this.getHXZPosition().getX() + 1) && (blockPos.getX() > this.posX - 1);
+		boolean isInZRange = (blockPos.getZ() < this.getHXZPosition().getZ() + 1) && (blockPos.getZ() > this.posZ - 1);
+		
 		return isInXRange && isInZRange;
 	}
 	

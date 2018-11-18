@@ -66,6 +66,7 @@ public class ItemClaimTool extends Item {
 					// Remove data so a new claim can be made.
 					data.removeTag("Corner1");
 					data.removeTag("Corner2");
+					return didClaim ? EnumActionResult.SUCCESS : EnumActionResult.FAIL;
 				}
 			} else {
 				data.setIntArray("Corner1", posArray);
