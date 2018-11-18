@@ -39,7 +39,9 @@ public class ItemClaimTool extends Item {
 			data = newTag;
 			stack.setTagCompound(newTag);
 		}
-		if(!ClaimManager.getManager().isBlockInAnyClaim(pos, worldIn)) {
+		boolean isInClaim = ClaimManager.getManager().isBlockInAnyClaim(pos, worldIn);
+		System.out.println("Overlaps: " + isInClaim);
+		if(!isInClaim) {
 			int[] posArray = {pos.getX(), pos.getZ()};
 			if(data.hasKey("Corner1")) {
 				if(!worldIn.isRemote)
