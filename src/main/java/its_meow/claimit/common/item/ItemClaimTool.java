@@ -34,6 +34,9 @@ public class ItemClaimTool extends Item {
 			EnumFacing facing, float hitX, float hitY, float hitZ) {
 		ItemStack stack = player.getHeldItem(hand);
 		NBTTagCompound data = stack.getTagCompound();
+		if(data == null) {
+			stack.setTagCompound(new NBTTagCompound());
+		}
 		if(!ClaimManager.getManager().isBlockInAnyClaim(pos, worldIn)) {
 			int[] posArray = {pos.getX(), pos.getZ()};
 			if(data.hasKey("Corner1")) {
