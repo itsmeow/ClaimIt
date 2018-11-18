@@ -35,7 +35,9 @@ public class ItemClaimTool extends Item {
 		ItemStack stack = player.getHeldItem(hand);
 		NBTTagCompound data = stack.getTagCompound();
 		if(data == null) {
-			stack.setTagCompound(new NBTTagCompound());
+			NBTTagCompound newTag = new NBTTagCompound();
+			data = newTag;
+			stack.setTagCompound(newTag);
 		}
 		if(!ClaimManager.getManager().isBlockInAnyClaim(pos, worldIn)) {
 			int[] posArray = {pos.getX(), pos.getZ()};
