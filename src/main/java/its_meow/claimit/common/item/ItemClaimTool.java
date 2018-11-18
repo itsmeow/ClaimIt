@@ -75,6 +75,8 @@ public class ItemClaimTool extends Item {
 			return EnumActionResult.SUCCESS;
 		}
 		if(!worldIn.isRemote) {
+			data.removeTag("Corner1");
+			data.removeTag("Corner2");
 			player.sendMessage(new TextComponentString("You cannot set a corner inside an existing claim!"));
 		}
 		return EnumActionResult.FAIL;
