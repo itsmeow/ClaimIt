@@ -3,6 +3,7 @@ package its_meow.claimit.init;
 import java.util.HashSet;
 import java.util.Set;
 
+import its_meow.claimit.common.item.ItemClaimInfoTool;
 import its_meow.claimit.common.item.ItemClaimTool;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.item.Item;
@@ -16,6 +17,7 @@ import net.minecraftforge.registries.IForgeRegistry;
 public class ItemRegistry {
 
 	public static final ItemClaimTool claimtool = new ItemClaimTool();
+	public static final ItemClaimInfoTool claiminfotool = new ItemClaimInfoTool();
 
 	@Mod.EventBusSubscriber
 	public static class RegistrationHandler {
@@ -30,6 +32,7 @@ public class ItemRegistry {
 		public static void registerItems(final RegistryEvent.Register<Item> event) {
 			Item[] items = {
 					claimtool,
+					claiminfotool,
 			};
 			final IForgeRegistry<Item> registry = event.getRegistry();
 
@@ -42,6 +45,7 @@ public class ItemRegistry {
 		@SubscribeEvent
 		public static void registerItemBlockModels(final ModelRegistryEvent event) {
 			initModel(claimtool, 0);
+			initModel(claiminfotool, 0);
 		}
 
 
