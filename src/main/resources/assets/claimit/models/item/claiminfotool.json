@@ -1,0 +1,7 @@
+
+{
+  "parent": "builtin/handheld",
+  "textures": {
+    "layer0": "claimit:items/claimtool"
+  }
+}
