@@ -19,14 +19,16 @@ public class ClaimArea {
 	private int sideLengthX;
 	private int sideLengthZ;
 	private UUID ownerUUID;
+	private UUID ownerUUIDOffline;
 
-	public ClaimArea(int dimID, int posX, int posZ, int sideLengthX, int sideLengthZ, String ownerName) {
+	public ClaimArea(int dimID, int posX, int posZ, int sideLengthX, int sideLengthZ, EntityPlayer player) {
 		this.dimID = dimID;
 		this.posX = posX;
 		this.posZ = posZ;
 		this.sideLengthX = sideLengthX;
 		this.sideLengthZ = sideLengthZ;
-		this.ownerUUID = EntityPlayer.getOfflineUUID(ownerName);
+		this.ownerUUID = EntityPlayer.getUUID(player.getGameProfile());
+		this.ownerUUIDOffline = EntityPlayer.getOfflineUUID(player.getName());
 		// Simplify main corner to the lowest x and y value
 		if(this.sideLengthX < 0 || this.sideLengthZ < 0) {
 			if(this.sideLengthX < 0) {
@@ -38,10 +40,6 @@ public class ClaimArea {
 				this.sideLengthZ = Math.abs(this.sideLengthZ);
 			}
 		}
-	}
-
-	public ClaimArea(int dimID, int posX, int posZ, int sideLengthX, int sideLengthZ, EntityPlayer player) {
-		this(dimID, posX, posZ, sideLengthX, sideLengthZ, player.getName());
 	}
 	
 	public boolean isBlockPosInClaim(BlockPos blockPos) {
@@ -98,6 +96,11 @@ public class ClaimArea {
 	@Nullable
 	public UUID getOwner() {
 		return this.ownerUUID;
+	}
+	
+	@Nullable
+	public UUID getOwnerOffline() {
+		return this.ownerUUIDOffline;
 	}
 	
 	public int getDimensionID() {

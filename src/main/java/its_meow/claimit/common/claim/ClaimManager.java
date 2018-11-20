@@ -3,6 +3,8 @@ package its_meow.claimit.common.claim;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.annotation.Nullable;
+
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
@@ -19,6 +21,19 @@ public class ClaimManager {
 		}
 
 		return instance;
+	}
+	
+	@Nullable
+	public ClaimArea getClaimAtLocation(World worldIn, BlockPos posIn) {
+		if(claims.size() == 0) {
+			return null;
+		}
+		for(ClaimArea claim : claims) {
+			if(claim.getWorld() == worldIn && claim.isBlockPosInClaim(posIn)) {
+				return claim;
+			}
+		}
+		return null;
 	}
 	
 	

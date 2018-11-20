@@ -32,6 +32,9 @@ public class ItemClaimTool extends Item {
 	@Override
 	public EnumActionResult onItemUse(EntityPlayer player, World worldIn, BlockPos pos, EnumHand hand,
 			EnumFacing facing, float hitX, float hitY, float hitZ) {
+		if(worldIn.isRemote) {
+			return EnumActionResult.PASS;
+		}
 		ItemStack stack = player.getHeldItem(hand);
 		NBTTagCompound data = stack.getTagCompound();
 		if(data == null) {
@@ -40,12 +43,10 @@ public class ItemClaimTool extends Item {
 			stack.setTagCompound(newTag);
 		}
 		boolean isInClaim = ClaimManager.getManager().isBlockInAnyClaim(pos, worldIn);
-		System.out.println("Overlaps: " + isInClaim);
 		if(!isInClaim) {
 			int[] posArray = {pos.getX(), pos.getZ()};
 			if(data.hasKey("Corner1")) {
-				if(!worldIn.isRemote)
-					player.sendMessage(new TextComponentString("Added corner 2 at " + posArray[0] + ", " + posArray[1]));
+				player.sendMessage(new TextComponentString("Added corner 2 at " + posArray[0] + ", " + posArray[1]));
 				int[] corner1 = data.getIntArray("Corner1");
 				int[] corner2 = posArray;
 				BlockPos c1 = new BlockPos(corner1[0], 0, corner1[1]);
@@ -61,22 +62,18 @@ public class ItemClaimTool extends Item {
 				ClaimArea newClaim;
 				newClaim = new ClaimArea(player.dimension, c1.getX(), c1.getZ(), sideL.getX(), sideL.getZ(), player);
 				boolean didClaim = ClaimManager.getManager().addClaim(newClaim); // Add claim
-				if(!worldIn.isRemote)
-					player.sendMessage(new TextComponentString(didClaim ? "Claim added successfully!" : "This claim overlaps another claim!"));
+				player.sendMessage(new TextComponentString(didClaim ? "Claim added successfully!" : "This claim overlaps another claim!"));
 				// Remove data so a new claim can be made.
 				data.removeTag("Corner1");
 				return didClaim ? EnumActionResult.SUCCESS : EnumActionResult.FAIL;
 			} else {
 				data.setIntArray("Corner1", posArray);
-				if(!worldIn.isRemote)
-					player.sendMessage(new TextComponentString("Added corner 1 at " + posArray[0] + ", " + posArray[1]));
+				player.sendMessage(new TextComponentString("Added corner 1 at " + posArray[0] + ", " + posArray[1]));
 			}
 			return EnumActionResult.SUCCESS;
 		} else {
-			if(!worldIn.isRemote) {
-				data.removeTag("Corner1");
-				player.sendMessage(new TextComponentString("You cannot set a corner inside an existing claim!"));
-			}
+			data.removeTag("Corner1");
+			player.sendMessage(new TextComponentString("You cannot set a corner inside an existing claim!"));
 		}
 		return EnumActionResult.FAIL;
 	}
