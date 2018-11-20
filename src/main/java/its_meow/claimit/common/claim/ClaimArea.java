@@ -110,5 +110,9 @@ public class ClaimArea {
 	public World getWorld() {
 		return DimensionManager.getWorld(this.dimID);
 	}
+	
+	public int getArea() {
+		return (sideLengthX + 1) * (sideLengthZ + 1);
+	}
 
 }

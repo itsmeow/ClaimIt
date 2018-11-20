@@ -56,7 +56,7 @@ public class ItemClaimInfoTool extends Item {
 				
 				sendMessage(player, "Information for claim owned by " + ownerName + ":");
 				sendMessage(player, "Dimension: " + dim);
-				sendMessage(player, "Area: " + claim.getSideLengthX() + "x" + claim.getSideLengthZ() + " (" + (claim.getSideLengthX() * claim.getSideLengthZ()) + ") ");
+				sendMessage(player, "Area: " + (claim.getSideLengthX() + 1) + "x" + (claim.getSideLengthZ() + 1) + " (" + claim.getArea() + ") ");
 				sendMessage(player, "Corner 1: " + corners[0].getX() + ", " + corners[0].getZ());
 				sendMessage(player, "Corner 2: " + corners[1].getX() + ", " + corners[1].getZ());
 			} else {
