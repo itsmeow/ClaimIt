@@ -1,7 +1,9 @@
 package its_meow.claimit.common.claim;
 
+import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
@@ -47,6 +49,9 @@ public class ClaimEventHandler {
 			if(claim.getOwner() != player.getUUID(player.getGameProfile())) {
 				// If online UUID doesn't match then make sure offline doesn't either
 				if(claim.getOwnerOffline() != player.getOfflineUUID(player.getName())) {
+					if(!player.capabilities.isCreativeMode) {
+						player.addItemStackToInventory(new ItemStack(e.getItemInHand().getItem(), 1));
+					}
 					e.setCanceled(true);
 				}
 			}
