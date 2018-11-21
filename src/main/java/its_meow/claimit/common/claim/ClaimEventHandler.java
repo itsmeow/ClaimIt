@@ -52,6 +52,7 @@ public class ClaimEventHandler {
 					if(!player.capabilities.isCreativeMode) {
 						player.addItemStackToInventory(new ItemStack(e.getItemInHand().getItem(), 1));
 					}
+					
 					e.setCanceled(true);
 				}
 			}
