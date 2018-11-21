@@ -3,7 +3,7 @@ package its_meow.claimit;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import its_meow.claimit.common.claim.BreakEventHandler;
+import its_meow.claimit.common.claim.ClaimEventHandler;
 import its_meow.claimit.proxy.CommonProxy;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.init.Blocks;
@@ -35,7 +35,7 @@ public class ClaimIt {
 	public void preInit(FMLPreInitializationEvent event) {
 		logger = LogManager.getLogger("claimit");
 		proxy.preInit(event);
-		MinecraftForge.EVENT_BUS.register(new BreakEventHandler());
+		MinecraftForge.EVENT_BUS.register(new ClaimEventHandler());
 	}
 
 	@EventHandler
