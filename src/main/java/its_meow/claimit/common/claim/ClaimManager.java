@@ -109,7 +109,7 @@ public class ClaimManager {
 	/** For use INTERNALLY ONLY!!! There's a reason this is private. Don't mess with it. **/
 	private void addClaimToListInsecurely(ClaimArea claim) {
 		claims.add(claim);
-		this.serialize(claim.getWorld());
+		//this.serialize(claim.getWorld());
 	}
 
 	public void serialize(World world) {
