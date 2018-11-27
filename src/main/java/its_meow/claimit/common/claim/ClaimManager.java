@@ -132,20 +132,21 @@ public class ClaimManager {
 	public void deserialize(World world) {
 		if(!world.isRemote) {
 			ClaimSerializer store = ClaimSerializer.get(world);
-			store.readFromNBT(store.data);
 			NBTTagCompound comp = store.data;
-			for(String key : comp.getKeySet()) {
-				if(!key.contains("_UID")) {
-					System.out.println("Loading " + key);
-					int[] claimVals = comp.getIntArray(key);
-					UUID owner = comp.getUniqueId(key + "_UID");
-					UUID ownerOffline = comp.getUniqueId(key + "_UIDOFF");
-					if(claimVals.length > 0 && claimVals[0] == 0) {
-						System.out.println("Valid version.");
-						ClaimArea claim = new ClaimArea(claimVals[1], claimVals[2], claimVals[3], claimVals[4], claimVals[5], owner, ownerOffline);
-						this.addClaim(claim);
-					} else {
-						ClaimIt.logger.log(Level.FATAL, "Detected version that doesn't exist yet! Mod was downgraded? Claim cannot be loaded.");
+			if(comp != null ) {
+				for(String key : comp.getKeySet()) {
+					if(!key.contains("_UID")) {
+						System.out.println("Loading " + key);
+						int[] claimVals = comp.getIntArray(key);
+						UUID owner = comp.getUniqueId(key + "_UID");
+						UUID ownerOffline = comp.getUniqueId(key + "_UIDOFF");
+						if(claimVals.length > 0 && claimVals[0] == 0) {
+							System.out.println("Valid version.");
+							ClaimArea claim = new ClaimArea(claimVals[1], claimVals[2], claimVals[3], claimVals[4], claimVals[5], owner, ownerOffline);
+							this.addClaim(claim);
+						} else {
+							ClaimIt.logger.log(Level.FATAL, "Detected version that doesn't exist yet! Mod was downgraded? Claim cannot be loaded.");
+						}
 					}
 				}
 			}
