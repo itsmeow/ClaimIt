@@ -132,6 +132,7 @@ public class ClaimManager {
 	public void deserialize(World world) {
 		if(!world.isRemote) {
 			ClaimSerializer store = ClaimSerializer.get(world);
+			store.readFromNBT(store.data);
 			NBTTagCompound comp = store.data;
 			for(String key : comp.getKeySet()) {
 				if(!key.endsWith("_UID") || !key .endsWith("_UIDOFF")) {
@@ -139,7 +140,7 @@ public class ClaimManager {
 					int[] claimVals = comp.getIntArray(key);
 					UUID owner = comp.getUniqueId(key + "_UID");
 					UUID ownerOffline = comp.getUniqueId(key + "_UIDOFF");
-					if(claimVals[0] == 0) {
+					if(claimVals.length > 0 && claimVals[0] == 0) {
 						System.out.println("Valid version.");
 						ClaimArea claim = new ClaimArea(claimVals[1], claimVals[2], claimVals[3], claimVals[4], claimVals[5], owner, ownerOffline);
 						this.addClaim(claim);
