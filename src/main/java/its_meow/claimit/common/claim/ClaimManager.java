@@ -135,7 +135,7 @@ public class ClaimManager {
 			store.readFromNBT(store.data);
 			NBTTagCompound comp = store.data;
 			for(String key : comp.getKeySet()) {
-				if(!key.endsWith("_UID") || !key .endsWith("_UIDOFF")) {
+				if(!key.contains("_UID")) {
 					System.out.println("Loading " + key);
 					int[] claimVals = comp.getIntArray(key);
 					UUID owner = comp.getUniqueId(key + "_UID");

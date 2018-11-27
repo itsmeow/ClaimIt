@@ -46,7 +46,7 @@ public class ItemClaimTool extends Item {
 		if(!isInClaim) {
 			int[] posArray = {pos.getX(), pos.getZ()};
 			if(data.hasKey("Corner1")) {
-				player.sendMessage(new TextComponentString("Added corner 2 at " + posArray[0] + ", " + posArray[1]));
+				player.sendMessage(new TextComponentString("§9Added corner 2 at §b" + posArray[0] + "§9, §b" + posArray[1]));
 				int[] corner1 = data.getIntArray("Corner1");
 				int[] corner2 = posArray;
 				BlockPos c1 = new BlockPos(corner1[0], 0, corner1[1]);
@@ -62,18 +62,18 @@ public class ItemClaimTool extends Item {
 				ClaimArea newClaim;
 				newClaim = new ClaimArea(player.dimension, c1.getX(), c1.getZ(), sideL.getX(), sideL.getZ(), player);
 				boolean didClaim = ClaimManager.getManager().addClaim(newClaim); // Add claim
-				player.sendMessage(new TextComponentString(didClaim ? "Claim added successfully!" : "This claim overlaps another claim!"));
+				player.sendMessage(new TextComponentString(didClaim ? "§aClaim added successfully!" : "§cThis claim overlaps another claim!"));
 				// Remove data so a new claim can be made.
 				data.removeTag("Corner1");
 				return didClaim ? EnumActionResult.SUCCESS : EnumActionResult.FAIL;
 			} else {
 				data.setIntArray("Corner1", posArray);
-				player.sendMessage(new TextComponentString("Added corner 1 at " + posArray[0] + ", " + posArray[1]));
+				player.sendMessage(new TextComponentString("§9Added corner 1 at §b" + posArray[0] + "§9, §b" + posArray[1]));
 			}
 			return EnumActionResult.SUCCESS;
 		} else {
 			data.removeTag("Corner1");
-			player.sendMessage(new TextComponentString("You cannot set a corner inside an existing claim!"));
+			player.sendMessage(new TextComponentString("§cYou cannot set a corner inside an existing claim!"));
 		}
 		return EnumActionResult.FAIL;
 	}
