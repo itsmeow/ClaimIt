@@ -1,5 +1,8 @@
 package its_meow.claimit.common.claim;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import its_meow.claimit.init.ItemRegistry;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
@@ -134,10 +137,6 @@ public class ClaimEventHandler {
 				}
 			}
 		}
-		// Allow info tool
-		if(e.getItemStack().getItem() == ItemRegistry.claiminfotool) {
-			e.setCanceled(false);
-		}
 	}
 
 	@SubscribeEvent
@@ -146,7 +145,7 @@ public class ClaimEventHandler {
 		BlockPos pos = e.getPos();
 		ClaimManager cm = ClaimManager.getManager();
 		ClaimArea claim = cm.getClaimAtLocation(world, pos);
-		if(claim != null) {
+		if(claim != null && e.getItemStack().getItem() != ItemRegistry.claiminfotool) {
 			EntityPlayer player = e.getEntityPlayer();
 			// First make sure online UUID doesn't match
 			if(claim.getOwner() != player.getUUID(player.getGameProfile())) {
@@ -155,10 +154,6 @@ public class ClaimEventHandler {
 					e.setCanceled(true);
 				}
 			}
-		}
-		// Allow info tool
-		if(e.getItemStack().getItem() == ItemRegistry.claiminfotool) {
-			e.setCanceled(false);
 		}
 	}
 
@@ -213,16 +208,26 @@ public class ClaimEventHandler {
 	public void onExplode(ExplosionEvent.Detonate e) {
 		World world = e.getWorld();
 		ClaimManager cm = ClaimManager.getManager();
+		Set<BlockPos> removeList = new HashSet<BlockPos>();
 		for(BlockPos pos : e.getAffectedBlocks()) {
 			if(cm.getClaimAtLocation(world, pos) != null) {
-				e.getAffectedBlocks().remove(pos);
+				removeList.add(pos);
 			}
 		}
+		Set<Entity> removeListE = new HashSet<Entity>();
 		for(Entity ent : e.getAffectedEntities()) {
 			BlockPos pos = ent.getPosition();
 			if(cm.getClaimAtLocation(world, pos) != null) {
-				e.getAffectedEntities().remove(ent);
+				removeListE.add(ent);
 			}
+		}
+		// Avoid concurrent modification by seperating tasks
+		for(BlockPos pos : removeList) {
+			e.getAffectedBlocks().remove(pos);
+		}
+		
+		for(Entity ent : removeListE) {
+			e.getAffectedEntities().remove(ent);
 		}
 	}
 
