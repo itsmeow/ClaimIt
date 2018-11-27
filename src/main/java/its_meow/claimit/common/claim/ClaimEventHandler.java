@@ -13,12 +13,28 @@ import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.event.world.BlockEvent.BreakEvent;
 import net.minecraftforge.event.world.BlockEvent.FarmlandTrampleEvent;
 import net.minecraftforge.event.world.BlockEvent.PlaceEvent;
+import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 @Mod.EventBusSubscriber
 public class ClaimEventHandler {
 
+	
+	@SubscribeEvent
+	public void onWorldLoad(WorldEvent.Load e) {
+		if(!e.getWorld().isRemote) {
+			ClaimManager.getManager().deserialize(e.getWorld());
+		}
+	}
+	
+	@SubscribeEvent
+	public void onWorldSave(WorldEvent.Save e) {
+		if(!e.getWorld().isRemote) {
+			ClaimManager.getManager().serialize(e.getWorld());
+		}
+	}
+	
 	@SubscribeEvent
 	public void onBlockBroken(BreakEvent e) {
 		World world = e.getWorld();
@@ -133,6 +149,28 @@ public class ClaimEventHandler {
 					e.setCanceled(true);
 				}
 			}
+		}
+	}
+	
+	@SubscribeEvent
+	public void onBlockExploded(net.minecraftforge.event.entity.EntityMobGriefingEvent e) {
+		World world = e.getEntity().getEntityWorld();
+		BlockPos pos = e.getEntity().getPosition();
+		ClaimManager cm = ClaimManager.getManager();
+		ClaimArea claim = cm.getClaimAtLocation(world, pos);
+		if(claim != null) {
+			e.setCanceled(true);
+		}
+	}
+	
+	@SubscribeEvent
+	public void onPlayerAttack(net.minecraftforge.event.entity.player.AttackEntityEvent e) {
+		World world = e.getEntity().getEntityWorld();
+		BlockPos pos = e.getEntity().getPosition();
+		ClaimManager cm = ClaimManager.getManager();
+		ClaimArea claim = cm.getClaimAtLocation(world, pos);
+		if(claim != null || cm.getClaimAtLocation(world, e.getEntityPlayer().getPosition()) != null) {
+			e.setCanceled(true);
 		}
 	}
 

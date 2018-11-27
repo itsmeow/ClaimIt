@@ -4,6 +4,7 @@ import java.util.UUID;
 
 import javax.annotation.Nullable;
 
+import its_meow.claimit.common.item.ItemClaimInfoTool;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
@@ -20,6 +21,7 @@ public class ClaimArea {
 	private int sideLengthZ;
 	private UUID ownerUUID;
 	private UUID ownerUUIDOffline;
+	private String name;
 
 	public ClaimArea(int dimID, int posX, int posZ, int sideLengthX, int sideLengthZ, EntityPlayer player) {
 		this.dimID = dimID;
@@ -40,6 +42,59 @@ public class ClaimArea {
 				this.sideLengthZ = Math.abs(this.sideLengthZ);
 			}
 		}
+		this.name = ownerUUID.toString() + dimID + posX + posZ + sideLengthX + sideLengthZ;
+	}
+	
+	public ClaimArea(int dimID, int posX, int posZ, int sideLengthX, int sideLengthZ, UUID ownerUUID) {
+		this.dimID = dimID;
+		this.posX = posX;
+		this.posZ = posZ;
+		this.sideLengthX = sideLengthX;
+		this.sideLengthZ = sideLengthZ;
+		this.ownerUUID = ownerUUID;
+		String ownerName = ItemClaimInfoTool.getPlayerName(ownerUUID.toString());
+		if(ownerName == null) {
+			ownerName = DimensionManager.getWorld(dimID).getMinecraftServer().getPlayerProfileCache().getProfileByUUID(ownerUUID).getName();
+			this.ownerUUIDOffline = EntityPlayer.getOfflineUUID(ownerName);
+		}
+		// Simplify main corner to the lowest x and y value
+		if(this.sideLengthX < 0 || this.sideLengthZ < 0) {
+			if(this.sideLengthX < 0) {
+				this.posX += this.sideLengthX;
+				this.sideLengthX = Math.abs(this.sideLengthX);
+			}
+			if(this.sideLengthZ < 0) {
+				this.posZ += this.sideLengthZ;
+				this.sideLengthZ = Math.abs(this.sideLengthZ);
+			}
+		}
+		this.name = ownerUUID.toString() + dimID + posX + posZ + sideLengthX + sideLengthZ;
+	}
+	
+	public ClaimArea(int dimID, int posX, int posZ, int sideLengthX, int sideLengthZ, UUID ownerUUID, UUID ownerUUIDOffline) {
+		this.dimID = dimID;
+		this.posX = posX;
+		this.posZ = posZ;
+		this.sideLengthX = sideLengthX;
+		this.sideLengthZ = sideLengthZ;
+		this.ownerUUID = ownerUUID;
+		this.ownerUUIDOffline = ownerUUIDOffline;
+		// Simplify main corner to the lowest x and y value
+		if(this.sideLengthX < 0 || this.sideLengthZ < 0) {
+			if(this.sideLengthX < 0) {
+				this.posX += this.sideLengthX;
+				this.sideLengthX = Math.abs(this.sideLengthX);
+			}
+			if(this.sideLengthZ < 0) {
+				this.posZ += this.sideLengthZ;
+				this.sideLengthZ = Math.abs(this.sideLengthZ);
+			}
+		}
+		this.name = ownerUUID.toString() + dimID + posX + posZ + sideLengthX + sideLengthZ;
+	}
+	
+	private void updateName() {
+		this.name = ownerUUID.toString() + dimID + posX + posZ + sideLengthX + sideLengthZ;
 	}
 	
 	public boolean isBlockPosInClaim(BlockPos blockPos) {
@@ -113,6 +168,19 @@ public class ClaimArea {
 	
 	public int getArea() {
 		return (sideLengthX + 1) * (sideLengthZ + 1);
+	}
+	
+	// Versions Store:
+	// 0: {0, dimID, posX, posZ, sideLengthX, sideLengthZ}
+	
+	public int[] getSelfAsInt() {
+		// 0 is version for updates to serialization, interpret version if changes are made to serialization structure
+		int[] s = {0, dimID, posX, posZ, sideLengthX, sideLengthZ};
+		return s;
+	}
+	
+	public String getSerialName() {
+		return name;
 	}
 
 }
