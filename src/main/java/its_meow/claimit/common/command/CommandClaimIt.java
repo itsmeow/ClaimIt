@@ -29,7 +29,7 @@ public class CommandClaimIt extends CommandBase {
 		return "'/claimit help' or '/ci help' for proper usage!";
 	}
 	
-	private String aliasList;
+	private String aliasList = "";
 	
 	@Override
 	public List<String> getAliases() {
