@@ -4,6 +4,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import its_meow.claimit.common.claim.ClaimEventHandler;
+import its_meow.claimit.common.command.CommandClaimIt;
 import its_meow.claimit.proxy.CommonProxy;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.init.Blocks;
@@ -16,6 +17,7 @@ import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 
 @Mod(modid = Ref.MOD_ID, name = Ref.NAME, version = Ref.VERSION, acceptedMinecraftVersions = Ref.acceptedMCV, updateJSON = Ref.updateJSON)
 public class ClaimIt {
@@ -30,6 +32,11 @@ public class ClaimIt {
 
 	public static Logger logger;
 	
+	@EventHandler
+	public void serverLoad(FMLServerStartingEvent event)
+	{
+		event.registerServerCommand(new CommandClaimIt());
+	}
 	
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent event) {

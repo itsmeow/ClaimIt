@@ -3,6 +3,7 @@ package its_meow.claimit.common.claim;
 import java.util.HashSet;
 import java.util.Set;
 
+import its_meow.claimit.common.command.CommandClaimIt;
 import its_meow.claimit.init.ItemRegistry;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
@@ -19,12 +20,13 @@ import net.minecraftforge.event.world.BlockEvent.PlaceEvent;
 import net.minecraftforge.event.world.ExplosionEvent;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.Mod.EventHandler;
+import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.common.eventhandler.Event.Result;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 @Mod.EventBusSubscriber
 public class ClaimEventHandler {
-
 
 	@SubscribeEvent
 	public void onWorldLoad(WorldEvent.Load e) {
