@@ -43,9 +43,9 @@ public class ClaimManager {
 
 	public boolean doesPlayerOwnClaim(ClaimArea claim, EntityPlayer player) {
 		try {
-			if(claim.getOwner() == player.getUUID(player.getGameProfile())) {
+			if(claim.getOwner().equals(player.getUUID(player.getGameProfile()))) {
 				// If online UUID does match then make sure offline does too
-				if(claim.getOwnerOffline() == player.getOfflineUUID(player.getName())) {
+				if(claim.getOwnerOffline().equals(player.getOfflineUUID(player.getName()))) {
 					return true;
 				}
 			}
