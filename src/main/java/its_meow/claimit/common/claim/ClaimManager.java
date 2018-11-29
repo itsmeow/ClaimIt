@@ -31,8 +31,8 @@ public class ClaimManager {
 
 	/** Removes a claim. Requires player object as verification of ownership **/
 	public boolean deleteClaim(ClaimArea claim, EntityPlayer player) {
-		if(claim.getOwner() == player.getUUID(player.getGameProfile())) {
-			if(claim.getOwnerOffline() == player.getOfflineUUID(player.getName())) {
+		if(claim.getOwner().equals(player.getUUID(player.getGameProfile()))) {
+			if(claim.getOwnerOffline().equals(player.getOfflineUUID(player.getName()))) {
 				claims.remove(claim);
 				this.serialize(claim.getWorld());
 				return true;
