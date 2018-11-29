@@ -9,6 +9,7 @@ import javax.annotation.Nullable;
 import org.apache.logging.log4j.Level;
 
 import its_meow.claimit.ClaimIt;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -26,6 +27,33 @@ public class ClaimManager {
 		}
 
 		return instance;
+	}
+
+	/** Removes a claim. Requires player object as verification of ownership **/
+	public boolean deleteClaim(ClaimArea claim, EntityPlayer player) {
+		if(claim.getOwner() == player.getUUID(player.getGameProfile())) {
+			if(claim.getOwnerOffline() == player.getOfflineUUID(player.getName())) {
+				claims.remove(claim);
+				this.serialize(claim.getWorld());
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public boolean doesPlayerOwnClaim(ClaimArea claim, EntityPlayer player) {
+		try {
+			if(claim.getOwner() == player.getUUID(player.getGameProfile())) {
+				// If online UUID does match then make sure offline does too
+				if(claim.getOwnerOffline() == player.getOfflineUUID(player.getName())) {
+					return true;
+				}
+			}
+			return false;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
 	}
 
 	@Nullable
@@ -116,15 +144,17 @@ public class ClaimManager {
 		if(!world.isRemote) {
 			ClaimSerializer store = ClaimSerializer.get(world);
 			for(ClaimArea claim : claims) {
-				int[] claimVals = claim.getSelfAsInt();
-				UUID owner = claim.getOwner();
-				UUID ownerOffline = claim.getOwnerOffline();
-				String serialName = claim.getSerialName();
-				store.data.setIntArray(serialName, claimVals);
-				store.data.setUniqueId(serialName + "_UID", owner);
-				store.data.setUniqueId(serialName + "_UIDOFF", ownerOffline);
-				store.markDirty();
-				System.out.println("Writing " + serialName + " = " + claimVals);
+				if(claim.getWorld() == world) {
+					int[] claimVals = claim.getSelfAsInt();
+					UUID owner = claim.getOwner();
+					UUID ownerOffline = claim.getOwnerOffline();
+					String serialName = claim.getSerialName();
+					store.data.setIntArray(serialName, claimVals);
+					store.data.setUniqueId(serialName + "_UID", owner);
+					store.data.setUniqueId(serialName + "_UIDOFF", ownerOffline);
+					store.markDirty();
+					System.out.println("Saving claim: " + serialName);
+				}
 			}
 		}
 	}
