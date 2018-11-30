@@ -53,7 +53,7 @@ public class ClaimArea {
 		}
 		this.name = ownerUUID.toString() + dimID + posX + posZ + sideLengthX + sideLengthZ;
 	}
-	
+
 	public ClaimArea(int dimID, int posX, int posZ, int sideLengthX, int sideLengthZ, UUID ownerUUID) {
 		this.dimID = dimID;
 		this.posX = posX;
@@ -83,7 +83,7 @@ public class ClaimArea {
 		}
 		this.name = ownerUUID.toString() + dimID + posX + posZ + sideLengthX + sideLengthZ;
 	}
-	
+
 	public ClaimArea(int dimID, int posX, int posZ, int sideLengthX, int sideLengthZ, UUID ownerUUID, UUID ownerUUIDOffline) {
 		this.dimID = dimID;
 		this.posX = posX;
@@ -109,11 +109,11 @@ public class ClaimArea {
 		}
 		this.name = ownerUUID.toString() + dimID + posX + posZ + sideLengthX + sideLengthZ;
 	}
-	
+
 	private void updateName() {
 		this.name = ownerUUID.toString() + dimID + posX + posZ + sideLengthX + sideLengthZ;
 	}
-	
+
 	public boolean isOwner(EntityPlayer player) {
 		try {
 			if(this.getOwner().equals(player.getUUID(player.getGameProfile()))) {
@@ -131,17 +131,33 @@ public class ClaimArea {
 			return false;
 		}
 	}
-	
+
 	public boolean canModify(EntityPlayer player) {
+		return getPermission(membersModify, player);
+	}
+
+	public boolean canUse(EntityPlayer player) {
+		return getPermission(membersUse, player);
+	}
+	
+	public boolean canEntity(EntityPlayer player) {
+		return getPermission(membersEntity, player);
+	}
+	
+	public boolean canPVP(EntityPlayer player) {
+		return getPermission(membersPVP, player);
+	}
+
+	private boolean getPermission(ArrayList<UUID> arr, EntityPlayer player) {
 		if(this.isOwner(player)) {
 			return true;
 		}
-		if(membersModify.contains(player.getUUID(player.getGameProfile()))) {
+		if(arr.contains(player.getUUID(player.getGameProfile()))) {
 			return true;
 		}
 		return false;
 	}
-	
+
 	public boolean addMemberModify(EntityPlayer player) {
 		UUID uuid = player.getUUID(player.getGameProfile());
 		if(membersModify.contains(uuid)) {
@@ -150,7 +166,7 @@ public class ClaimArea {
 		}
 		return false;
 	}
-	
+
 	public boolean addMemberUse(EntityPlayer player) {
 		UUID uuid = player.getUUID(player.getGameProfile());
 		if(membersUse.contains(uuid)) {
@@ -168,7 +184,7 @@ public class ClaimArea {
 		}
 		return false;
 	}
-	
+
 	public boolean addMemberPVP(EntityPlayer player) {
 		UUID uuid = player.getUUID(player.getGameProfile());
 		if(membersPVP.contains(uuid)) {
@@ -177,7 +193,7 @@ public class ClaimArea {
 		}
 		return false;
 	}
-	
+
 	public boolean removeMemberModify(EntityPlayer player) {
 		UUID uuid = player.getUUID(player.getGameProfile());
 		if(membersModify.contains(uuid)) {
@@ -186,7 +202,7 @@ public class ClaimArea {
 		}
 		return false;
 	}
-	
+
 	public boolean removeMemberUse(EntityPlayer player) {
 		UUID uuid = player.getUUID(player.getGameProfile());
 		if(membersUse.contains(uuid)) {
@@ -204,7 +220,7 @@ public class ClaimArea {
 		}
 		return false;
 	}
-	
+
 	public boolean removeMemberPVP(EntityPlayer player) {
 		UUID uuid = player.getUUID(player.getGameProfile());
 		if(membersPVP.contains(uuid)) {
@@ -213,41 +229,41 @@ public class ClaimArea {
 		}
 		return false;
 	}
-	
+
 	public boolean isBlockPosInClaim(BlockPos blockPos) {
 		boolean isInXRange = (blockPos.getX() < this.getHXZPosition().getX() + 1) && (blockPos.getX() > this.posX - 1);
 		boolean isInZRange = (blockPos.getZ() < this.getHXZPosition().getZ() + 1) && (blockPos.getZ() > this.posZ - 1);
-		
+
 		return isInXRange && isInZRange;
 	}
-	
+
 	/** Returns posX and posZ as BlockPos **/
 	public BlockPos getMainPosition() {
 		return new BlockPos(posX, 0, posZ);
 	}
-	
+
 	/** Returns the highest X and Z corner **/
 	public BlockPos getHXZPosition() {
 		return new BlockPos(posX + sideLengthX, 0, posZ + sideLengthZ);
 	}
-	
+
 	/** Returns the highest X and lowest Z corner **/
 	public BlockPos getHXLZPosition() {
 		return new BlockPos(posX + sideLengthX, 0, posZ);
 	}
-	
+
 	/** Returns the lowest X and the highest Z corner **/
 	public BlockPos getLXHZPosition() {
 		return new BlockPos(posX, 0, posZ + sideLengthZ);
 	}
-	
+
 	public BlockPos[] getTwoMainClaimCorners() {
 		BlockPos[] corners = new BlockPos[2];
 		corners[0] = this.getMainPosition();
 		corners[1] = this.getHXZPosition();
 		return corners;
 	}
-	
+
 	public BlockPos[] getFourCorners() {
 		BlockPos[] corners = new BlockPos[4];
 		corners[0] = this.getMainPosition();
@@ -256,46 +272,46 @@ public class ClaimArea {
 		corners[3] = this.getHXZPosition();
 		return corners;
 	}
-	
+
 	public int getSideLengthX() {
 		return sideLengthX;
 	}
-	
+
 	public int getSideLengthZ() {
 		return sideLengthZ;
 	}
-	
+
 	@Nullable
 	public UUID getOwner() {
 		return this.ownerUUID;
 	}
-	
+
 	@Nullable
 	public UUID getOwnerOffline() {
 		return this.ownerUUIDOffline;
 	}
-	
+
 	public int getDimensionID() {
 		return dimID;
 	}
-	
+
 	public World getWorld() {
 		return DimensionManager.getWorld(this.dimID);
 	}
-	
+
 	public int getArea() {
 		return (sideLengthX + 1) * (sideLengthZ + 1);
 	}
-	
+
 	// Versions Store:
 	// 0: {0, dimID, posX, posZ, sideLengthX, sideLengthZ}
-	
+
 	public int[] getSelfAsInt() {
 		// 0 is version for updates to serialization, interpret version if changes are made to serialization structure
 		int[] s = {0, dimID, posX, posZ, sideLengthX, sideLengthZ};
 		return s;
 	}
-	
+
 	public String getSerialName() {
 		return name;
 	}

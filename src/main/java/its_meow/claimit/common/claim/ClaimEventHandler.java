@@ -6,10 +6,13 @@ import java.util.Set;
 import its_meow.claimit.common.command.CommandClaimIt;
 import its_meow.claimit.init.ItemRegistry;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.DamageSource;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent.EntityInteract;
@@ -50,13 +53,7 @@ public class ClaimEventHandler {
 		ClaimArea claim = cm.getClaimAtLocation(world, pos);
 		if(claim != null) {
 			EntityPlayer player = e.getPlayer();
-			// First make sure online UUID doesn't match
-			if(claim.getOwner() != player.getUUID(player.getGameProfile())) {
-				// If online UUID doesn't match then make sure offline doesn't either
-				if(claim.getOwnerOffline() != player.getOfflineUUID(player.getName())) {
-					e.setCanceled(true);
-				}
-			}
+			e.setCanceled(!claim.canModify(player));
 		}
 	}
 
@@ -68,16 +65,12 @@ public class ClaimEventHandler {
 		ClaimArea claim = cm.getClaimAtLocation(world, pos);
 		if(claim != null) {
 			EntityPlayer player = e.getPlayer();
-			// First make sure online UUID doesn't match
-			if(claim.getOwner() != player.getUUID(player.getGameProfile())) {
-				// If online UUID doesn't match then make sure offline doesn't either
-				if(claim.getOwnerOffline() != player.getOfflineUUID(player.getName())) {
-					if(!player.capabilities.isCreativeMode) {
-						player.addItemStackToInventory(new ItemStack(e.getItemInHand().getItem(), 1));
-					}
-
-					e.setCanceled(true);
+			if(!claim.canModify(player)) {
+				if(!player.capabilities.isCreativeMode) {
+					player.addItemStackToInventory(new ItemStack(e.getItemInHand().getItem(), 1));
 				}
+
+				e.setCanceled(true);
 			}
 		}
 	}
@@ -92,13 +85,7 @@ public class ClaimEventHandler {
 			Entity ent = e.getEntity();
 			if(ent instanceof EntityPlayer) {
 				EntityPlayer player = (EntityPlayer) ent;
-				// First make sure online UUID doesn't match
-				if(claim.getOwner() != player.getUUID(player.getGameProfile())) {
-					// If online UUID doesn't match then make sure offline doesn't either
-					if(claim.getOwnerOffline() != player.getOfflineUUID(player.getName())) {
-						e.setCanceled(true);
-					}
-				}
+				e.setCanceled(!claim.canModify(player));
 			} else {
 				e.setCanceled(true);
 			}
@@ -113,12 +100,10 @@ public class ClaimEventHandler {
 		ClaimArea claim = cm.getClaimAtLocation(world, pos);
 		if(claim != null) {
 			EntityPlayer player = e.getEntityPlayer();
-			// First make sure online UUID doesn't match
-			if(claim.getOwner() != player.getUUID(player.getGameProfile())) {
-				// If online UUID doesn't match then make sure offline doesn't either
-				if(claim.getOwnerOffline() != player.getOfflineUUID(player.getName())) {
-					e.setCanceled(true);
-				}
+			if(e.getTarget() instanceof EntityPlayer) {
+				e.setCanceled(!claim.canPVP(player));
+			} else {
+				e.setCanceled(!claim.canEntity(player));
 			}
 		}
 	}
@@ -131,13 +116,7 @@ public class ClaimEventHandler {
 		ClaimArea claim = cm.getClaimAtLocation(world, pos);
 		if(claim != null) {
 			EntityPlayer player = e.getEntityPlayer();
-			// First make sure online UUID doesn't match
-			if(claim.getOwner() != player.getUUID(player.getGameProfile())) {
-				// If online UUID doesn't match then make sure offline doesn't either
-				if(claim.getOwnerOffline() != player.getOfflineUUID(player.getName())) {
-					e.setCanceled(true);
-				}
-			}
+			e.setCanceled(!claim.canEntity(player) && !claim.canUse(player));
 		}
 	}
 
@@ -149,13 +128,7 @@ public class ClaimEventHandler {
 		ClaimArea claim = cm.getClaimAtLocation(world, pos);
 		if(claim != null && e.getItemStack().getItem() != ItemRegistry.claiminfotool) {
 			EntityPlayer player = e.getEntityPlayer();
-			// First make sure online UUID doesn't match
-			if(claim.getOwner() != player.getUUID(player.getGameProfile())) {
-				// If online UUID doesn't match then make sure offline doesn't either
-				if(claim.getOwnerOffline() != player.getOfflineUUID(player.getName())) {
-					e.setCanceled(true);
-				}
-			}
+			e.setCanceled(!claim.canUse(player));
 		}
 	}
 
@@ -178,16 +151,29 @@ public class ClaimEventHandler {
 		ClaimArea claim = cm.getClaimAtLocation(world, pos);
 		if(claim != null || cm.getClaimAtLocation(world, e.getEntityPlayer().getPosition()) != null) {
 			EntityPlayer player = e.getEntityPlayer();
-			// First make sure online UUID doesn't match
-			if(claim.getOwner() != player.getUUID(player.getGameProfile())) {
-				// If online UUID doesn't match then make sure offline doesn't either
-				if(claim.getOwnerOffline() != player.getOfflineUUID(player.getName())) {
-					e.setCanceled(true);
+			if(e.getTarget() instanceof EntityPlayer) {
+				e.setCanceled(!claim.canPVP(player));
+			} else {
+				e.setCanceled(!claim.canEntity(player));
+			}
+		}
+	}
+
+	@SubscribeEvent
+	public void onHurtEvent(LivingHurtEvent e) {
+		EntityLivingBase entity = e.getEntityLiving();
+		DamageSource source = e.getSource();
+		if(entity != null && source != null) {
+			if(source.getTrueSource() instanceof EntityPlayer && source.getImmediateSource() instanceof EntityPlayer) {
+				EntityPlayer player = (EntityPlayer) source.getTrueSource();
+				ClaimArea claim = ClaimManager.getManager().getClaimAtLocation(entity.getEntityWorld(), player.getPosition());
+				if(claim != null) {
+					e.setCanceled(!claim.canEntity(player));
 				}
 			}
 		}
 	}
-	
+
 	@SubscribeEvent
 	public void onPlayerPickupXp(PlayerPickupXpEvent e) {
 		World world = e.getEntity().getEntityWorld();
@@ -196,16 +182,10 @@ public class ClaimEventHandler {
 		ClaimArea claim = cm.getClaimAtLocation(world, pos);
 		if(claim != null) {
 			EntityPlayer player = e.getEntityPlayer();
-			// First make sure online UUID doesn't match
-			if(claim.getOwner() != player.getUUID(player.getGameProfile())) {
-				// If online UUID doesn't match then make sure offline doesn't either
-				if(claim.getOwnerOffline() != player.getOfflineUUID(player.getName())) {
-					e.setCanceled(true);
-				}
-			}
+			e.setCanceled(!claim.canEntity(player));
 		}
 	}
-	
+
 	@SubscribeEvent
 	public void onExplode(ExplosionEvent.Detonate e) {
 		World world = e.getWorld();
@@ -227,7 +207,7 @@ public class ClaimEventHandler {
 		for(BlockPos pos : removeList) {
 			e.getAffectedBlocks().remove(pos);
 		}
-		
+
 		for(Entity ent : removeListE) {
 			e.getAffectedEntities().remove(ent);
 		}
