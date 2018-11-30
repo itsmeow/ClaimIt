@@ -68,21 +68,39 @@ public class CommandClaimIt extends CommandBase {
 				sendMessage(sender, "§eclaim list");
 			} else if(args.length == 2) {
 				if(args[1].equals("delete")) {
-					ClaimArea claim = ClaimManager.getManager().getClaimAtLocation(sender.getEntityWorld(), sender.getPosition());
-					if(claim != null) {
-						if(ClaimManager.getManager().doesPlayerOwnClaim(claim, (EntityPlayer) sender.getCommandSenderEntity())) {
-							boolean removed = ClaimManager.getManager().deleteClaim(claim, (EntityPlayer) sender.getCommandSenderEntity());
-							sendMessage(sender, removed ? "§eClaim deleted." : "§cCould not remove claim!");
+					if(sender instanceof EntityPlayer) {
+						ClaimArea claim = ClaimManager.getManager().getClaimAtLocation(sender.getEntityWorld(), sender.getPosition());
+						if(claim != null) {
+							if(claim.isOwner((EntityPlayer) sender.getCommandSenderEntity())) {
+								boolean removed = ClaimManager.getManager().deleteClaim(claim, (EntityPlayer) sender.getCommandSenderEntity());
+								sendMessage(sender, removed ? "§eClaim deleted." : "§cCould not remove claim!");
+							} else {
+								sendMessage(sender, "§cYou do not own this claim!");
+							}
 						} else {
-							sendMessage(sender, "§cYou do not own this claim!");
+							sendMessage(sender, "§cThere is no claim here!");
 						}
 					} else {
-						sendMessage(sender, "§cThere is no claim here!");
+						sendMessage(sender, "You must be a player to use this command!");
 					}
 				}
 			}
-		} else if(args[0].equals("confirm")) {
-			
+		} else if(args[0].equals("admin")) {
+			if(sender instanceof EntityPlayer) {
+				if(sender.canUseCommand(2, "")) {
+					if(ClaimManager.getManager().isAdmin((EntityPlayer) sender)) {
+						ClaimManager.getManager().removeAdmin((EntityPlayer) sender);
+						sendMessage(sender, "§aAdmin bypass disabled.");
+					} else {
+						ClaimManager.getManager().addAdmin((EntityPlayer) sender);
+						sendMessage(sender, "§aAdmin bypass enabled. You may now manage all claims.");
+					}
+				} else {
+					sendMessage(sender, "§cYou are not operator level 2!");
+				}
+			} else {
+				sendMessage(sender, "You must be a player to use this command!");
+			}
 		} else {
 			throw new SyntaxErrorException("Unknown subcommand or you are using server console!");
 		}

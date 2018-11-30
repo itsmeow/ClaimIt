@@ -1,5 +1,6 @@
 package its_meow.claimit.common.claim;
 
+import java.util.ArrayList;
 import java.util.UUID;
 
 import javax.annotation.Nullable;
@@ -22,6 +23,10 @@ public class ClaimArea {
 	private UUID ownerUUID;
 	private UUID ownerUUIDOffline;
 	private String name;
+	private ArrayList<UUID> membersModify;
+	private ArrayList<UUID> membersUse;
+	private ArrayList<UUID> membersEntity;
+	private ArrayList<UUID> membersPVP;
 
 	public ClaimArea(int dimID, int posX, int posZ, int sideLengthX, int sideLengthZ, EntityPlayer player) {
 		this.dimID = dimID;
@@ -31,6 +36,10 @@ public class ClaimArea {
 		this.sideLengthZ = sideLengthZ;
 		this.ownerUUID = EntityPlayer.getUUID(player.getGameProfile());
 		this.ownerUUIDOffline = EntityPlayer.getOfflineUUID(player.getName());
+		this.membersModify = new ArrayList<UUID>();
+		this.membersUse = new ArrayList<UUID>();
+		this.membersEntity = new ArrayList<UUID>();
+		this.membersPVP = new ArrayList<UUID>();
 		// Simplify main corner to the lowest x and y value
 		if(this.sideLengthX < 0 || this.sideLengthZ < 0) {
 			if(this.sideLengthX < 0) {
@@ -57,6 +66,10 @@ public class ClaimArea {
 			ownerName = DimensionManager.getWorld(dimID).getMinecraftServer().getPlayerProfileCache().getProfileByUUID(ownerUUID).getName();
 			this.ownerUUIDOffline = EntityPlayer.getOfflineUUID(ownerName);
 		}
+		this.membersModify = new ArrayList<UUID>();
+		this.membersUse = new ArrayList<UUID>();
+		this.membersEntity = new ArrayList<UUID>();
+		this.membersPVP = new ArrayList<UUID>();
 		// Simplify main corner to the lowest x and y value
 		if(this.sideLengthX < 0 || this.sideLengthZ < 0) {
 			if(this.sideLengthX < 0) {
@@ -79,6 +92,10 @@ public class ClaimArea {
 		this.sideLengthZ = sideLengthZ;
 		this.ownerUUID = ownerUUID;
 		this.ownerUUIDOffline = ownerUUIDOffline;
+		this.membersModify = new ArrayList<UUID>();
+		this.membersUse = new ArrayList<UUID>();
+		this.membersEntity = new ArrayList<UUID>();
+		this.membersPVP = new ArrayList<UUID>();
 		// Simplify main corner to the lowest x and y value
 		if(this.sideLengthX < 0 || this.sideLengthZ < 0) {
 			if(this.sideLengthX < 0) {
@@ -95,6 +112,106 @@ public class ClaimArea {
 	
 	private void updateName() {
 		this.name = ownerUUID.toString() + dimID + posX + posZ + sideLengthX + sideLengthZ;
+	}
+	
+	public boolean isOwner(EntityPlayer player) {
+		try {
+			if(this.getOwner().equals(player.getUUID(player.getGameProfile()))) {
+				// If online UUID does match then make sure offline does too
+				if(this.getOwnerOffline().equals(player.getOfflineUUID(player.getName()))) {
+					return true;
+				}
+			}
+			if(ClaimManager.getManager().isAdmin(player)) {
+				return true;
+			}
+			return false;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
+	
+	public boolean canModify(EntityPlayer player) {
+		if(this.isOwner(player)) {
+			return true;
+		}
+		if(membersModify.contains(player.getUUID(player.getGameProfile()))) {
+			return true;
+		}
+		return false;
+	}
+	
+	public boolean addMemberModify(EntityPlayer player) {
+		UUID uuid = player.getUUID(player.getGameProfile());
+		if(membersModify.contains(uuid)) {
+			membersModify.add(uuid);
+			return true;
+		}
+		return false;
+	}
+	
+	public boolean addMemberUse(EntityPlayer player) {
+		UUID uuid = player.getUUID(player.getGameProfile());
+		if(membersUse.contains(uuid)) {
+			membersUse.add(uuid);
+			return true;
+		}
+		return false;
+	}
+
+	public boolean addMemberEntity(EntityPlayer player) {
+		UUID uuid = player.getUUID(player.getGameProfile());
+		if(membersEntity.contains(uuid)) {
+			membersEntity.add(uuid);
+			return true;
+		}
+		return false;
+	}
+	
+	public boolean addMemberPVP(EntityPlayer player) {
+		UUID uuid = player.getUUID(player.getGameProfile());
+		if(membersPVP.contains(uuid)) {
+			membersPVP.add(uuid);
+			return true;
+		}
+		return false;
+	}
+	
+	public boolean removeMemberModify(EntityPlayer player) {
+		UUID uuid = player.getUUID(player.getGameProfile());
+		if(membersModify.contains(uuid)) {
+			membersModify.remove(uuid);
+			return true;
+		}
+		return false;
+	}
+	
+	public boolean removeMemberUse(EntityPlayer player) {
+		UUID uuid = player.getUUID(player.getGameProfile());
+		if(membersUse.contains(uuid)) {
+			membersUse.remove(uuid);
+			return true;
+		}
+		return false;
+	}
+
+	public boolean removeMemberEntity(EntityPlayer player) {
+		UUID uuid = player.getUUID(player.getGameProfile());
+		if(membersEntity.contains(uuid)) {
+			membersEntity.remove(uuid);
+			return true;
+		}
+		return false;
+	}
+	
+	public boolean removeMemberPVP(EntityPlayer player) {
+		UUID uuid = player.getUUID(player.getGameProfile());
+		if(membersPVP.contains(uuid)) {
+			membersPVP.remove(uuid);
+			return true;
+		}
+		return false;
 	}
 	
 	public boolean isBlockPosInClaim(BlockPos blockPos) {

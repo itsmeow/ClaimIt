@@ -18,6 +18,7 @@ public class ClaimManager {
 
 	private static ClaimManager instance = null;
 	private Set<ClaimArea> claims = new HashSet<ClaimArea>();
+	private Set<EntityPlayer> admins = new HashSet<EntityPlayer>();
 
 	private ClaimManager() {}
 
@@ -28,32 +29,27 @@ public class ClaimManager {
 
 		return instance;
 	}
+	
+	public void addAdmin(EntityPlayer player) {
+		admins.add(player);
+	}
+	
+	public void removeAdmin(EntityPlayer player) {
+		admins.remove(player);
+	}
+	
+	public boolean isAdmin(EntityPlayer player) {
+		return admins.contains(player);
+	}
 
 	/** Removes a claim. Requires player object as verification of ownership **/
 	public boolean deleteClaim(ClaimArea claim, EntityPlayer player) {
-		if(claim.getOwner().equals(player.getUUID(player.getGameProfile()))) {
-			if(claim.getOwnerOffline().equals(player.getOfflineUUID(player.getName()))) {
+		if(claim.isOwner(player)) {
 				claims.remove(claim);
 				this.serialize(claim.getWorld());
 				return true;
-			}
 		}
 		return false;
-	}
-
-	public boolean doesPlayerOwnClaim(ClaimArea claim, EntityPlayer player) {
-		try {
-			if(claim.getOwner().equals(player.getUUID(player.getGameProfile()))) {
-				// If online UUID does match then make sure offline does too
-				if(claim.getOwnerOffline().equals(player.getOfflineUUID(player.getName()))) {
-					return true;
-				}
-			}
-			return false;
-		} catch (Exception e) {
-			e.printStackTrace();
-			return false;
-		}
 	}
 
 	@Nullable
