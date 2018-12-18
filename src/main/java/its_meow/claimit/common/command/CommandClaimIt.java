@@ -2,19 +2,23 @@ package its_meow.claimit.common.command;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.UUID;
 
 import its_meow.claimit.Ref;
 import its_meow.claimit.common.claim.ClaimArea;
 import its_meow.claimit.common.claim.ClaimManager;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommand;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.command.SyntaxErrorException;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
+import net.minecraft.world.World;
 
 public class CommandClaimIt extends CommandBase {
 
@@ -82,6 +86,33 @@ public class CommandClaimIt extends CommandBase {
 						}
 					} else {
 						sendMessage(sender, "You must be a player to use this command!");
+					}
+				} else if(args[1].equals("info")) {
+					if(sender instanceof EntityPlayer) {
+						ClaimArea claim = ClaimManager.getManager().getClaimAtLocation(sender.getEntityWorld(), sender.getPosition());
+						if(claim != null) {
+							World worldIn = sender.getEntityWorld();
+							BlockPos pos = sender.getPosition();
+							EntityPlayer player = (EntityPlayer) sender;
+							IBlockState state = worldIn.getBlockState(pos);
+							if(state.getBlock() != Blocks.AIR) {
+								BlockPos[] corners = claim.getTwoMainClaimCorners();
+								UUID owner = claim.getOwner();
+								String ownerName = ClaimManager.getPlayerName(owner.toString(), worldIn);
+								if(ownerName == null) {
+									ownerName = worldIn.getMinecraftServer().getPlayerProfileCache().getProfileByUUID(owner).getName();
+								}
+								int dim = claim.getDimensionID();
+
+								sendMessage(player, "§l§n§9Information for claim owned by §a" + ownerName + "§9:");
+								sendMessage(player, "§9Dimension: §5" + dim);
+								sendMessage(player, "§9Area: §b" + (claim.getSideLengthX() + 1) + "§9x§b" + (claim.getSideLengthZ() + 1) + " §9(§b" + claim.getArea() + "§9) ");
+								sendMessage(player, "§9Corner 1: §2" + corners[0].getX() + ", " + corners[0].getZ());
+								sendMessage(player, "§9Corner 2: §2" + corners[1].getX() + ", " + corners[1].getZ());
+							}
+						} else {
+							sendMessage(sender, "§cThere is no claim here!");
+						}
 					}
 				}
 			}

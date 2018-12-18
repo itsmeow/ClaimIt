@@ -61,7 +61,7 @@ public class ClaimArea {
 		this.sideLengthX = sideLengthX;
 		this.sideLengthZ = sideLengthZ;
 		this.ownerUUID = ownerUUID;
-		String ownerName = ItemClaimInfoTool.getPlayerName(ownerUUID.toString(), DimensionManager.getWorld(dimID));
+		String ownerName = ClaimManager.getPlayerName(ownerUUID.toString(), DimensionManager.getWorld(dimID));
 		if(ownerName == null) {
 			ownerName = DimensionManager.getWorld(dimID).getMinecraftServer().getPlayerProfileCache().getProfileByUUID(ownerUUID).getName();
 			this.ownerUUIDOffline = EntityPlayer.getOfflineUUID(ownerName);

@@ -1,5 +1,8 @@
 package its_meow.claimit.common.claim;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.URL;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
@@ -7,6 +10,10 @@ import java.util.UUID;
 import javax.annotation.Nullable;
 
 import org.apache.logging.log4j.Level;
+
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
+import com.mojang.authlib.GameProfile;
 
 import its_meow.claimit.ClaimIt;
 import net.minecraft.entity.player.EntityPlayer;
@@ -196,6 +203,44 @@ public class ClaimManager {
 				}
 			}
 		}
+	}
+	
+	@Nullable
+	/** Attempts to get name from UUID cache, then requests name from Mojang servers. Requires World to get server instance. **/
+	public static String getPlayerName(String uuid, World worldIn) {
+		String name = null;
+		GameProfile profile = worldIn.getMinecraftServer().getPlayerProfileCache().getProfileByUUID(UUID.fromString(uuid));
+		if(profile != null) {
+			name = profile.getName();
+		}
+		if(name != null) {
+			return name;
+		}
+		
+		// Could not get name from cache, request from server.
+		try {
+			URL url = new URL("https://sessionserver.mojang.com/session/minecraft/profile/" + uuid);
+			BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream()));
+			StringBuilder sb = new StringBuilder();
+			String line;
+
+			while((line = reader.readLine()) != null) {
+
+				sb.append(line + "\n");
+
+			}
+
+			//System.out.println(sb.toString());
+
+			JsonParser parser = new JsonParser();
+			JsonElement obj = parser.parse(sb.toString().trim());
+			name = obj.getAsJsonObject().get("name").getAsString();
+			reader.close();
+		} catch (Exception e) {
+			System.out.println("Unable to retrieve name for UUID: " + uuid);
+			System.out.println("Error: " + e.getMessage());
+		}
+		return name;
 	}
 
 }

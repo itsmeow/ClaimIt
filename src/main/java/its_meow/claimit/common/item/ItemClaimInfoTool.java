@@ -51,9 +51,9 @@ public class ItemClaimInfoTool extends Item {
 				ClaimArea claim = ClaimManager.getManager().getClaimAtLocation(worldIn, pos);
 				BlockPos[] corners = claim.getTwoMainClaimCorners();
 				UUID owner = claim.getOwner();
-				String ownerName = getPlayerName(owner.toString(), worldIn);
+				String ownerName = ClaimManager.getPlayerName(owner.toString(), worldIn);
 				if(ownerName == null) {
-					ownerName = worldIn.getMinecraftServer().getPlayerProfileCache().getProfileByUUID(owner).getName();
+					ownerName = owner.toString();
 				}
 				int dim = claim.getDimensionID();
 				
@@ -72,43 +72,6 @@ public class ItemClaimInfoTool extends Item {
 	
 	public static void sendMessage(EntityPlayer player, String message) {
 		player.sendMessage(new TextComponentString(message));
-	}
-
-	@Nullable
-	public static String getPlayerName(String uuid, World worldIn) {
-		String name = null;
-		GameProfile profile = worldIn.getMinecraftServer().getPlayerProfileCache().getProfileByUUID(UUID.fromString(uuid));
-		if(profile != null) {
-			name = profile.getName();
-		}
-		if(name != null) {
-			return name;
-		}
-		
-		// Could not get name from cache, request from server.
-		try {
-			URL url = new URL("https://sessionserver.mojang.com/session/minecraft/profile/" + uuid);
-			BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream()));
-			StringBuilder sb = new StringBuilder();
-			String line;
-
-			while((line = reader.readLine()) != null) {
-
-				sb.append(line + "\n");
-
-			}
-
-			//System.out.println(sb.toString());
-
-			JsonParser parser = new JsonParser();
-			JsonElement obj = parser.parse(sb.toString().trim());
-			name = obj.getAsJsonObject().get("name").getAsString();
-			reader.close();
-		} catch (Exception e) {
-			System.out.println("Unable to retrieve name for UUID: " + uuid);
-			System.out.println("Error: " + e.getMessage());
-		}
-		return name;
 	}
 
 }

@@ -8,9 +8,14 @@ import its_meow.claimit.init.ItemRegistry;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.EnumActionResult;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
@@ -129,6 +134,49 @@ public class ClaimEventHandler {
 		if(claim != null && e.getItemStack().getItem() != ItemRegistry.claiminfotool) {
 			EntityPlayer player = e.getEntityPlayer();
 			e.setCanceled(!claim.canUse(player));
+		} else if(claim == null && e.getItemStack().getItem() == Items.SHEARS) {
+			EntityPlayer player = e.getEntityPlayer();
+			EnumHand hand = e.getHand();
+			ItemStack stack = player.getHeldItem(hand);
+			NBTTagCompound data = stack.getTagCompound();
+			if(data == null) {
+				NBTTagCompound newTag = new NBTTagCompound();
+				data = newTag;
+				stack.setTagCompound(newTag);
+			}
+			boolean isInClaim = ClaimManager.getManager().isBlockInAnyClaim(world, pos);
+			if(!isInClaim) {
+				int[] posArray = {pos.getX(), pos.getZ()};
+				if(data.hasKey("Corner1")) {
+					player.sendMessage(new TextComponentString("§9Added corner 2 at §b" + posArray[0] + "§9, §b" + posArray[1]));
+					int[] corner1 = data.getIntArray("Corner1");
+					int[] corner2 = posArray;
+					BlockPos c1 = new BlockPos(corner1[0], 0, corner1[1]);
+					BlockPos c2 = new BlockPos(corner2[0], 0, corner2[1]);
+					/* Not needed due to ClaimArea constructor
+						if(c1.subtract(c2).getX() < 0 && c1.subtract(c2).getY() < 0) {
+							BlockPos c = c1; // Swap values to make c1 the proper corner
+							c1 = c2;
+							c2 = c;
+						}*/
+					BlockPos sideL = c2.subtract(c1); // Subtract to get side lengths
+					// Claim corners are automatically corrected to proper values by constructor
+					ClaimArea newClaim;
+					newClaim = new ClaimArea(player.dimension, c1.getX(), c1.getZ(), sideL.getX(), sideL.getZ(), player);
+					boolean didClaim = ClaimManager.getManager().addClaim(newClaim); // Add claim
+					player.sendMessage(new TextComponentString(didClaim ? "§aClaim added successfully!" : "§cThis claim overlaps another claim!"));
+					// Remove data so a new claim can be made.
+					data.removeTag("Corner1");
+				} else {
+					data.setIntArray("Corner1", posArray);
+					player.sendMessage(new TextComponentString("§9Added corner 1 at §b" + posArray[0] + "§9, §b" + posArray[1]));
+				}
+			} else {
+				data.removeTag("Corner1");
+				player.sendMessage(new TextComponentString("§cYou cannot set a corner inside an existing claim!"));
+			}
+			
+			
 		}
 	}
 
