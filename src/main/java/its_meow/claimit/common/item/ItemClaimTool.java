@@ -42,7 +42,7 @@ public class ItemClaimTool extends Item {
 			data = newTag;
 			stack.setTagCompound(newTag);
 		}
-		boolean isInClaim = ClaimManager.getManager().isBlockInAnyClaim(pos, worldIn);
+		boolean isInClaim = ClaimManager.getManager().isBlockInAnyClaim(worldIn, pos);
 		if(!isInClaim) {
 			int[] posArray = {pos.getX(), pos.getZ()};
 			if(data.hasKey("Corner1")) {

@@ -9,6 +9,7 @@ import javax.annotation.Nullable;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
+import com.mojang.authlib.GameProfile;
 
 import its_meow.claimit.ClaimIt;
 import its_meow.claimit.common.claim.ClaimArea;
@@ -25,6 +26,8 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class ItemClaimInfoTool extends Item {
 
@@ -44,11 +47,11 @@ public class ItemClaimInfoTool extends Item {
 
 		IBlockState state = worldIn.getBlockState(pos);
 		if(state.getBlock() != Blocks.AIR) {
-			if(ClaimManager.getManager().isBlockInAnyClaim(pos, worldIn)) {
+			if(ClaimManager.getManager().isBlockInAnyClaim(worldIn, pos)) {
 				ClaimArea claim = ClaimManager.getManager().getClaimAtLocation(worldIn, pos);
 				BlockPos[] corners = claim.getTwoMainClaimCorners();
 				UUID owner = claim.getOwner();
-				String ownerName = getPlayerName(owner.toString());
+				String ownerName = getPlayerName(owner.toString(), worldIn);
 				if(ownerName == null) {
 					ownerName = worldIn.getMinecraftServer().getPlayerProfileCache().getProfileByUUID(owner).getName();
 				}
@@ -72,8 +75,18 @@ public class ItemClaimInfoTool extends Item {
 	}
 
 	@Nullable
-	public static String getPlayerName(String uuid) {
+	@SideOnly(Side.SERVER)
+	public static String getPlayerName(String uuid, World worldIn) {
 		String name = null;
+		GameProfile profile = worldIn.getMinecraftServer().getPlayerProfileCache().getProfileByUUID(UUID.fromString(uuid));
+		if(profile != null) {
+			name = profile.getName();
+		}
+		if(name != null) {
+			return name;
+		}
+		
+		// Could not get name from cache, request from server.
 		try {
 			URL url = new URL("https://sessionserver.mojang.com/session/minecraft/profile/" + uuid);
 			BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream()));

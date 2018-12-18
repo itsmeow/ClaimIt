@@ -61,7 +61,7 @@ public class ClaimArea {
 		this.sideLengthX = sideLengthX;
 		this.sideLengthZ = sideLengthZ;
 		this.ownerUUID = ownerUUID;
-		String ownerName = ItemClaimInfoTool.getPlayerName(ownerUUID.toString());
+		String ownerName = ItemClaimInfoTool.getPlayerName(ownerUUID.toString(), DimensionManager.getWorld(dimID));
 		if(ownerName == null) {
 			ownerName = DimensionManager.getWorld(dimID).getMinecraftServer().getPlayerProfileCache().getProfileByUUID(ownerUUID).getName();
 			this.ownerUUIDOffline = EntityPlayer.getOfflineUUID(ownerName);
@@ -133,98 +133,58 @@ public class ClaimArea {
 	}
 
 	public boolean canModify(EntityPlayer player) {
-		return getPermission(membersModify, player);
+		return hasPermission(EnumPerm.MODIFY, player);
 	}
 
 	public boolean canUse(EntityPlayer player) {
-		return getPermission(membersUse, player);
+		return hasPermission(EnumPerm.USE, player);
 	}
 	
 	public boolean canEntity(EntityPlayer player) {
-		return getPermission(membersEntity, player);
+		return hasPermission(EnumPerm.ENTITY, player);
 	}
 	
 	public boolean canPVP(EntityPlayer player) {
-		return getPermission(membersPVP, player);
+		return hasPermission(EnumPerm.PVP, player);
 	}
 
-	private boolean getPermission(ArrayList<UUID> arr, EntityPlayer player) {
+	private boolean hasPermission(EnumPerm permission, EntityPlayer player) {
 		if(this.isOwner(player)) {
 			return true;
 		}
-		if(arr.contains(player.getUUID(player.getGameProfile()))) {
+		ArrayList<UUID> array = getArrayForPermission(permission);
+		if(array != null && array.contains(player.getUUID(player.getGameProfile()))) {
+			return true;
+		}
+		return false;
+	}
+	
+	@Nullable
+	private ArrayList<UUID> getArrayForPermission(EnumPerm permission) {
+		switch(permission) {
+		case MODIFY: return membersModify;
+		case USE: return membersUse;
+		case ENTITY: return membersEntity;
+		case PVP: return membersPVP;
+		default: return null;
+		}
+	}
+	
+	public boolean addMember(EnumPerm permission, EntityPlayer player) {
+		UUID uuid = player.getUUID(player.getGameProfile());
+		ArrayList<UUID> array = getArrayForPermission(permission);
+		if(!array.contains(uuid)) {
+			array.add(uuid);
 			return true;
 		}
 		return false;
 	}
 
-	public boolean addMemberModify(EntityPlayer player) {
+	public boolean removeMember(EnumPerm permission, EntityPlayer player) {
 		UUID uuid = player.getUUID(player.getGameProfile());
-		if(membersModify.contains(uuid)) {
-			membersModify.add(uuid);
-			return true;
-		}
-		return false;
-	}
-
-	public boolean addMemberUse(EntityPlayer player) {
-		UUID uuid = player.getUUID(player.getGameProfile());
-		if(membersUse.contains(uuid)) {
-			membersUse.add(uuid);
-			return true;
-		}
-		return false;
-	}
-
-	public boolean addMemberEntity(EntityPlayer player) {
-		UUID uuid = player.getUUID(player.getGameProfile());
-		if(membersEntity.contains(uuid)) {
-			membersEntity.add(uuid);
-			return true;
-		}
-		return false;
-	}
-
-	public boolean addMemberPVP(EntityPlayer player) {
-		UUID uuid = player.getUUID(player.getGameProfile());
-		if(membersPVP.contains(uuid)) {
-			membersPVP.add(uuid);
-			return true;
-		}
-		return false;
-	}
-
-	public boolean removeMemberModify(EntityPlayer player) {
-		UUID uuid = player.getUUID(player.getGameProfile());
-		if(membersModify.contains(uuid)) {
-			membersModify.remove(uuid);
-			return true;
-		}
-		return false;
-	}
-
-	public boolean removeMemberUse(EntityPlayer player) {
-		UUID uuid = player.getUUID(player.getGameProfile());
-		if(membersUse.contains(uuid)) {
-			membersUse.remove(uuid);
-			return true;
-		}
-		return false;
-	}
-
-	public boolean removeMemberEntity(EntityPlayer player) {
-		UUID uuid = player.getUUID(player.getGameProfile());
-		if(membersEntity.contains(uuid)) {
-			membersEntity.remove(uuid);
-			return true;
-		}
-		return false;
-	}
-
-	public boolean removeMemberPVP(EntityPlayer player) {
-		UUID uuid = player.getUUID(player.getGameProfile());
-		if(membersPVP.contains(uuid)) {
-			membersPVP.remove(uuid);
+		ArrayList<UUID> array = getArrayForPermission(permission);
+		if(array.contains(uuid)) {
+			array.remove(uuid);
 			return true;
 		}
 		return false;
