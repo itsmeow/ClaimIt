@@ -75,7 +75,6 @@ public class ItemClaimInfoTool extends Item {
 	}
 
 	@Nullable
-	@SideOnly(Side.SERVER)
 	public static String getPlayerName(String uuid, World worldIn) {
 		String name = null;
 		GameProfile profile = worldIn.getMinecraftServer().getPlayerProfileCache().getProfileByUUID(UUID.fromString(uuid));
