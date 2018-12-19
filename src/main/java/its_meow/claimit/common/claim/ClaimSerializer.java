@@ -1,9 +1,6 @@
 package its_meow.claimit.common.claim;
 
-import java.util.HashMap;
-
 import its_meow.claimit.Ref;
-import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 import net.minecraft.world.storage.WorldSavedData;

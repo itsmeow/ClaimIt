@@ -5,10 +5,7 @@ import java.util.UUID;
 
 import javax.annotation.Nullable;
 
-import its_meow.claimit.common.item.ItemClaimInfoTool;
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.DimensionManager;
@@ -110,15 +107,11 @@ public class ClaimArea {
 		this.name = ownerUUID.toString() + dimID + posX + posZ + sideLengthX + sideLengthZ;
 	}
 
-	private void updateName() {
-		this.name = ownerUUID.toString() + dimID + posX + posZ + sideLengthX + sideLengthZ;
-	}
-
 	public boolean isOwner(EntityPlayer player) {
 		try {
-			if(this.getOwner().equals(player.getUUID(player.getGameProfile()))) {
+			if(this.getOwner().equals(EntityPlayer.getUUID(player.getGameProfile()))) {
 				// If online UUID does match then make sure offline does too
-				if(this.getOwnerOffline().equals(player.getOfflineUUID(player.getName()))) {
+				if(this.getOwnerOffline().equals(EntityPlayer.getOfflineUUID(player.getName()))) {
 					return true;
 				}
 			}
@@ -153,7 +146,7 @@ public class ClaimArea {
 			return true;
 		}
 		ArrayList<UUID> array = getArrayForPermission(permission);
-		if(array != null && array.contains(player.getUUID(player.getGameProfile()))) {
+		if(array != null && array.contains(EntityPlayer.getUUID(player.getGameProfile()))) {
 			return true;
 		}
 		return false;
@@ -171,7 +164,7 @@ public class ClaimArea {
 	}
 	
 	public boolean addMember(EnumPerm permission, EntityPlayer player) {
-		UUID uuid = player.getUUID(player.getGameProfile());
+		UUID uuid = EntityPlayer.getUUID(player.getGameProfile());
 		return this.addMember(permission, uuid);
 	}
 	
@@ -185,7 +178,7 @@ public class ClaimArea {
 	}
 
 	public boolean removeMember(EnumPerm permission, EntityPlayer player) {
-		UUID uuid = player.getUUID(player.getGameProfile());
+		UUID uuid = EntityPlayer.getUUID(player.getGameProfile());
 		return this.removeMember(permission, uuid);
 	}
 	

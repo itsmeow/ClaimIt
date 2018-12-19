@@ -3,7 +3,6 @@ package its_meow.claimit.common.claim;
 import java.util.HashSet;
 import java.util.Set;
 
-import its_meow.claimit.common.command.CommandClaimIt;
 import its_meow.claimit.init.ItemRegistry;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -12,7 +11,6 @@ import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.DamageSource;
-import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
@@ -28,8 +26,6 @@ import net.minecraftforge.event.world.BlockEvent.PlaceEvent;
 import net.minecraftforge.event.world.ExplosionEvent;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.Mod.EventHandler;
-import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.common.eventhandler.Event.Result;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
@@ -127,7 +123,7 @@ public class ClaimEventHandler {
 			EntityPlayer player = e.getPlayer();
 			if(!claim.canModify(player)) {
 				if(!player.capabilities.isCreativeMode) {
-					player.addItemStackToInventory(new ItemStack(e.getItemInHand().getItem(), 1));
+					player.addItemStackToInventory(new ItemStack(e.getPlayer().getHeldItem(e.getHand()).getItem(), 1));
 				}
 
 				e.setCanceled(true);

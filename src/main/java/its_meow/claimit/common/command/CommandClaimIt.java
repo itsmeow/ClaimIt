@@ -8,14 +8,12 @@ import java.util.UUID;
 import its_meow.claimit.Ref;
 import its_meow.claimit.common.claim.ClaimArea;
 import its_meow.claimit.common.claim.ClaimManager;
-import net.minecraft.block.state.IBlockState;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommand;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.command.SyntaxErrorException;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Blocks;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
@@ -92,7 +90,6 @@ public class CommandClaimIt extends CommandBase {
 						ClaimArea claim = ClaimManager.getManager().getClaimAtLocation(sender.getEntityWorld(), sender.getPosition());
 						if(claim != null) {
 							World worldIn = sender.getEntityWorld();
-							BlockPos pos = sender.getPosition();
 							EntityPlayer player = (EntityPlayer) sender;
 							BlockPos[] corners = claim.getTwoMainClaimCorners();
 							UUID owner = claim.getOwner();
