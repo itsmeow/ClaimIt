@@ -99,7 +99,7 @@ public class CommandClaimIt extends CommandBase {
 							}
 							int dim = claim.getDimensionID();
 
-							sendMessage(player, "§l§n§9Information for claim owned by §a" + ownerName + "§9:");
+							sendMessage(player, "§9§l§nInformation for claim owned by §a" + ownerName + "§9:");
 							sendMessage(player, "§9Dimension: §5" + dim);
 							sendMessage(player, "§9Area: §b" + (claim.getSideLengthX() + 1) + "§9x§b" + (claim.getSideLengthZ() + 1) + " §9(§b" + claim.getArea() + "§9) ");
 							sendMessage(player, "§9Corner 1: §2" + (corners[0].getX()) + ", " + (corners[0].getZ()));
@@ -116,10 +116,13 @@ public class CommandClaimIt extends CommandBase {
 						for(ClaimArea claim : claims) {
 							if(claim.isOwner(player)) {
 								i++;
-								sendMessage(sender, "§l§n§9Claim §a#" + i);
+								sendMessage(sender, "§9§l§nClaim §a#" + i);
 								sendMessage(sender, "§5Dimension: " + claim.getDimensionID());
 								sendMessage(sender, "§9Location: §2" + (claim.getMainPosition().getX()) + ", " + (claim.getMainPosition().getZ()));
 							}
+						}
+						if(i == 0) {
+							sendMessage(sender, "§cYou don't own any claims!");
 						}
 					} else { // Sender is console!
 						sendMessage(sender, "Detected server console. Getting all claims...");
@@ -131,6 +134,9 @@ public class CommandClaimIt extends CommandBase {
 							sendMessage(sender, "Claim #" + i + ", owned by: " + ClaimManager.getPlayerName(claim.getOwner().toString(), sender.getEntityWorld()));
 							sendMessage(sender, "Dimension: " + claim.getDimensionID());
 							sendMessage(sender, "Location: " + (claim.getMainPosition().getX()) + ", " + (claim.getMainPosition().getZ()));
+						}
+						if(i == 0) {
+							sendMessage(sender, "There's no claims on the server!");
 						}
 					}
 				}
