@@ -150,8 +150,8 @@ public class ClaimEventHandler {
 
 	@SubscribeEvent
 	public void onPlayerAttackAnimal(AttackEntityEvent e) {
-		World world = e.getEntity().getEntityWorld();
-		BlockPos pos = e.getEntity().getPosition();
+		World world = e.getEntityPlayer().getEntityWorld();
+		BlockPos pos = e.getEntityPlayer().getPosition();
 		ClaimManager cm = ClaimManager.getManager();
 		ClaimArea claim = cm.getClaimAtLocation(world, pos);
 		if(claim != null) {
@@ -160,6 +160,15 @@ public class ClaimEventHandler {
 				e.setCanceled(!claim.canPVP(player));
 			} else {
 				e.setCanceled(!claim.canEntity(player));
+			}
+		} else {
+			ClaimArea claim2 = cm.getClaimAtLocation(world, e.getTarget().getPosition());
+			if(claim2 != null) {
+				if(e.getTarget() instanceof EntityPlayer) {
+					e.setCanceled(!claim2.canPVP(e.getEntityPlayer()));
+				} else {
+					e.setCanceled(!claim2.canEntity(e.getEntityPlayer()));;
+				}
 			}
 		}
 	}
@@ -220,7 +229,7 @@ public class ClaimEventHandler {
 		EntityLivingBase entity = e.getEntityLiving();
 		DamageSource source = e.getSource();
 		if(entity != null && source != null) {
-			if(source.getTrueSource() instanceof EntityPlayer && source.getImmediateSource() instanceof EntityPlayer) {
+			if(source.getTrueSource() instanceof EntityPlayer || source.getImmediateSource() instanceof EntityPlayer) {
 				EntityPlayer player = (EntityPlayer) source.getTrueSource();
 				ClaimArea claim = ClaimManager.getManager().getClaimAtLocation(entity.getEntityWorld(), player.getPosition());
 				if(claim != null) {
