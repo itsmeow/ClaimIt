@@ -160,7 +160,7 @@ public class ClaimArea {
 	}
 	
 	@Nullable
-	private ArrayList<UUID> getArrayForPermission(EnumPerm permission) {
+	public ArrayList<UUID> getArrayForPermission(EnumPerm permission) {
 		switch(permission) {
 		case MODIFY: return membersModify;
 		case USE: return membersUse;
@@ -172,6 +172,10 @@ public class ClaimArea {
 	
 	public boolean addMember(EnumPerm permission, EntityPlayer player) {
 		UUID uuid = player.getUUID(player.getGameProfile());
+		return this.addMember(permission, uuid);
+	}
+	
+	public boolean addMember(EnumPerm permission, UUID uuid) {
 		ArrayList<UUID> array = getArrayForPermission(permission);
 		if(!array.contains(uuid)) {
 			array.add(uuid);
@@ -182,6 +186,10 @@ public class ClaimArea {
 
 	public boolean removeMember(EnumPerm permission, EntityPlayer player) {
 		UUID uuid = player.getUUID(player.getGameProfile());
+		return this.removeMember(permission, uuid);
+	}
+	
+	public boolean removeMember(EnumPerm permission, UUID uuid) {
 		ArrayList<UUID> array = getArrayForPermission(permission);
 		if(array.contains(uuid)) {
 			array.remove(uuid);

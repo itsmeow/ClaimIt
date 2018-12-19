@@ -60,8 +60,8 @@ public class ItemClaimInfoTool extends Item {
 				sendMessage(player, "§l§n§9Information for claim owned by §a" + ownerName + "§9:");
 				sendMessage(player, "§9Dimension: §5" + dim);
 				sendMessage(player, "§9Area: §b" + (claim.getSideLengthX() + 1) + "§9x§b" + (claim.getSideLengthZ() + 1) + " §9(§b" + claim.getArea() + "§9) ");
-				sendMessage(player, "§9Corner 1: §2" + corners[0].getX() + ", " + corners[0].getZ());
-				sendMessage(player, "§9Corner 2: §2" + corners[1].getX() + ", " + corners[1].getZ());
+				sendMessage(player, "§9Corner 1: §2" + (corners[0].getX()) + ", " + (corners[0].getZ()));
+				sendMessage(player, "§9Corner 2: §2" + (corners[1].getX()) + ", " + (corners[1].getZ()));
 			} else {
 				sendMessage(player, "§cThe block you are looking at is not owned by anyone!");
 			}

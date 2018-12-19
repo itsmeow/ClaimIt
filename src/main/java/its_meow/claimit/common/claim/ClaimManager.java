@@ -3,6 +3,7 @@ package its_meow.claimit.common.claim;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
@@ -36,17 +37,17 @@ public class ClaimManager {
 
 		return instance;
 	}
-	
+
 	/** Adds a player to the admin list, allowing claim bypass **/
 	public void addAdmin(EntityPlayer player) {
 		admins.add(player);
 	}
-	
+
 	/** Removes a player from the admin list, removing claim bypass **/
 	public void removeAdmin(EntityPlayer player) {
 		admins.remove(player);
 	}
-	
+
 	/** Tells whether a player is an admin/has claim bypass
 	 * @return True if has admin, false if not. **/
 	public boolean isAdmin(EntityPlayer player) {
@@ -56,11 +57,20 @@ public class ClaimManager {
 	/** Removes a claim. Requires player object as verification of ownership **/
 	public boolean deleteClaim(ClaimArea claim, EntityPlayer player) {
 		if(claim.isOwner(player)) {
-				claims.remove(claim);
-				this.serialize(claim.getWorld());
-				return true;
+			claims.remove(claim);
+			this.serialize(claim.getWorld());
+			return true;
 		}
 		return false;
+	}
+
+	/** Returns a copy of the claims list, not modifiable. **/
+	public Set<ClaimArea> getClaimsList() {
+		Set<ClaimArea> claimsList = new HashSet<ClaimArea>();
+		for(ClaimArea claim : claims) {
+			claimsList.add(claim);
+		}
+		return claimsList;
 	}
 
 	@Nullable
@@ -97,7 +107,7 @@ public class ClaimManager {
 	}
 
 	private static int dimT = 0;
-	
+
 	/** Check claim is not overlapping/illegal and add to list 
 	 * @param claim - The claim to be added 
 	 * @returns true if claim was added, false if not. **/
@@ -163,21 +173,31 @@ public class ClaimManager {
 		if(!world.isRemote) {
 			ClaimSerializer store = ClaimSerializer.get(world);
 			for(ClaimArea claim : claims) {
-				if(claim.getWorld() == world) {
+				if(claim.getDimensionID() == world.provider.getDimension()) {
 					int[] claimVals = claim.getSelfAsInt();
 					UUID owner = claim.getOwner();
 					UUID ownerOffline = claim.getOwnerOffline();
 					String serialName = claim.getSerialName();
-					store.data.setIntArray(serialName, claimVals);
-					store.data.setUniqueId(serialName + "_UID", owner);
-					store.data.setUniqueId(serialName + "_UIDOFF", ownerOffline);
+					NBTTagCompound data = new NBTTagCompound();
+					data.setIntArray("CLAIMINFO", claimVals);
+					data.setString("OWNERUID", owner.toString());
+					data.setString("OWNERUIDOFF", ownerOffline.toString());
+					System.out.println("Owner: " + owner);
+					for(EnumPerm perm : EnumPerm.values()) {
+						NBTTagCompound members = new NBTTagCompound();
+						for(UUID member : claim.getArrayForPermission(perm)) {
+							members.setString("MEMBER_" + member.toString(), member.toString());
+						}
+						data.setTag("MEMBERS_" + perm.name(), members);
+					}
+					store.data.setTag("CLAIM_" + serialName, data);
 					store.markDirty();
 					System.out.println("Saving claim: " + serialName);
 				}
 			}
 		}
 	}
-	
+
 	/** Forces a world to load claim data. 
 	 * Overwrites new claim data since last load!
 	 * @param world - The world to be saved **/
@@ -187,24 +207,35 @@ public class ClaimManager {
 			NBTTagCompound comp = store.data;
 			if(comp != null ) {
 				for(String key : comp.getKeySet()) {
-					if(!key.contains("_UID")) {
-						System.out.println("Loading " + key);
-						int[] claimVals = comp.getIntArray(key);
-						UUID owner = comp.getUniqueId(key + "_UID");
-						UUID ownerOffline = comp.getUniqueId(key + "_UIDOFF");
-						if(claimVals.length > 0 && claimVals[0] == 0) {
-							System.out.println("Valid version.");
-							ClaimArea claim = new ClaimArea(claimVals[1], claimVals[2], claimVals[3], claimVals[4], claimVals[5], owner, ownerOffline);
-							this.addClaim(claim);
-						} else {
-							ClaimIt.logger.log(Level.FATAL, "Detected version that doesn't exist yet! Mod was downgraded? Claim cannot be loaded.");
+					System.out.println("Loading " + key);
+					NBTTagCompound data = comp.getCompoundTag(key);
+					int[] claimVals = data.getIntArray("CLAIMINFO");
+					UUID owner = UUID.fromString(comp.getString("OWNERUID"));
+					UUID ownerOffline = UUID.fromString(comp.getString("OWNERUIDOFF"));
+					System.out.println("Owner: " + owner);
+					if(claimVals.length > 0 && claimVals[0] == 0 && claimVals[1] == world.provider.getDimension()) {
+						System.out.println("Valid version.");
+						ClaimArea claim = new ClaimArea(claimVals[1], claimVals[2], claimVals[3], claimVals[4], claimVals[5], owner, ownerOffline);
+						for(String key2 : data.getKeySet()) {
+							if(key2.startsWith("MEMBERS_")) {
+								NBTTagCompound members = data.getCompoundTag(key2);
+								for(String key3 : members.getKeySet()) {
+									if(key3.startsWith("MEMBER_")) {
+										UUID member = UUID.fromString(members.getString(key3));
+										claim.addMember(EnumPerm.valueOf(key2.replaceAll("MEMBERS_", "")), member);
+									}
+								}
+							}
 						}
+						this.addClaim(claim);
+					} else {
+						ClaimIt.logger.log(Level.FATAL, "Detected version that doesn't exist yet! Mod was downgraded? Claim cannot be loaded.");
 					}
 				}
 			}
 		}
 	}
-	
+
 	@Nullable
 	/** Attempts to get name from UUID cache, then requests name from Mojang servers. Requires World to get server instance. **/
 	public static String getPlayerName(String uuid, World worldIn) {
@@ -216,7 +247,7 @@ public class ClaimManager {
 		if(name != null) {
 			return name;
 		}
-		
+
 		// Could not get name from cache, request from server.
 		try {
 			URL url = new URL("https://sessionserver.mojang.com/session/minecraft/profile/" + uuid);

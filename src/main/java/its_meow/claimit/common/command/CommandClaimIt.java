@@ -2,6 +2,7 @@ package its_meow.claimit.common.command;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 import its_meow.claimit.Ref;
@@ -56,15 +57,14 @@ public class CommandClaimIt extends CommandBase {
 			System.out.println(arg);
 		}
 		if(args.length == 0) {
-			sendMessage(sender, "§bClaimIt version §e" + Ref.VERSION + " §b by its_meow");
+			sendMessage(sender, "§bClaimIt Version §e" + Ref.VERSION + "§b by its_meow");
 			sendMessage(sender, "§bFor possible commands, run §e/claimit help");
 			sendMessage(sender, "§bAlias(es): §e" + aliasList);
 		} else if(args[0].equals("help") && args.length == 1) {
 			sendMessage(sender, "§l§bSubcommands: ");
-			sendMessage(sender, "§e/claimit");
-			sendMessage(sender, "§e/claimit help");
 			sendMessage(sender, "§e/claimit claim");
-		} else if(args[0].equals("claim") && sender.getCommandSenderEntity() instanceof EntityPlayer) {
+			sendMessage(sender, "§e/claimit admin");
+		} else if(args[0].equals("claim")) {
 			if(args.length == 1) {
 				sendMessage(sender, "§l§bSubcommands: ");
 				sendMessage(sender, "§eclaim delete");
@@ -94,24 +94,46 @@ public class CommandClaimIt extends CommandBase {
 							World worldIn = sender.getEntityWorld();
 							BlockPos pos = sender.getPosition();
 							EntityPlayer player = (EntityPlayer) sender;
-							IBlockState state = worldIn.getBlockState(pos);
-							if(state.getBlock() != Blocks.AIR) {
-								BlockPos[] corners = claim.getTwoMainClaimCorners();
-								UUID owner = claim.getOwner();
-								String ownerName = ClaimManager.getPlayerName(owner.toString(), worldIn);
-								if(ownerName == null) {
-									ownerName = worldIn.getMinecraftServer().getPlayerProfileCache().getProfileByUUID(owner).getName();
-								}
-								int dim = claim.getDimensionID();
-
-								sendMessage(player, "§l§n§9Information for claim owned by §a" + ownerName + "§9:");
-								sendMessage(player, "§9Dimension: §5" + dim);
-								sendMessage(player, "§9Area: §b" + (claim.getSideLengthX() + 1) + "§9x§b" + (claim.getSideLengthZ() + 1) + " §9(§b" + claim.getArea() + "§9) ");
-								sendMessage(player, "§9Corner 1: §2" + corners[0].getX() + ", " + corners[0].getZ());
-								sendMessage(player, "§9Corner 2: §2" + corners[1].getX() + ", " + corners[1].getZ());
+							BlockPos[] corners = claim.getTwoMainClaimCorners();
+							UUID owner = claim.getOwner();
+							String ownerName = ClaimManager.getPlayerName(owner.toString(), worldIn);
+							if(ownerName == null) {
+								ownerName = worldIn.getMinecraftServer().getPlayerProfileCache().getProfileByUUID(owner).getName();
 							}
+							int dim = claim.getDimensionID();
+
+							sendMessage(player, "§l§n§9Information for claim owned by §a" + ownerName + "§9:");
+							sendMessage(player, "§9Dimension: §5" + dim);
+							sendMessage(player, "§9Area: §b" + (claim.getSideLengthX() + 1) + "§9x§b" + (claim.getSideLengthZ() + 1) + " §9(§b" + claim.getArea() + "§9) ");
+							sendMessage(player, "§9Corner 1: §2" + (corners[0].getX()) + ", " + (corners[0].getZ()));
+							sendMessage(player, "§9Corner 2: §2" + (corners[1].getX()) + ", " + (corners[1].getZ()));
 						} else {
 							sendMessage(sender, "§cThere is no claim here!");
+						}
+					}
+				} else if(args[1].equals("list")) {
+					if(sender instanceof EntityPlayer) {
+						EntityPlayer player = (EntityPlayer) sender;
+						Set<ClaimArea> claims = ClaimManager.getManager().getClaimsList();
+						int i = 0;
+						for(ClaimArea claim : claims) {
+							if(claim.isOwner(player)) {
+								i++;
+								sendMessage(sender, "§l§n§9Claim §a#" + i);
+								sendMessage(sender, "§5Dimension: " + claim.getDimensionID());
+								sendMessage(sender, "§9Location: §2" + (claim.getMainPosition().getX()) + ", " + (claim.getMainPosition().getZ()));
+							}
+						}
+					} else { // Sender is console!
+						sendMessage(sender, "Detected server console. Getting all claims...");
+						Set<ClaimArea> claims = ClaimManager.getManager().getClaimsList();
+						int i = 0;
+						for(ClaimArea claim : claims) {
+							i++;
+							sendMessage(sender, "####CLAIM INFO####");
+							sendMessage(sender, "Claim #" + i + ", owned by: " + ClaimManager.getPlayerName(claim.getOwner().toString(), sender.getEntityWorld()));
+							sendMessage(sender, "Dimension: " + claim.getDimensionID());
+							sendMessage(sender, "Location: " + (claim.getMainPosition().getX()) + ", " + (claim.getMainPosition().getZ()));
 						}
 					}
 				}
