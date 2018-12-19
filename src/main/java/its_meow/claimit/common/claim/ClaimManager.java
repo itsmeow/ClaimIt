@@ -210,8 +210,8 @@ public class ClaimManager {
 					System.out.println("Loading " + key);
 					NBTTagCompound data = comp.getCompoundTag(key);
 					int[] claimVals = data.getIntArray("CLAIMINFO");
-					UUID owner = UUID.fromString(comp.getString("OWNERUID"));
-					UUID ownerOffline = UUID.fromString(comp.getString("OWNERUIDOFF"));
+					UUID owner = UUID.fromString(data.getString("OWNERUID"));
+					UUID ownerOffline = UUID.fromString(data.getString("OWNERUIDOFF"));
 					System.out.println("Owner: " + owner);
 					if(claimVals.length > 0 && claimVals[0] == 0 && claimVals[1] == world.provider.getDimension()) {
 						System.out.println("Valid version.");
