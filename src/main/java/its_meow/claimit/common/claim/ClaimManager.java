@@ -53,14 +53,9 @@ public class ClaimManager {
 		return admins.contains(player);
 	}
 
-	/** Removes a claim. Requires player object as verification of ownership **/
-	public boolean deleteClaim(ClaimArea claim, EntityPlayer player) {
-		if(claim.isOwner(player)) {
-			claims.remove(claim);
-			this.serialize(claim.getWorld());
-			return true;
-		}
-		return false;
+	/** Removes a claim. **/
+	public void deleteClaim(ClaimArea claim) {
+		claims.remove(claim);
 	}
 
 	/** Returns a copy of the claims list, not modifiable. **/
@@ -171,6 +166,9 @@ public class ClaimManager {
 	public void serialize(World world) {
 		if(!world.isRemote) {
 			ClaimSerializer store = ClaimSerializer.get(world);
+			for(String key : store.data.getKeySet()) { // Remove all data
+				store.data.removeTag(key);
+			}
 			for(ClaimArea claim : claims) {
 				if(claim.getDimensionID() == world.provider.getDimension()) {
 					int[] claimVals = claim.getSelfAsInt();
@@ -202,6 +200,7 @@ public class ClaimManager {
 	 * @param world - The world to be saved **/
 	public void deserialize(World world) {
 		if(!world.isRemote) {
+			claims.clear();
 			ClaimSerializer store = ClaimSerializer.get(world);
 			NBTTagCompound comp = store.data;
 			if(comp != null ) {
@@ -231,6 +230,7 @@ public class ClaimManager {
 						ClaimIt.logger.log(Level.FATAL, "Detected version that doesn't exist yet! Mod was downgraded? Claim cannot be loaded.");
 					}
 				}
+				this.serialize(world);
 			}
 		}
 	}

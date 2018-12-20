@@ -59,12 +59,12 @@ public class CommandClaimIt extends CommandBase {
 			sendMessage(sender, "§bFor possible commands, run §e/claimit help");
 			sendMessage(sender, "§bAlias(es): §e" + aliasList);
 		} else if(args[0].equals("help") && args.length == 1) {
-			sendMessage(sender, "§l§bSubcommands: ");
+			sendMessage(sender, "§b§nSubcommands: ");
 			sendMessage(sender, "§e/claimit claim");
 			sendMessage(sender, "§e/claimit admin");
 		} else if(args[0].equals("claim")) {
 			if(args.length == 1) {
-				sendMessage(sender, "§l§bSubcommands: ");
+				sendMessage(sender, "§b§nSubcommands: ");
 				sendMessage(sender, "§eclaim delete");
 				sendMessage(sender, "§eclaim info");
 				sendMessage(sender, "§eclaim list");
@@ -74,13 +74,14 @@ public class CommandClaimIt extends CommandBase {
 						ClaimArea claim = ClaimManager.getManager().getClaimAtLocation(sender.getEntityWorld(), sender.getPosition());
 						if(claim != null) {
 							if(claim.isOwner((EntityPlayer) sender.getCommandSenderEntity())) {
-								boolean removed = ClaimManager.getManager().deleteClaim(claim, (EntityPlayer) sender.getCommandSenderEntity());
-								sendMessage(sender, removed ? "§eClaim deleted." : "§cCould not remove claim!");
+								ClaimManager.getManager().deleteClaim(claim);
+								sendMessage(sender, "§eClaim deleted.");
 							} else {
 								sendMessage(sender, "§cYou do not own this claim!");
 							}
 						} else {
-							sendMessage(sender, "§cThere is no claim here!");
+							sendMessage(sender, "§cThere is no claim here! You can use §e/claimit claim delete (Corner 1 X) (Corner 1 Z) §c to delete a claim remotely.");
+
 						}
 					} else {
 						sendMessage(sender, "You must be a player to use this command!");
@@ -99,7 +100,7 @@ public class CommandClaimIt extends CommandBase {
 							}
 							int dim = claim.getDimensionID();
 
-							sendMessage(player, "§9§l§nInformation for claim owned by §a" + ownerName + "§9:");
+							sendMessage(player, "§9§nInformation for claim owned by §a§n" + ownerName + "§9§n:");
 							sendMessage(player, "§9Dimension: §5" + dim);
 							sendMessage(player, "§9Area: §b" + (claim.getSideLengthX() + 1) + "§9x§b" + (claim.getSideLengthZ() + 1) + " §9(§b" + claim.getArea() + "§9) ");
 							sendMessage(player, "§9Corner 1: §2" + (corners[0].getX()) + ", " + (corners[0].getZ()));
@@ -116,7 +117,7 @@ public class CommandClaimIt extends CommandBase {
 						for(ClaimArea claim : claims) {
 							if(claim.isOwner(player)) {
 								i++;
-								sendMessage(sender, "§9§l§nClaim §a#" + i);
+								sendMessage(sender, "§9§nClaim §a§n#" + i);
 								sendMessage(sender, "§5Dimension: " + claim.getDimensionID());
 								sendMessage(sender, "§9Location: §2" + (claim.getMainPosition().getX()) + ", " + (claim.getMainPosition().getZ()));
 							}
@@ -139,6 +140,39 @@ public class CommandClaimIt extends CommandBase {
 							sendMessage(sender, "There's no claims on the server!");
 						}
 					}
+				}
+			} else if(args.length == 4 && args[1].equals("delete")) {
+				int posX = 0;
+				int posY = 0;
+				try {
+					posX = Integer.parseInt(args[2]);
+					posY = Integer.parseInt(args[3]);
+					ClaimArea claim = ClaimManager.getManager().getClaimAtLocation(sender.getEntityWorld(), new BlockPos(posX,0,posY));
+					if(claim != null) {
+						if(sender instanceof EntityPlayer) {
+							EntityPlayer player = (EntityPlayer) sender;
+							if(claim.isOwner(player)) {
+								ClaimManager.getManager().deleteClaim(claim);
+								sendMessage(sender, "§b§nDeleted claim:");
+								sendMessage(sender, "§5Dimension: " + claim.getDimensionID());
+								sendMessage(sender, "§9Location: §2" + (claim.getMainPosition().getX()) + ", " + (claim.getMainPosition().getZ()));
+							} else {
+								sendMessage(sender, "§cNo claim there or you don't own the claim!");
+							}
+						} else {
+							if(sender.canUseCommand(2, "")) {
+								sendMessage(sender, "Deleted claim:");
+								sendMessage(sender, "Dimension: " + claim.getDimensionID());
+								sendMessage(sender, "Location: " + (claim.getMainPosition().getX()) + ", " + (claim.getMainPosition().getZ()));
+							} else {
+								sendMessage(sender, "No claim there or you don't have permission!");
+							}
+						}
+					} else {
+						sendMessage(sender, "§cNo claim there or you don't own the claim!");
+					}
+				} catch(NumberFormatException e) {
+					sendMessage(sender, "§cInvalid location! Use §e/claimit claim delete (Corner 1 X) (Corner 1 Z)");
 				}
 			}
 		} else if(args[0].equals("admin")) {
