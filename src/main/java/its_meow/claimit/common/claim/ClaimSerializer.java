@@ -28,7 +28,7 @@ public class ClaimSerializer extends WorldSavedData {
 	}
 	
 	public static ClaimSerializer get(World world) {
-		ClaimSerializer save = (ClaimSerializer) world.getPerWorldStorage().getOrLoadData(ClaimSerializer.class, DATA_NAME);
+		ClaimSerializer save = (ClaimSerializer) world.getMapStorage().getOrLoadData(ClaimSerializer.class, DATA_NAME);
 		if(save == null) {
 			save = new ClaimSerializer();
 			world.getMapStorage().setData(DATA_NAME, save);

@@ -26,6 +26,7 @@ import net.minecraftforge.event.world.BlockEvent.PlaceEvent;
 import net.minecraftforge.event.world.ExplosionEvent;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.common.eventhandler.Event.Result;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
@@ -33,16 +34,14 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 public class ClaimEventHandler {
 
 	@SubscribeEvent
-	public void onWorldLoad(WorldEvent.Load e) {
-		if(!e.getWorld().isRemote) {
-			ClaimManager.getManager().deserialize(e.getWorld());
-		}
+	public void onWorldLoad(FMLServerStartingEvent e) {
+		ClaimManager.getManager().deserialize();
 	}
 
 	@SubscribeEvent
 	public void onWorldSave(WorldEvent.Save e) {
-		if(!e.getWorld().isRemote) {
-			ClaimManager.getManager().serialize(e.getWorld());
+		if(e.getWorld().isRemote) {
+			ClaimManager.getManager().serialize();
 		}
 	}
 	

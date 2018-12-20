@@ -20,6 +20,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.common.DimensionManager;
 
 public class ClaimManager {
 
@@ -161,85 +162,77 @@ public class ClaimManager {
 		//this.serialize(claim.getWorld());
 	}
 
-	/** Forces a world to save claim data 
-	 * @param world - The world to be saved **/
-	public void serialize(World world) {
-		if(!world.isRemote) {
-			ClaimSerializer store = ClaimSerializer.get(world);
-			if(store != null && store.data != null && store.data.getSize() > 0) {
-				Set<String> toRemove = new HashSet<String>();
-				for(String key : store.data.getKeySet()) { // Remove all data
-					if(!key.equals("")) {
-						toRemove.add(key);
-					}
-				}
-				for(String key : toRemove) {
-					store.data.removeTag(key);
+	/** Forces a world to save claim data **/
+	public void serialize() {
+		ClaimSerializer store = ClaimSerializer.get(DimensionManager.getWorld(0));
+		if(store != null && store.data != null && store.data.getSize() > 0) {
+			Set<String> toRemove = new HashSet<String>();
+			for(String key : store.data.getKeySet()) { // Remove all data
+				if(!key.equals("")) {
+					toRemove.add(key);
 				}
 			}
- 			for(ClaimArea claim : claims) {
-				if(claim.getDimensionID() == world.provider.getDimension()) {
-					int[] claimVals = claim.getSelfAsInt();
-					UUID owner = claim.getOwner();
-					UUID ownerOffline = claim.getOwnerOffline();
-					String serialName = claim.getSerialName();
-					NBTTagCompound data = new NBTTagCompound();
-					data.setIntArray("CLAIMINFO", claimVals);
-					data.setString("OWNERUID", owner.toString());
-					data.setString("OWNERUIDOFF", ownerOffline.toString());
-					System.out.println("Owner: " + owner);
-					for(EnumPerm perm : EnumPerm.values()) {
-						NBTTagCompound members = new NBTTagCompound();
-						for(UUID member : claim.getArrayForPermission(perm)) {
-							members.setString("MEMBER_" + member.toString(), member.toString());
-						}
-						data.setTag("MEMBERS_" + perm.name(), members);
-					}
-					store.data.setTag("CLAIM_" + serialName, data);
-					store.markDirty();
-					System.out.println("Saving claim: " + serialName);
-				}
+			for(String key : toRemove) {
+				store.data.removeTag(key);
 			}
+		}
+		for(ClaimArea claim : claims) {
+			int[] claimVals = claim.getSelfAsInt();
+			UUID owner = claim.getOwner();
+			UUID ownerOffline = claim.getOwnerOffline();
+			String serialName = claim.getSerialName();
+			NBTTagCompound data = new NBTTagCompound();
+			data.setIntArray("CLAIMINFO", claimVals);
+			data.setString("OWNERUID", owner.toString());
+			data.setString("OWNERUIDOFF", ownerOffline.toString());
+			System.out.println("Owner: " + owner);
+			for(EnumPerm perm : EnumPerm.values()) {
+				NBTTagCompound members = new NBTTagCompound();
+				for(UUID member : claim.getArrayForPermission(perm)) {
+					members.setString("MEMBER_" + member.toString(), member.toString());
+				}
+				data.setTag("MEMBERS_" + perm.name(), members);
+			}
+			store.data.setTag("CLAIM_" + serialName, data);
+			store.markDirty();
+			System.out.println("Saving claim: " + serialName);
 		}
 	}
 
 	/** Forces a world to load claim data. 
-	 * Overwrites new claim data since last load!
-	 * @param world - The world to be saved **/
-	public void deserialize(World world) {
-		if(!world.isRemote) {
-			claims.clear();
-			ClaimSerializer store = ClaimSerializer.get(world);
-			NBTTagCompound comp = store.data;
-			if(comp != null ) {
-				for(String key : comp.getKeySet()) {
-					System.out.println("Loading " + key);
-					NBTTagCompound data = comp.getCompoundTag(key);
-					int[] claimVals = data.getIntArray("CLAIMINFO");
-					UUID owner = UUID.fromString(data.getString("OWNERUID"));
-					UUID ownerOffline = UUID.fromString(data.getString("OWNERUIDOFF"));
-					System.out.println("Owner: " + owner);
-					if(claimVals.length > 0 && claimVals[0] == 0 && claimVals[1] == world.provider.getDimension()) {
-						System.out.println("Valid version.");
-						ClaimArea claim = new ClaimArea(claimVals[1], claimVals[2], claimVals[3], claimVals[4], claimVals[5], owner, ownerOffline);
-						for(String key2 : data.getKeySet()) {
-							if(key2.startsWith("MEMBERS_")) {
-								NBTTagCompound members = data.getCompoundTag(key2);
-								for(String key3 : members.getKeySet()) {
-									if(key3.startsWith("MEMBER_")) {
-										UUID member = UUID.fromString(members.getString(key3));
-										claim.addMember(EnumPerm.valueOf(key2.replaceAll("MEMBERS_", "")), member);
-									}
+	 * Overwrites new claim data since last load! **/
+	public void deserialize() {
+		claims.clear();
+		ClaimSerializer store = ClaimSerializer.get(DimensionManager.getWorld(0));
+		NBTTagCompound comp = store.data;
+		if(comp != null ) {
+			for(String key : comp.getKeySet()) {
+				System.out.println("Loading " + key);
+				NBTTagCompound data = comp.getCompoundTag(key);
+				int[] claimVals = data.getIntArray("CLAIMINFO");
+				UUID owner = UUID.fromString(data.getString("OWNERUID"));
+				UUID ownerOffline = UUID.fromString(data.getString("OWNERUIDOFF"));
+				System.out.println("Owner: " + owner);
+				if(claimVals.length > 0 && claimVals[0] == 0) {
+					System.out.println("Valid version.");
+					ClaimArea claim = new ClaimArea(claimVals[1], claimVals[2], claimVals[3], claimVals[4], claimVals[5], owner, ownerOffline);
+					for(String key2 : data.getKeySet()) {
+						if(key2.startsWith("MEMBERS_")) {
+							NBTTagCompound members = data.getCompoundTag(key2);
+							for(String key3 : members.getKeySet()) {
+								if(key3.startsWith("MEMBER_")) {
+									UUID member = UUID.fromString(members.getString(key3));
+									claim.addMember(EnumPerm.valueOf(key2.replaceAll("MEMBERS_", "")), member);
 								}
 							}
 						}
-						this.addClaim(claim);
-					} else {
-						ClaimIt.logger.log(Level.FATAL, "Detected version that doesn't exist yet! Mod was downgraded? Claim cannot be loaded.");
 					}
+					this.addClaim(claim);
+				} else {
+					ClaimIt.logger.log(Level.FATAL, "Detected version that doesn't exist yet! Mod was downgraded? Claim cannot be loaded.");
 				}
-				this.serialize(world);
 			}
+			this.serialize();
 		}
 	}
 
