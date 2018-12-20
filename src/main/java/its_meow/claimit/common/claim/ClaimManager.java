@@ -166,7 +166,7 @@ public class ClaimManager {
 	public void serialize(World world) {
 		if(!world.isRemote) {
 			ClaimSerializer store = ClaimSerializer.get(world);
-			if(store != null && store.data != null) {
+			if(store != null && store.data != null && store.data.getSize() > 0) {
 				for(String key : store.data.getKeySet()) { // Remove all data
 					if(!key.equals("")) {
 						store.data.removeTag(key);
