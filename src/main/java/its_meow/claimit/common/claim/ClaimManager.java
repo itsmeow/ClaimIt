@@ -167,7 +167,9 @@ public class ClaimManager {
 		if(!world.isRemote) {
 			ClaimSerializer store = ClaimSerializer.get(world);
 			for(String key : store.data.getKeySet()) { // Remove all data
-				store.data.removeTag(key);
+				if(store != null && store.data != null && !key.equals("")) {
+					store.data.removeTag(key);
+				}
 			}
 			for(ClaimArea claim : claims) {
 				if(claim.getDimensionID() == world.provider.getDimension()) {
