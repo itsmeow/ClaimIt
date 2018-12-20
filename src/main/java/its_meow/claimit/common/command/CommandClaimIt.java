@@ -18,6 +18,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
+import net.minecraftforge.common.DimensionManager;
 
 public class CommandClaimIt extends CommandBase {
 
@@ -80,7 +81,7 @@ public class CommandClaimIt extends CommandBase {
 								sendMessage(sender, "§cYou do not own this claim!");
 							}
 						} else {
-							sendMessage(sender, "§cThere is no claim here! You can use §e/claimit claim delete (Corner 1 X) (Corner 1 Z) §c to delete a claim remotely.");
+							sendMessage(sender, "§cThere is no claim here! You can use §e/claimit claim delete (Corner 1 X) (Corner 1 Z) (Dimension ID) §c to delete a claim remotely.");
 
 						}
 					} else {
@@ -141,13 +142,15 @@ public class CommandClaimIt extends CommandBase {
 						}
 					}
 				}
-			} else if(args.length == 4 && args[1].equals("delete")) {
+			} else if(args.length == 5 && args[1].equals("delete")) {
 				int posX = 0;
 				int posY = 0;
+				int dim = 0;
 				try {
 					posX = Integer.parseInt(args[2]);
 					posY = Integer.parseInt(args[3]);
-					ClaimArea claim = ClaimManager.getManager().getClaimAtLocation(sender.getEntityWorld(), new BlockPos(posX,0,posY));
+					dim = Integer.parseInt(args[4]);
+					ClaimArea claim = ClaimManager.getManager().getClaimAtLocation(DimensionManager.getWorld(dim), new BlockPos(posX,0,posY));
 					if(claim != null) {
 						if(sender instanceof EntityPlayer) {
 							EntityPlayer player = (EntityPlayer) sender;
@@ -172,7 +175,7 @@ public class CommandClaimIt extends CommandBase {
 						sendMessage(sender, "§cNo claim there or you don't own the claim!");
 					}
 				} catch(NumberFormatException e) {
-					sendMessage(sender, "§cInvalid location! Use §e/claimit claim delete (Corner 1 X) (Corner 1 Z)");
+					sendMessage(sender, "§cInvalid location! Use §e/claimit claim delete (Corner 1 X) (Corner 1 Z) (Dimension ID)");
 				}
 			}
 		} else if(args[0].equals("admin")) {
