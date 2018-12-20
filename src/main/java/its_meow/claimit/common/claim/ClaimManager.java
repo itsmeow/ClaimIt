@@ -166,9 +166,11 @@ public class ClaimManager {
 	public void serialize(World world) {
 		if(!world.isRemote) {
 			ClaimSerializer store = ClaimSerializer.get(world);
-			for(String key : store.data.getKeySet()) { // Remove all data
-				if(store != null && store.data != null && !key.equals("")) {
-					store.data.removeTag(key);
+			if(store != null && store.data != null) {
+				for(String key : store.data.getKeySet()) { // Remove all data
+					if(!key.equals("")) {
+						store.data.removeTag(key);
+					}
 				}
 			}
 			for(ClaimArea claim : claims) {
