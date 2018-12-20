@@ -167,13 +167,17 @@ public class ClaimManager {
 		if(!world.isRemote) {
 			ClaimSerializer store = ClaimSerializer.get(world);
 			if(store != null && store.data != null && store.data.getSize() > 0) {
+				Set<String> toRemove = new HashSet<String>();
 				for(String key : store.data.getKeySet()) { // Remove all data
 					if(!key.equals("")) {
-						store.data.removeTag(key);
+						toRemove.add(key);
 					}
 				}
+				for(String key : toRemove) {
+					store.data.removeTag(key);
+				}
 			}
-			for(ClaimArea claim : claims) {
+ 			for(ClaimArea claim : claims) {
 				if(claim.getDimensionID() == world.provider.getDimension()) {
 					int[] claimVals = claim.getSelfAsInt();
 					UUID owner = claim.getOwner();
