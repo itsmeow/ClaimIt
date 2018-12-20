@@ -34,11 +34,6 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 public class ClaimEventHandler {
 
 	@SubscribeEvent
-	public void onWorldLoad(FMLServerStartingEvent e) {
-		ClaimManager.getManager().deserialize();
-	}
-
-	@SubscribeEvent
 	public void onWorldSave(WorldEvent.Save e) {
 		if(e.getWorld().isRemote) {
 			ClaimManager.getManager().serialize();

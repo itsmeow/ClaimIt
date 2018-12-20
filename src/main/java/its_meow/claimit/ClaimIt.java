@@ -4,6 +4,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import its_meow.claimit.common.claim.ClaimEventHandler;
+import its_meow.claimit.common.claim.ClaimManager;
 import its_meow.claimit.common.command.CommandClaimIt;
 import its_meow.claimit.proxy.CommonProxy;
 import net.minecraft.creativetab.CreativeTabs;
@@ -36,6 +37,7 @@ public class ClaimIt {
 	public void serverLoad(FMLServerStartingEvent event)
 	{
 		event.registerServerCommand(new CommandClaimIt());
+		ClaimManager.getManager().deserialize();
 	}
 	
 	@EventHandler
