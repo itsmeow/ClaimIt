@@ -36,8 +36,8 @@ public class ClaimIt {
 	@EventHandler
 	public void serverLoad(FMLServerStartingEvent event)
 	{
+		ClaimManager.getManager().clearClaims();
 		event.registerServerCommand(new CommandClaimIt());
-		ClaimManager.getManager().deserialize();
 	}
 	
 	@EventHandler

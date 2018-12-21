@@ -35,7 +35,14 @@ public class ClaimEventHandler {
 	@SubscribeEvent
 	public void onWorldSave(WorldEvent.Save e) {
 		if(e.getWorld().isRemote) {
-			ClaimManager.getManager().serialize();
+			ClaimManager.getManager().serialize(e.getWorld());
+		}
+	}
+	
+	@SubscribeEvent
+	public void onWorldSave(WorldEvent.Load e) {
+		if(e.getWorld().isRemote) {
+			ClaimManager.getManager().deserialize(e.getWorld());
 		}
 	}
 	
@@ -225,9 +232,14 @@ public class ClaimEventHandler {
 			if(source.getTrueSource() instanceof EntityPlayer || source.getImmediateSource() instanceof EntityPlayer) {
 				EntityPlayer player = (EntityPlayer) source.getTrueSource();
 				ClaimArea claim = ClaimManager.getManager().getClaimAtLocation(entity.getEntityWorld(), player.getPosition());
-				if(claim != null) {
-					e.setCanceled(!claim.canEntity(player));
+				ClaimArea claim2 = ClaimManager.getManager().getClaimAtLocation(entity.getEntityWorld(), entity.getPosition());
+				if(claim != null && claim2 != null) {
+					e.setCanceled(!claim.canEntity(player) || !claim2.canEntity(player));
 				}
+			}
+			ClaimArea claim = ClaimManager.getManager().getClaimAtLocation(entity.getEntityWorld(), entity.getPosition());
+			if(source == DamageSource.MAGIC && claim != null) {
+				e.setCanceled(true);
 			}
 		}
 	}
