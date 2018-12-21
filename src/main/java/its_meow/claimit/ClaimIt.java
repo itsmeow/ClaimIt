@@ -22,24 +22,23 @@ import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 
 @Mod(modid = Ref.MOD_ID, name = Ref.NAME, version = Ref.VERSION, acceptedMinecraftVersions = Ref.acceptedMCV, updateJSON = Ref.updateJSON, acceptableRemoteVersions = "*")
 public class ClaimIt {
-	
+
 	@Instance(Ref.MOD_ID) 
 	public static ClaimIt mod;
-	
+
 	@SidedProxy(clientSide = Ref.CLIENT_PROXY_C, serverSide = Ref.SERVER_PROXY_C)
 	public static CommonProxy proxy;
 
 	public static CreativeTab tab = new CreativeTab("ClaimIt");
 
 	public static Logger logger;
-	
+
 	@EventHandler
-	public void serverLoad(FMLServerStartingEvent event)
-	{
-		ClaimManager.getManager().clearClaims();
+	public void serverLoad(FMLServerStartingEvent event) {
+		ClaimManager.getManager().deserialize();
 		event.registerServerCommand(new CommandClaimIt());
 	}
-	
+
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent event) {
 		logger = LogManager.getLogger("claimit");
@@ -51,24 +50,24 @@ public class ClaimIt {
 	public void init(FMLInitializationEvent e) {
 		proxy.init(e);
 	}
-	
+
 	@EventHandler
 	public void postInit(FMLPostInitializationEvent e) {
 		proxy.postInit(e);
 	}
-	
+
 	public static class CreativeTab extends CreativeTabs {
 
 		public CreativeTab(String tab) {
 			super(tab);
 		}
-		
+
 		@Override
 		public ItemStack getTabIconItem() {
 			return new ItemStack(Blocks.BARRIER);
 		}
 
-		
+
 	}
-	
+
 }

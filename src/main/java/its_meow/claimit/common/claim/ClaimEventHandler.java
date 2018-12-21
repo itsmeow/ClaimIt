@@ -35,14 +35,7 @@ public class ClaimEventHandler {
 	@SubscribeEvent
 	public void onWorldSave(WorldEvent.Save e) {
 		if(!e.getWorld().isRemote) {
-			ClaimManager.getManager().serialize(e.getWorld());
-		}
-	}
-	
-	@SubscribeEvent
-	public void onWorldSave(WorldEvent.Load e) {
-		if(!e.getWorld().isRemote) {
-			ClaimManager.getManager().deserialize(e.getWorld());
+			ClaimManager.getManager().serialize();
 		}
 	}
 	
