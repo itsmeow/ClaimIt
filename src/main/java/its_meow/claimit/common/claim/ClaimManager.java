@@ -84,6 +84,35 @@ public class ClaimManager {
 		return null;
 	}
 
+	@Nullable
+	/** Gets the claim by the viewable name and the owner
+	 * @param name - The viewable name set by the player 
+	 * @param owner - The UUID of the owner of the claim 
+	 * @returns The claim with this name and owner or null if no claim is found **/
+	public ClaimArea getClaimByNameAndOwner(String name, UUID owner) {
+		for(ClaimArea claim : this.claims) {
+			if(claim.isTrueOwner(owner)) {
+				if(claim.getTrueViewName().equals(owner + "_" + name)) {
+					return claim;
+				}
+			}
+		}
+		return null;
+	}
+
+	@Nullable
+	/** Gets the claim by the viewable name and the owner
+	 * @param name - The true name of the claim (with UUID prefix)
+	 * @returns The claim with this name and owner or null if no claim is found **/
+	public ClaimArea getClaimByTrueName(String name) {
+		for(ClaimArea claim : this.claims) {
+			if(claim.getTrueViewName().equals(name)) {
+				return claim;
+			}
+		}
+		return null;
+	}
+
 	/** Gets the claim at a given BlockPos in a World and returns true if not null
 	 * @param world - The world checked for claim 
 	 * @param pos - The position checked for a claim 
@@ -185,6 +214,7 @@ public class ClaimManager {
 			data.setString("OWNERUID", owner.toString());
 			data.setString("OWNERUIDOFF", ownerOffline.toString());
 			System.out.println("Owner: " + owner);
+			data.setString("TRUEVIEWNAME", claim.getTrueViewName());
 			for(EnumPerm perm : EnumPerm.values()) {
 				NBTTagCompound members = new NBTTagCompound();
 				for(UUID member : claim.getArrayForPermission(perm)) {
@@ -212,9 +242,13 @@ public class ClaimManager {
 				UUID owner = UUID.fromString(data.getString("OWNERUID"));
 				UUID ownerOffline = UUID.fromString(data.getString("OWNERUIDOFF"));
 				System.out.println("Owner: " + owner);
+				String trueViewName = data.getString("TRUEVIEWNAME");
+				if(trueViewName == null || trueViewName.equals("")) {
+					trueViewName = key;
+				}
 				if(claimVals.length > 0 && claimVals[0] == 0) {
 					System.out.println("Valid version.");
-					ClaimArea claim = new ClaimArea(claimVals[1], claimVals[2], claimVals[3], claimVals[4], claimVals[5], owner, ownerOffline);
+					ClaimArea claim = new ClaimArea(claimVals[1], claimVals[2], claimVals[3], claimVals[4], claimVals[5], owner, ownerOffline, trueViewName);
 					for(String key2 : data.getKeySet()) {
 						if(key2.startsWith("MEMBERS_")) {
 							NBTTagCompound members = data.getCompoundTag(key2);

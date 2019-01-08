@@ -12,14 +12,27 @@ import net.minecraftforge.common.DimensionManager;
 
 public class ClaimArea {
 
+	/** X position of the lowest (closest to -inf, -inf) corner **/
 	private int posX;
+	/** Z position of the lowest (closest to -inf, -inf) corner **/
 	private int posZ;
+	/** Dimension ID of the claim's location -
+	 *  FINAL **/
 	private final int dimID;
+	/** Length of the side in the X direction extending from +1 of posX **/
 	private int sideLengthX;
+	/** Length of the side in the Z direction extending from +1 of posZ **/
 	private int sideLengthZ;
+	/** The UUID of the owner **/
 	private UUID ownerUUID;
+	/** The offline UUID of the owner**/
 	private UUID ownerUUIDOffline;
+	/** The name used to serialize the ClaimArea **/
 	private String name;
+	/** The name used to refer to this ClaimArea by the player 
+	 * defaults to {@link name}**/
+	private String viewName;
+	/* Private fields for storing member UUIDs */
 	private ArrayList<UUID> membersModify;
 	private ArrayList<UUID> membersUse;
 	private ArrayList<UUID> membersEntity;
@@ -49,6 +62,7 @@ public class ClaimArea {
 			}
 		}
 		this.name = ownerUUID.toString() + dimID + posX + posZ + sideLengthX + sideLengthZ;
+		this.viewName = this.name;
 	}
 
 	public ClaimArea(int dimID, int posX, int posZ, int sideLengthX, int sideLengthZ, UUID ownerUUID) {
@@ -79,6 +93,7 @@ public class ClaimArea {
 			}
 		}
 		this.name = ownerUUID.toString() + dimID + posX + posZ + sideLengthX + sideLengthZ;
+		this.viewName = this.name;
 	}
 
 	public ClaimArea(int dimID, int posX, int posZ, int sideLengthX, int sideLengthZ, UUID ownerUUID, UUID ownerUUIDOffline) {
@@ -105,6 +120,12 @@ public class ClaimArea {
 			}
 		}
 		this.name = ownerUUID.toString() + dimID + posX + posZ + sideLengthX + sideLengthZ;
+		this.viewName = this.name;
+	}
+
+	public ClaimArea(int dimID, int posX, int posZ, int sideLengthX, int sideLengthZ, UUID ownerUUID, UUID ownerUUIDOffline, String trueViewName) {
+		this(dimID, posX, posZ, sideLengthX, sideLengthZ, ownerUUID, ownerUUIDOffline);
+		this.viewName = trueViewName;
 	}
 
 	public boolean isOwner(EntityPlayer player) {
@@ -116,6 +137,33 @@ public class ClaimArea {
 				}
 			}
 			if(ClaimManager.getManager().isAdmin(player)) {
+				return true;
+			}
+			return false;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
+	
+	public boolean isTrueOwner(EntityPlayer player) {
+		try {
+			if(this.getOwner().equals(EntityPlayer.getUUID(player.getGameProfile()))) {
+				// If online UUID does match then make sure offline does too
+				if(this.getOwnerOffline().equals(EntityPlayer.getOfflineUUID(player.getName()))) {
+					return true;
+				}
+			}
+			return false;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
+	
+	public boolean isTrueOwner(UUID owner) {
+		try {
+			if(this.getOwner().equals(owner)) {
 				return true;
 			}
 			return false;
@@ -275,6 +323,40 @@ public class ClaimArea {
 
 	public String getSerialName() {
 		return name;
+	}
+	
+	public String getTrueViewName() {
+		return viewName;
+	}
+	
+	public String getDisplayedViewName() {
+		if(viewName.contains("_")) {
+			return viewName.substring(viewName.indexOf('_') + 1);
+		} else if(!viewName.equals(name)) { // The data was edited!
+			this.viewName = name;
+			return name;
+		}
+		return name;
+	}
+	
+	/** Sets the used name for this ClaimArea. 
+	 * @param nameIn - Name to set
+	 * @param player - Player that owns the claim (will not work if not the true owner)
+	 * @return True if no other claims by the owner have this as their name **/
+	public boolean setViewName(String nameIn, EntityPlayer player) {
+		boolean pass = true;
+		if(!this.isTrueOwner(player)) { // Player does not own this claim
+			return false;
+		}
+		for(ClaimArea claim : ClaimManager.getManager().getClaimsList()) {
+			if(claim.getTrueViewName().equals(nameIn) && claim != this) { // Claim has the same name, is not this claim, and is owned by the same player
+				pass = false;
+			}
+		}
+		if(pass) {
+			this.viewName = this.ownerUUID + "_" + nameIn;
+		}
+		return pass;
 	}
 
 }

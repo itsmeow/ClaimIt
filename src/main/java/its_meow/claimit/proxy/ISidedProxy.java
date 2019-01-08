@@ -4,7 +4,7 @@ import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 
-public interface CommonProxy {
+public interface ISidedProxy {
 	
 	void preInit(FMLPreInitializationEvent e);
 	

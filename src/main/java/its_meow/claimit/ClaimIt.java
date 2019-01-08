@@ -6,7 +6,7 @@ import org.apache.logging.log4j.Logger;
 import its_meow.claimit.common.claim.ClaimEventHandler;
 import its_meow.claimit.common.claim.ClaimManager;
 import its_meow.claimit.common.command.CommandClaimIt;
-import its_meow.claimit.proxy.CommonProxy;
+import its_meow.claimit.proxy.ISidedProxy;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
@@ -27,7 +27,7 @@ public class ClaimIt {
 	public static ClaimIt mod;
 
 	@SidedProxy(clientSide = Ref.CLIENT_PROXY_C, serverSide = Ref.SERVER_PROXY_C)
-	public static CommonProxy proxy;
+	public static ISidedProxy proxy;
 
 	public static CreativeTab tab = new CreativeTab("ClaimIt");
 
