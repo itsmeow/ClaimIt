@@ -39,61 +39,7 @@ public class ClaimArea {
 	private ArrayList<UUID> membersPVP;
 
 	public ClaimArea(int dimID, int posX, int posZ, int sideLengthX, int sideLengthZ, EntityPlayer player) {
-		this.dimID = dimID;
-		this.posX = posX;
-		this.posZ = posZ;
-		this.sideLengthX = sideLengthX;
-		this.sideLengthZ = sideLengthZ;
-		this.ownerUUID = EntityPlayer.getUUID(player.getGameProfile());
-		this.ownerUUIDOffline = EntityPlayer.getOfflineUUID(player.getName());
-		this.membersModify = new ArrayList<UUID>();
-		this.membersUse = new ArrayList<UUID>();
-		this.membersEntity = new ArrayList<UUID>();
-		this.membersPVP = new ArrayList<UUID>();
-		// Simplify main corner to the lowest x and y value
-		if(this.sideLengthX < 0 || this.sideLengthZ < 0) {
-			if(this.sideLengthX < 0) {
-				this.posX += this.sideLengthX;
-				this.sideLengthX = Math.abs(this.sideLengthX);
-			}
-			if(this.sideLengthZ < 0) {
-				this.posZ += this.sideLengthZ;
-				this.sideLengthZ = Math.abs(this.sideLengthZ);
-			}
-		}
-		this.name = ownerUUID.toString() + dimID + posX + posZ + sideLengthX + sideLengthZ;
-		this.viewName = this.name;
-	}
-
-	public ClaimArea(int dimID, int posX, int posZ, int sideLengthX, int sideLengthZ, UUID ownerUUID) {
-		this.dimID = dimID;
-		this.posX = posX;
-		this.posZ = posZ;
-		this.sideLengthX = sideLengthX;
-		this.sideLengthZ = sideLengthZ;
-		this.ownerUUID = ownerUUID;
-		String ownerName = ClaimManager.getPlayerName(ownerUUID.toString(), DimensionManager.getWorld(dimID));
-		if(ownerName == null) {
-			ownerName = DimensionManager.getWorld(dimID).getMinecraftServer().getPlayerProfileCache().getProfileByUUID(ownerUUID).getName();
-			this.ownerUUIDOffline = EntityPlayer.getOfflineUUID(ownerName);
-		}
-		this.membersModify = new ArrayList<UUID>();
-		this.membersUse = new ArrayList<UUID>();
-		this.membersEntity = new ArrayList<UUID>();
-		this.membersPVP = new ArrayList<UUID>();
-		// Simplify main corner to the lowest x and y value
-		if(this.sideLengthX < 0 || this.sideLengthZ < 0) {
-			if(this.sideLengthX < 0) {
-				this.posX += this.sideLengthX;
-				this.sideLengthX = Math.abs(this.sideLengthX);
-			}
-			if(this.sideLengthZ < 0) {
-				this.posZ += this.sideLengthZ;
-				this.sideLengthZ = Math.abs(this.sideLengthZ);
-			}
-		}
-		this.name = ownerUUID.toString() + dimID + posX + posZ + sideLengthX + sideLengthZ;
-		this.viewName = this.name;
+		this(dimID, posX, posZ, sideLengthX, sideLengthZ, EntityPlayer.getUUID(player.getGameProfile()), EntityPlayer.getOfflineUUID(player.getName()));
 	}
 
 	public ClaimArea(int dimID, int posX, int posZ, int sideLengthX, int sideLengthZ, UUID ownerUUID, UUID ownerUUIDOffline) {
@@ -120,7 +66,7 @@ public class ClaimArea {
 			}
 		}
 		this.name = ownerUUID.toString() + dimID + posX + posZ + sideLengthX + sideLengthZ;
-		this.viewName = this.name;
+		this.viewName = ownerUUID.toString() + "_" + Math.round(Math.random() * 10000);
 	}
 
 	public ClaimArea(int dimID, int posX, int posZ, int sideLengthX, int sideLengthZ, UUID ownerUUID, UUID ownerUUIDOffline, String trueViewName) {
