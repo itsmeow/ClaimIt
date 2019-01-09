@@ -66,7 +66,7 @@ public class ClaimArea {
 			}
 		}
 		this.name = ownerUUID.toString() + dimID + posX + posZ + sideLengthX + sideLengthZ;
-		this.viewName = ownerUUID.toString() + "_" + Math.round(Math.random() * 10000);
+		this.viewName = ownerUUID.toString() + "_" + Math.abs(posX) + Math.abs(posZ) + dimID + Math.round(Math.random() * 100);
 	}
 
 	public ClaimArea(int dimID, int posX, int posZ, int sideLengthX, int sideLengthZ, UUID ownerUUID, UUID ownerUUIDOffline, String trueViewName) {
@@ -276,13 +276,10 @@ public class ClaimArea {
 	}
 	
 	public String getDisplayedViewName() {
-		if(viewName.contains("_")) {
-			return viewName.substring(viewName.indexOf('_') + 1);
-		} else if(!viewName.equals(name)) { // The data was edited!
-			this.viewName = name;
-			return name;
+		if(!viewName.contains("_")) { // The data was edited! Making a new name...
+			this.viewName = ownerUUID.toString() + "_" + Math.abs(posX) + Math.abs(posZ) + dimID + Math.round(Math.random() * 100);
 		}
-		return name;
+		return viewName.substring(viewName.indexOf('_') + 1);
 	}
 	
 	/** Sets the used name for this ClaimArea. 
