@@ -49,9 +49,14 @@ public class CommandSubClaimMember extends CommandBase {
 		if(!action.equalsIgnoreCase("add") && !action.equalsIgnoreCase("remove")) {
 			throw new WrongUsageException("Invalid action! Specify add or remove. Usage: " + this.getUsage(sender));
 		}
-		EnumPerm permission = EnumPerm.valueOf(permissionStr);
+		EnumPerm permission = null;
+		try {
+			permission = EnumPerm.valueOf(permissionStr);
+		} catch (IllegalArgumentException e) {
+			throw new WrongUsageException("Invalid permission. Specify: Modify, Use, Entity, or PVP. Usage: " + this.getUsage(sender));
+		}
 		if(permission == null) {
-			throw new WrongUsageException("Invalid permission. Specify: Modify, Use, Entity, or PVP");
+			throw new WrongUsageException("Invalid permission. Specify: Modify, Use, Entity, or PVP. Usage: " + this.getUsage(sender));
 		}
 		UUID id = null;
 		GameProfile profile = server.getPlayerProfileCache().getGameProfileForUsername(username);
@@ -91,21 +96,23 @@ public class CommandSubClaimMember extends CommandBase {
 				// Add user
 				if(sender.canUseCommand(2, "")) {
 					claim.addMember(permission, id);
+					sendMessage(sender, "§aSuccessfully added " + username + "§a to claim " + claim.getDisplayedViewName() + " with permission " + permission.toString());
 				} else if(sender instanceof EntityPlayer && claim.isOwner((EntityPlayer) sender)) {
 					claim.addMember(permission, id);
+					sendMessage(sender, "§aSuccessfully added " + username + "§a to claim " + claim.getDisplayedViewName() + " with permission " + permission.toString());
 				}
 			} else if(action.equals("remove")) {
 				// Remove user
 				if(sender.canUseCommand(2, "")) {
 					claim.removeMember(permission, id);
+					sendMessage(sender, "§aSuccessfully removed permission " + permission.toString() + " from user " + username + " in claim " + claim.getDisplayedViewName());
 				} else if(sender instanceof EntityPlayer && claim.isOwner((EntityPlayer) sender)) {
 					claim.removeMember(permission, id);
+					sendMessage(sender, "§aSuccessfully removed permission " + permission.toString() + " from user " + username + " in claim " + claim.getDisplayedViewName());
 				}
 			} else {
 				throw new WrongUsageException("Invalid action! Specify add or remove. Usage: " + this.getUsage(sender));
 			}
-
-			sendMessage(sender, "§aSuccessfully added " + username + "§a to claim " + claim.getDisplayedViewName() + " with permission " + permission.toString());
 		} else {
 			if(claimName != null && !claimName.equals("")) {
 				sendMessage(sender, "§cNo claim with this name was found.");

@@ -154,14 +154,13 @@ public class ClaimEventHandler {
 			} else {
 				e.setCanceled(!claim.canEntity(player));
 			}
-		} else {
-			ClaimArea claim2 = cm.getClaimAtLocation(world, e.getTarget().getPosition());
-			if(claim2 != null) {
-				if(e.getTarget() instanceof EntityPlayer) {
-					e.setCanceled(!claim2.canPVP(e.getEntityPlayer()));
-				} else {
-					e.setCanceled(!claim2.canEntity(e.getEntityPlayer()));;
-				}
+		}
+		ClaimArea claim2 = cm.getClaimAtLocation(world, e.getTarget().getPosition());
+		if(claim2 != null) {
+			if(e.getTarget() instanceof EntityPlayer) {
+				e.setCanceled(!claim2.canPVP(e.getEntityPlayer()) || e.isCanceled());
+			} else {
+				e.setCanceled(!claim2.canEntity(e.getEntityPlayer()) || e.isCanceled());;
 			}
 		}
 	}
@@ -174,7 +173,7 @@ public class ClaimEventHandler {
 		ClaimArea claim = cm.getClaimAtLocation(world, pos);
 		if(claim != null) {
 			EntityPlayer player = e.getEntityPlayer();
-			e.setCanceled(!claim.canEntity(player) && !claim.canUse(player));
+			e.setCanceled(!claim.canEntity(player) || !claim.canUse(player));
 		}
 	}
 
@@ -226,9 +225,7 @@ public class ClaimEventHandler {
 				EntityPlayer player = (EntityPlayer) source.getTrueSource();
 				ClaimArea claim = ClaimManager.getManager().getClaimAtLocation(entity.getEntityWorld(), player.getPosition());
 				ClaimArea claim2 = ClaimManager.getManager().getClaimAtLocation(entity.getEntityWorld(), entity.getPosition());
-				if(claim != null && claim2 != null) {
-					e.setCanceled(!claim.canEntity(player) || !claim2.canEntity(player));
-				}
+				e.setCanceled((claim != null && !claim.canEntity(player)) || (claim2 != null && !claim2.canEntity(player)));
 			}
 			ClaimArea claim = ClaimManager.getManager().getClaimAtLocation(entity.getEntityWorld(), entity.getPosition());
 			if(source == DamageSource.MAGIC && claim != null) {
