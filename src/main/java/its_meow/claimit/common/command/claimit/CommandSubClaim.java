@@ -3,6 +3,7 @@ package its_meow.claimit.common.command.claimit;
 import its_meow.claimit.common.command.claimit.claim.CommandSubClaimDelete;
 import its_meow.claimit.common.command.claimit.claim.CommandSubClaimInfo;
 import its_meow.claimit.common.command.claimit.claim.CommandSubClaimList;
+import its_meow.claimit.common.command.claimit.claim.CommandSubClaimMember;
 import its_meow.claimit.common.command.claimit.claim.CommandSubClaimSetName;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
@@ -17,6 +18,7 @@ public class CommandSubClaim extends CommandTreeBase {
 		this.addSubcommand(new CommandSubClaimDelete());
 		this.addSubcommand(new CommandSubClaimList());
 		this.addSubcommand(new CommandSubClaimSetName());
+		this.addSubcommand(new CommandSubClaimMember());
 	}
 	
 	@Override
@@ -43,6 +45,7 @@ public class CommandSubClaim extends CommandTreeBase {
 			sendMessage(sender, "§e/claimit claim delete");
 			sendMessage(sender, "§e/claimit claim list");
 			sendMessage(sender, "§e/claimit claim setname");
+			sendMessage(sender, "§e/claimit claim member");
 		}
 	}
 	

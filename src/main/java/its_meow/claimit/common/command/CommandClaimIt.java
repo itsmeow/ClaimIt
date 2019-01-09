@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import its_meow.claimit.Ref;
+import its_meow.claimit.common.claim.EnumPerm;
 import its_meow.claimit.common.command.claimit.CommandSubAdmin;
 import its_meow.claimit.common.command.claimit.CommandSubClaim;
 import net.minecraft.command.CommandException;
@@ -79,6 +80,18 @@ public class CommandClaimIt extends CommandTreeBase {
 				completions.add("delete");
 				completions.add("list");
 				completions.add("setname");
+				completions.add("member");
+			}
+			if(args.length > 2 && args[1].equals("claim") && args[2].equals("member")) {
+				if(args.length == 3) {
+					completions.add("add");
+					completions.add("remove");
+				}
+				if(args.length == 4) {
+					for(EnumPerm perm : EnumPerm.values()) {
+						completions.add(perm.toString().toLowerCase());
+					}
+				}
 			}
 		}
 		
@@ -87,7 +100,7 @@ public class CommandClaimIt extends CommandTreeBase {
 
 	@Override
 	public boolean isUsernameIndex(String[] args, int index) {
-		return false;
+		return (args.length == 5 && args[1].equals("claim") && args[2].equals("member")) || (args.length == 3 && args[1].equals("claim") && args[2].equals("member"));
 	}
 
 	private static void sendMessage(ICommandSender sender, String message) {
