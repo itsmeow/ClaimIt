@@ -138,12 +138,21 @@ public class ClaimArea {
 		return hasPermission(EnumPerm.PVP, player);
 	}
 
-	private boolean hasPermission(EnumPerm permission, EntityPlayer player) {
+	public boolean hasPermission(EnumPerm permission, EntityPlayer player) {
 		if(this.isOwner(player)) {
 			return true;
 		}
 		ArrayList<UUID> array = getArrayForPermission(permission);
 		if(array != null && array.contains(EntityPlayer.getUUID(player.getGameProfile()))) {
+			return true;
+		}
+		return false;
+	}
+	
+	/** Do NOT use this for permission checking. Only for use in removing members. **/
+	public boolean inPermissionList(EnumPerm permission, UUID id) {
+		ArrayList<UUID> array = getArrayForPermission(permission);
+		if(array != null && array.contains(id)) {
 			return true;
 		}
 		return false;

@@ -110,6 +110,9 @@ public class CommandSubClaimMemberList extends CommandBase {
 					throw new CommandException("You cannot view the members of this claim!");
 				}
 			}
+			if(members.isEmpty()) {
+				throw new CommandException("This claim has no members with that permission.");
+			}
 			sendMessage(sender, "§a" + filter.toString() + "§9:");
 			for(UUID member : members) {
 				String name = ClaimManager.getPlayerName(member.toString(), sender.getEntityWorld());
@@ -127,6 +130,9 @@ public class CommandSubClaimMemberList extends CommandBase {
 				if(!ClaimManager.getManager().isAdmin((EntityPlayer) sender)) {
 					throw new CommandException("You cannot view the members of this claim!");
 				}
+			}
+			if(permMap.isEmpty()) {
+				throw new CommandException("This claim has no members.");
 			}
 			for(UUID member : permMap.keySet()) {
 				String permString = "";
