@@ -1,6 +1,9 @@
 package its_meow.claimit.common.claim;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
 import java.util.UUID;
 
 import javax.annotation.Nullable;
@@ -184,7 +187,32 @@ public class ClaimArea {
 		}
 		return false;
 	}
-
+	
+	public Map<UUID, HashSet<EnumPerm>> getMembers() {
+		HashMap<UUID, HashSet<EnumPerm>> map = new HashMap<UUID, HashSet<EnumPerm>>();
+		for(EnumPerm perm : EnumPerm.values()) {
+			ArrayList<UUID> members = this.getArrayForPermission(perm);
+			for(UUID member : members) {
+				if(map.get(member) == null) {
+					HashSet<EnumPerm> set = new HashSet<EnumPerm>();
+					set.add(perm);
+					if(map.containsKey(member)) {
+						map.remove(member);
+					}
+					map.put(member, set);
+				} else {
+					HashSet<EnumPerm> set = map.get(member);
+					set.add(perm);
+					if(map.containsKey(member)) {
+						map.remove(member);
+					}
+					map.put(member, set);
+				}
+			}
+		}
+		return map;
+	}
+	
 	public boolean isBlockPosInClaim(BlockPos blockPos) {
 		boolean isInXRange = (blockPos.getX() < this.getHXZPosition().getX() + 1) && (blockPos.getX() > this.posX - 1);
 		boolean isInZRange = (blockPos.getZ() < this.getHXZPosition().getZ() + 1) && (blockPos.getZ() > this.posZ - 1);

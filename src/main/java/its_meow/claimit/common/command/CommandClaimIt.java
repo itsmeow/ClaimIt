@@ -86,8 +86,13 @@ public class CommandClaimIt extends CommandTreeBase {
 				if(args.length == 3) {
 					completions.add("add");
 					completions.add("remove");
+					completions.add("list");
 				}
 				if(args.length == 4) {
+					for(EnumPerm perm : EnumPerm.values()) {
+						completions.add(perm.toString().toLowerCase());
+					}
+				} else if(args.length == 5 && args[3].equals("list")) {
 					for(EnumPerm perm : EnumPerm.values()) {
 						completions.add(perm.toString().toLowerCase());
 					}
@@ -98,10 +103,10 @@ public class CommandClaimIt extends CommandTreeBase {
 		return completions;
 	}
 
-	@Override
+	/*@Override
 	public boolean isUsernameIndex(String[] args, int index) {
 		return (args.length == 5 && args[1].equals("claim") && args[2].equals("member")) || (args.length == 3 && args[1].equals("claim") && args[2].equals("member"));
-	}
+	}*/
 
 	private static void sendMessage(ICommandSender sender, String message) {
 		sender.sendMessage(new TextComponentString(message));

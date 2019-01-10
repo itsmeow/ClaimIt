@@ -18,7 +18,6 @@ import net.minecraft.world.World;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
-import net.minecraftforge.event.entity.player.PlayerInteractEvent.EntityInteract;
 import net.minecraftforge.event.entity.player.PlayerPickupXpEvent;
 import net.minecraftforge.event.world.BlockEvent.BreakEvent;
 import net.minecraftforge.event.world.BlockEvent.FarmlandTrampleEvent;
@@ -166,7 +165,7 @@ public class ClaimEventHandler {
 	}
 
 	@SubscribeEvent
-	public void onEntityRightClicked(EntityInteract e) {
+	public void onEntityRightClicked(PlayerInteractEvent.EntityInteract e) {
 		World world = e.getEntity().getEntityWorld();
 		BlockPos pos = e.getEntity().getPosition();
 		ClaimManager cm = ClaimManager.getManager();
@@ -178,7 +177,31 @@ public class ClaimEventHandler {
 	}
 
 	@SubscribeEvent
-	public void onPlayerUse(PlayerInteractEvent e) {
+	public void onPlayerUse(PlayerInteractEvent.RightClickEmpty e) {
+		World world = e.getEntity().getEntityWorld();
+		BlockPos pos = e.getPos();
+		ClaimManager cm = ClaimManager.getManager();
+		ClaimArea claim = cm.getClaimAtLocation(world, pos);
+		if(claim != null && e.getItemStack().getItem() != ItemRegistry.claiminfotool) {
+			EntityPlayer player = e.getEntityPlayer();
+			e.setCanceled(!claim.canUse(player));
+		}
+	}
+	
+	@SubscribeEvent
+	public void onPlayerUse(PlayerInteractEvent.RightClickItem e) {
+		World world = e.getEntity().getEntityWorld();
+		BlockPos pos = e.getPos();
+		ClaimManager cm = ClaimManager.getManager();
+		ClaimArea claim = cm.getClaimAtLocation(world, pos);
+		if(claim != null && e.getItemStack().getItem() != ItemRegistry.claiminfotool) {
+			EntityPlayer player = e.getEntityPlayer();
+			e.setCanceled(!claim.canUse(player));
+		}
+	}
+	
+	@SubscribeEvent
+	public void onPlayerUse(PlayerInteractEvent.LeftClickEmpty e) {
 		World world = e.getEntity().getEntityWorld();
 		BlockPos pos = e.getPos();
 		ClaimManager cm = ClaimManager.getManager();
