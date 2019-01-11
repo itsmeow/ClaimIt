@@ -106,7 +106,7 @@ public class CommandSubClaimMemberList extends CommandBase {
 		if(claim != null) {
 			ArrayList<UUID> members = claim.getArrayForPermission(filter);
 			if(sender instanceof EntityPlayer && !claim.getMembers().keySet().contains(EntityPlayer.getUUID(((EntityPlayer) sender).getGameProfile()))) {
-				if(!ClaimManager.getManager().isAdmin((EntityPlayer) sender)) {
+				if(claim.isOwner((EntityPlayer) sender)) {
 					throw new CommandException("You cannot view the members of this claim!");
 				}
 			}
@@ -127,7 +127,7 @@ public class CommandSubClaimMemberList extends CommandBase {
 		if(claim != null) {
 			Map<UUID, HashSet<EnumPerm>> permMap = claim.getMembers();
 			if(sender instanceof EntityPlayer && !permMap.keySet().contains(EntityPlayer.getUUID(((EntityPlayer) sender).getGameProfile()))) {
-				if(!ClaimManager.getManager().isAdmin((EntityPlayer) sender)) {
+				if(!claim.isOwner((EntityPlayer) sender)) {
 					throw new CommandException("You cannot view the members of this claim!");
 				}
 			}
