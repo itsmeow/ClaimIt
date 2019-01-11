@@ -49,7 +49,7 @@ public class CommandSubClaimMemberList extends CommandBase {
 			// Attempt perm filter with no claim name
 
 			try {
-				EnumPerm filter = EnumPerm.valueOf(args[0]);
+				EnumPerm filter = EnumPerm.valueOf(args[0].toUpperCase());
 				if(sender instanceof EntityPlayer) {
 					ClaimArea claim = m.getClaimAtLocation(sender.getEntityWorld(), sender.getPosition());
 					outputFiltered(claim, sender, filter);

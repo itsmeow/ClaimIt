@@ -44,7 +44,7 @@ public class ClaimEventHandler {
 		BlockPos pos = e.getPos();
 		ClaimManager cm = ClaimManager.getManager();
 		ClaimArea claim = cm.getClaimAtLocation(world, pos);
-		if(claim != null && e.getItemStack().getItem() != ItemRegistry.claiminfotool) {
+		if(claim != null && e.getItemStack().isEmpty()) {
 			EntityPlayer player = e.getEntityPlayer();
 			e.setCanceled(!claim.canUse(player));
 		} else if(claim == null && e.getItemStack().getItem() == Items.SHEARS && !world.isRemote) {
@@ -114,9 +114,9 @@ public class ClaimEventHandler {
 		if(claim != null) {
 			EntityPlayer player = e.getPlayer();
 			if(!claim.canModify(player)) {
-				if(!player.capabilities.isCreativeMode) {
+				/*if(!player.capabilities.isCreativeMode) {
 					player.addItemStackToInventory(new ItemStack(e.getPlayer().getHeldItem(e.getHand()).getItem(), 1));
-				}
+				}*/
 
 				e.setCanceled(true);
 			}
@@ -243,12 +243,16 @@ public class ClaimEventHandler {
 	public void onHurtEvent(LivingHurtEvent e) {
 		EntityLivingBase entity = e.getEntityLiving();
 		DamageSource source = e.getSource();
-		if(entity != null && source != null) {
-			if(source.getTrueSource() instanceof EntityPlayer || source.getImmediateSource() instanceof EntityPlayer) {
-				EntityPlayer player = (EntityPlayer) source.getTrueSource();
-				ClaimArea claim = ClaimManager.getManager().getClaimAtLocation(entity.getEntityWorld(), player.getPosition());
-				ClaimArea claim2 = ClaimManager.getManager().getClaimAtLocation(entity.getEntityWorld(), entity.getPosition());
-				e.setCanceled((claim != null && !claim.canEntity(player)) || (claim2 != null && !claim2.canEntity(player)));
+		if(entity != null && source != null) { // There is an actual damage happening
+			if(source.getTrueSource() instanceof EntityPlayer || source.getImmediateSource() instanceof EntityPlayer) { // Damage is caused by a player either indirectly or directly
+				EntityPlayer player = (EntityPlayer) source.getTrueSource(); // Get the player
+				ClaimArea claim = ClaimManager.getManager().getClaimAtLocation(entity.getEntityWorld(), player.getPosition()); // Claim the damage-doer is in
+				ClaimArea claim2 = ClaimManager.getManager().getClaimAtLocation(entity.getEntityWorld(), entity.getPosition()); // Claim the damaged is in
+				if(entity instanceof EntityPlayer) { // whether the damaged is a player or not
+					e.setCanceled((claim != null && !claim.canPVP(player)) || (claim2 != null && !claim2.canPVP(player))); // if either one disallows PVP block it
+				} else {
+					e.setCanceled((claim != null && !claim.canEntity(player)) || (claim2 != null && !claim2.canEntity(player))); // if either one disallows entity block it
+				}
 			}
 			ClaimArea claim = ClaimManager.getManager().getClaimAtLocation(entity.getEntityWorld(), entity.getPosition());
 			if(source == DamageSource.MAGIC && claim != null) {
