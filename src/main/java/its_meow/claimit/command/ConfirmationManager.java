@@ -9,7 +9,9 @@ public class ConfirmationManager {
 	
 	private static ConfirmationManager instance = null;
 	
-	private ConfirmationManager() {}
+	private ConfirmationManager() {
+		 confirmActions = new HashMap<ICommandSender, EnumConfirmableAction>();
+	}
 
 	public static ConfirmationManager getManager() {
 		if(instance == null) {
@@ -19,8 +21,7 @@ public class ConfirmationManager {
 		return instance;
 	}
 	
-	private HashMap<ICommandSender, EnumConfirmableAction> confirmActions = new HashMap<ICommandSender, EnumConfirmableAction>();
-	
+	private HashMap<ICommandSender, EnumConfirmableAction> confirmActions;
 	public boolean needsConfirm(ICommandSender sender) {
 		return confirmActions.containsKey(sender);
 	}
@@ -39,7 +40,7 @@ public class ConfirmationManager {
 	}
 	
 	public boolean removeConfirm(ICommandSender sender) {
-		if(needsConfirm(sender)) {
+		if(!needsConfirm(sender)) {
 			return false;
 		} else {
 			confirmActions.remove(sender);

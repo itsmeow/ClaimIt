@@ -7,9 +7,10 @@ import java.util.List;
 import its_meow.claimit.Ref;
 import its_meow.claimit.claim.EnumPerm;
 import its_meow.claimit.command.claimit.CommandSubAdmin;
+import its_meow.claimit.command.claimit.CommandSubCancel;
 import its_meow.claimit.command.claimit.CommandSubClaim;
+import its_meow.claimit.command.claimit.CommandSubConfirm;
 import net.minecraft.command.CommandException;
-import net.minecraft.command.ICommand;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
@@ -21,11 +22,8 @@ public class CommandClaimIt extends CommandTreeBase {
 	public CommandClaimIt() {
 		this.addSubcommand(new CommandSubClaim());
 		this.addSubcommand(new CommandSubAdmin());
-	}
-
-	@Override
-	public int compareTo(ICommand arg0) {
-		return 0;
+		this.addSubcommand(new CommandSubConfirm());
+		this.addSubcommand(new CommandSubCancel());
 	}
 
 	@Override
@@ -35,7 +33,7 @@ public class CommandClaimIt extends CommandTreeBase {
 
 	@Override
 	public String getUsage(ICommandSender sender) {
-		return "claimit <subcommand>";
+		return "/claimit [subcommand]";
 	}
 
 	private String aliasList = "";

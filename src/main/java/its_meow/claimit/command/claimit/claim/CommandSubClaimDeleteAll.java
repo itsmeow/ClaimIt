@@ -65,7 +65,7 @@ public class CommandSubClaimDeleteAll extends CommandBase {
 				throw new PlayerNotFoundException("Invalid player: " + args[0]);
 			}
 			Set<ClaimArea> owned = ClaimManager.getManager().getClaimsOwnedByPlayer(id);
-			if(owned.size() == 0) {
+			if(owned == null) {
 				throw new CommandException("This player owns no claims.");
 			}
 			if(!(sender instanceof EntityPlayer) && sender.canUseCommand(2, "")) {

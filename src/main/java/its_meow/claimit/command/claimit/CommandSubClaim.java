@@ -1,6 +1,7 @@
 package its_meow.claimit.command.claimit;
 
 import its_meow.claimit.command.claimit.claim.CommandSubClaimDelete;
+import its_meow.claimit.command.claimit.claim.CommandSubClaimDeleteAll;
 import its_meow.claimit.command.claimit.claim.CommandSubClaimInfo;
 import its_meow.claimit.command.claimit.claim.CommandSubClaimList;
 import its_meow.claimit.command.claimit.claim.CommandSubClaimMember;
@@ -19,6 +20,7 @@ public class CommandSubClaim extends CommandTreeBase {
 		this.addSubcommand(new CommandSubClaimList());
 		this.addSubcommand(new CommandSubClaimSetName());
 		this.addSubcommand(new CommandSubClaimMember());
+		this.addSubcommand(new CommandSubClaimDeleteAll());
 	}
 	
 	@Override
@@ -46,6 +48,7 @@ public class CommandSubClaim extends CommandTreeBase {
 			sendMessage(sender, "§e/claimit claim list");
 			sendMessage(sender, "§e/claimit claim setname");
 			sendMessage(sender, "§e/claimit claim member");
+			sendMessage(sender, "§e/claimit claim deleteall");
 		}
 	}
 	
