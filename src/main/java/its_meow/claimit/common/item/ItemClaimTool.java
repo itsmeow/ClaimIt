@@ -1,8 +1,8 @@
 package its_meow.claimit.common.item;
 
 import its_meow.claimit.ClaimIt;
-import its_meow.claimit.common.claim.ClaimArea;
-import its_meow.claimit.common.claim.ClaimManager;
+import its_meow.claimit.claim.ClaimArea;
+import its_meow.claimit.claim.ClaimManager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;

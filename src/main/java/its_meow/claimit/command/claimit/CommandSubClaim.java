@@ -1,10 +1,10 @@
-package its_meow.claimit.common.command.claimit;
+package its_meow.claimit.command.claimit;
 
-import its_meow.claimit.common.command.claimit.claim.CommandSubClaimDelete;
-import its_meow.claimit.common.command.claimit.claim.CommandSubClaimInfo;
-import its_meow.claimit.common.command.claimit.claim.CommandSubClaimList;
-import its_meow.claimit.common.command.claimit.claim.CommandSubClaimMember;
-import its_meow.claimit.common.command.claimit.claim.CommandSubClaimSetName;
+import its_meow.claimit.command.claimit.claim.CommandSubClaimDelete;
+import its_meow.claimit.command.claimit.claim.CommandSubClaimInfo;
+import its_meow.claimit.command.claimit.claim.CommandSubClaimList;
+import its_meow.claimit.command.claimit.claim.CommandSubClaimMember;
+import its_meow.claimit.command.claimit.claim.CommandSubClaimSetName;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.server.MinecraftServer;

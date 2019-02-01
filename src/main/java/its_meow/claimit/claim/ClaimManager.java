@@ -1,4 +1,4 @@
-package its_meow.claimit.common.claim;
+package its_meow.claimit.claim;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -18,8 +18,11 @@ import com.mojang.authlib.GameProfile;
 import its_meow.claimit.ClaimIt;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
+import net.minecraft.nbt.NBTTagString;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.common.util.Constants;
 
 public class ClaimManager {
 
@@ -184,10 +187,30 @@ public class ClaimManager {
 		return false;
 	}
 
+	/** Clears the list of players with admin enabled. **/
+	public void clearAdmins() {
+		this.admins.clear();
+	}
+
 	/** Adds a claim to the claim list without checking for overlaps. Don't use! **/
 	private void addClaimToListInsecurely(ClaimArea claim) {
 		claims.add(claim);
 		//this.serialize(claim.getWorld());
+	}
+
+	/** Gets all claims owned by a UUID
+	 * @param uuid - The UUID of the player to be searched for
+	 * @return A Set<ClaimArea> of ClaimAreas owned by the player. If no claims are owned, returns null.
+	 * **/
+	@Nullable
+	public Set<ClaimArea> getClaimsOwnedByPlayer(UUID uuid) {
+		HashSet<ClaimArea> owned = new HashSet<ClaimArea>();
+		for(ClaimArea claim : this.claims) {
+			if(claim.isTrueOwner(uuid)) {
+				owned.add(claim);
+			}
+		}
+		return owned.size() > 0 ? owned : null;
 	}
 
 	/** Forces a world to save claim data **/
@@ -215,13 +238,15 @@ public class ClaimManager {
 			data.setString("OWNERUIDOFF", ownerOffline.toString());
 			System.out.println("Owner: " + owner);
 			data.setString("TRUEVIEWNAME", claim.getTrueViewName());
+			NBTTagCompound memberCompound = new NBTTagCompound();
 			for(EnumPerm perm : EnumPerm.values()) {
-				NBTTagCompound members = new NBTTagCompound();
+				NBTTagList members = new NBTTagList();
 				for(UUID member : claim.getArrayForPermission(perm)) {
-					members.setString("MEMBER_" + member.toString(), member.toString());
+					members.appendTag(new NBTTagString(member.toString()));
 				}
-				data.setTag("MEMBERS_" + perm.name(), members);
+				memberCompound.setTag(perm.name(), members);
 			}
+			data.setTag("MEMBERS", memberCompound);
 			store.data.setTag("CLAIM_" + serialName, data);
 			store.markDirty();
 			System.out.println("Saving claim: " + serialName);
@@ -249,17 +274,19 @@ public class ClaimManager {
 				if(claimVals.length > 0 && claimVals[0] == 0) {
 					System.out.println("Valid version.");
 					ClaimArea claim = new ClaimArea(claimVals[1], claimVals[2], claimVals[3], claimVals[4], claimVals[5], owner, ownerOffline, trueViewName);
-					for(String key2 : data.getKeySet()) {
-						if(key2.startsWith("MEMBERS_")) {
-							NBTTagCompound members = data.getCompoundTag(key2);
-							for(String key3 : members.getKeySet()) {
-								if(key3.startsWith("MEMBER_")) {
-									UUID member = UUID.fromString(members.getString(key3));
-									claim.addMember(EnumPerm.valueOf(key2.replaceAll("MEMBERS_", "")), member);
-								}
+
+					NBTTagCompound memberCompound = data.getCompoundTag("MEMBERS");
+					for(String permString : memberCompound.getKeySet()) {
+						if(EnumPerm.valueOf(permString) != null) {
+							NBTTagList tagList = memberCompound.getTagList(permString, Constants.NBT.TAG_STRING);
+							for(int i = 0; i < tagList.tagCount(); i++) {
+								String uuidString = tagList.getStringTagAt(i);
+								UUID member = UUID.fromString(uuidString);
+								claim.addMember(EnumPerm.valueOf(permString), member);
 							}
 						}
 					}
+
 					this.addClaim(claim);
 				} else {
 					ClaimIt.logger.log(Level.FATAL, "Detected version that doesn't exist yet! Mod was downgraded? Claim cannot be loaded.");

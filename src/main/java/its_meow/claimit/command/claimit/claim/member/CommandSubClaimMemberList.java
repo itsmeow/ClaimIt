@@ -1,13 +1,13 @@
-package its_meow.claimit.common.command.claimit.claim.member;
+package its_meow.claimit.command.claimit.claim.member;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.UUID;
 
-import its_meow.claimit.common.claim.ClaimArea;
-import its_meow.claimit.common.claim.ClaimManager;
-import its_meow.claimit.common.claim.EnumPerm;
+import its_meow.claimit.claim.ClaimArea;
+import its_meow.claimit.claim.ClaimManager;
+import its_meow.claimit.claim.EnumPerm;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
@@ -106,7 +106,7 @@ public class CommandSubClaimMemberList extends CommandBase {
 		if(claim != null) {
 			ArrayList<UUID> members = claim.getArrayForPermission(filter);
 			if(sender instanceof EntityPlayer && !claim.getMembers().keySet().contains(EntityPlayer.getUUID(((EntityPlayer) sender).getGameProfile()))) {
-				if(claim.isOwner((EntityPlayer) sender)) {
+				if(!claim.isOwner((EntityPlayer) sender)) {
 					throw new CommandException("You cannot view the members of this claim!");
 				}
 			}

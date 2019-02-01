@@ -1,12 +1,12 @@
-package its_meow.claimit.common.command.claimit.claim;
+package its_meow.claimit.command.claimit.claim;
 
 import java.util.Set;
 import java.util.UUID;
 
 import com.mojang.authlib.GameProfile;
 
-import its_meow.claimit.common.claim.ClaimArea;
-import its_meow.claimit.common.claim.ClaimManager;
+import its_meow.claimit.claim.ClaimArea;
+import its_meow.claimit.claim.ClaimManager;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;

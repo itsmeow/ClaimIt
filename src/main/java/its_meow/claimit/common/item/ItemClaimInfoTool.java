@@ -3,8 +3,8 @@ package its_meow.claimit.common.item;
 import java.util.UUID;
 
 import its_meow.claimit.ClaimIt;
-import its_meow.claimit.common.claim.ClaimArea;
-import its_meow.claimit.common.claim.ClaimManager;
+import its_meow.claimit.claim.ClaimArea;
+import its_meow.claimit.claim.ClaimManager;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;

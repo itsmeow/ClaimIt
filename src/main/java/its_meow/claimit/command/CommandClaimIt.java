@@ -1,13 +1,13 @@
-package its_meow.claimit.common.command;
+package its_meow.claimit.command;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
 import its_meow.claimit.Ref;
-import its_meow.claimit.common.claim.EnumPerm;
-import its_meow.claimit.common.command.claimit.CommandSubAdmin;
-import its_meow.claimit.common.command.claimit.CommandSubClaim;
+import its_meow.claimit.claim.EnumPerm;
+import its_meow.claimit.command.claimit.CommandSubAdmin;
+import its_meow.claimit.command.claimit.CommandSubClaim;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommand;
 import net.minecraft.command.ICommandSender;

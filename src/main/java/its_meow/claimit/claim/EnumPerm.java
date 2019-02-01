@@ -1,4 +1,4 @@
-package its_meow.claimit.common.claim;
+package its_meow.claimit.claim;
 
 public enum EnumPerm {
 	

@@ -1,4 +1,4 @@
-package its_meow.claimit.common.command.claimit.claim;
+package its_meow.claimit.command.claimit.claim;
 
 import java.util.UUID;
 
@@ -6,10 +6,10 @@ import javax.annotation.Nullable;
 
 import com.mojang.authlib.GameProfile;
 
-import its_meow.claimit.common.claim.ClaimArea;
-import its_meow.claimit.common.claim.ClaimManager;
-import its_meow.claimit.common.claim.EnumPerm;
-import its_meow.claimit.common.command.claimit.claim.member.CommandSubClaimMemberList;
+import its_meow.claimit.claim.ClaimArea;
+import its_meow.claimit.claim.ClaimManager;
+import its_meow.claimit.claim.EnumPerm;
+import its_meow.claimit.command.claimit.claim.member.CommandSubClaimMemberList;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommand;
 import net.minecraft.command.ICommandSender;
@@ -84,7 +84,7 @@ public class CommandSubClaimMember extends CommandTreeBase {
 			if(profile != null && profile.getName().equals(username)) { // Found the profile!
 				id = profile.getId();
 			} else {
-				throw new PlayerNotFoundException("Invalid player: " + args[0]);
+				throw new PlayerNotFoundException("Invalid player: " + username);
 			}
 			ClaimManager mgr = ClaimManager.getManager();
 			ClaimArea claim = null;
