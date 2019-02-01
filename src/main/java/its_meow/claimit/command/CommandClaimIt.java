@@ -69,28 +69,37 @@ public class CommandClaimIt extends CommandTreeBase {
 	public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args,
 			BlockPos targetPos) {
 		List<String> completions = new LinkedList<String>();
-		if(args.length == 1) {
+		/* 
+		 * Key:
+		 * . = The part to be completed
+		 * * = Wildcard. Could be any value here (may be limited to a set)
+		 * + = General filter. No spot is completed here, but we are completing every part past and at this.
+		 * */
+		
+		if(args.length == 1) { // claimit .
 			completions.add("claim");
 			completions.add("admin");
+			completions.add("cancel");
+			completions.add("confirm");
 		} else {
-			if(args[1].equals("claim") && args.length == 2) {
+			if(args[0].equals("claim") && args.length == 2) { // claimit claim .
 				completions.add("info");
 				completions.add("delete");
 				completions.add("list");
 				completions.add("setname");
 				completions.add("member");
 			}
-			if(args.length > 2 && args[1].equals("claim") && args[2].equals("member")) {
-				if(args.length == 3) {
+			if(args.length > 2 && args[0].equals("claim") && args[1].equals("member")) { // claimit claim member +
+				if(args.length == 3) { // claimit claim member .
 					completions.add("add");
 					completions.add("remove");
 					completions.add("list");
 				}
-				if(args.length == 4) {
+				if(args.length == 4) { // claimit claim member * .
 					for(EnumPerm perm : EnumPerm.values()) {
 						completions.add(perm.toString().toLowerCase());
 					}
-				} else if(args.length == 5 && args[3].equals("list")) {
+				} else if(args.length == 5 && args[2].equals("list")) { // claimit claim member list * .
 					for(EnumPerm perm : EnumPerm.values()) {
 						completions.add(perm.toString().toLowerCase());
 					}
