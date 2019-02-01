@@ -21,7 +21,7 @@ public class CommandSubClaimSetName extends CommandBase {
 	public String getUsage(ICommandSender sender) {
 		return "claimit claim setname <name>";
 	}
-	
+
 	@Override
 	public boolean checkPermission(MinecraftServer server, ICommandSender sender) {
 		return true;
@@ -34,14 +34,15 @@ public class CommandSubClaimSetName extends CommandBase {
 				EntityPlayer player = (EntityPlayer) sender;
 				ClaimArea claim = ClaimManager.getManager().getClaimAtLocation(player.world, player.getPosition());
 				if(claim != null) {
-					if(claim.isTrueOwner(player)) {
-						claim.setViewName(args[0], player);
-						sendMessage(sender, "§bSet this claim's name to: §a" + claim.getDisplayedViewName());
-					} else {
-						if(ClaimManager.getManager().isAdmin(player)) {
-							sendMessage(sender, "§cAdmins cannot change claim names.");
+					if(claim.isOwner(player)) {
+						boolean pass = claim.setViewName(args[0]);
+						if(pass) {
+							sendMessage(sender, "§bSet this claim's name to: §a" + claim.getDisplayedViewName());
+							if(ClaimManager.getManager().isAdmin(player)) {
+								sendMessage(sender, "§bSet this claim's true name to: §a" + claim.getTrueViewName());
+							}
 						} else {
-							sendMessage(sender, "§cYou don't own this claim!");
+							sendMessage(sender, "§cFailed to set name. There is another claim " + (ClaimManager.getManager().isAdmin(player) ? "this player" : "you") + " own with this name.");
 						}
 					}
 				} else {
@@ -54,7 +55,7 @@ public class CommandSubClaimSetName extends CommandBase {
 			throw new SyntaxErrorException("Specify a name with no spaces. Usage: " + this.getUsage(sender));
 		}
 	}
-	
+
 	private static void sendMessage(ICommandSender sender, String message) {
 		sender.sendMessage(new TextComponentString(message));
 	}

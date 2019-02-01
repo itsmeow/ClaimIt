@@ -38,7 +38,7 @@ public class ItemClaimInfoTool extends Item {
 				ClaimArea claim = ClaimManager.getManager().getClaimAtLocation(worldIn, pos);
 				BlockPos[] corners = claim.getTwoMainClaimCorners();
 				UUID owner = claim.getOwner();
-				String ownerName = ClaimManager.getPlayerName(owner.toString(), worldIn);
+				String ownerName = ClaimManager.getPlayerName(owner, worldIn);
 				if(ownerName == null) {
 					ownerName = owner.toString();
 				}

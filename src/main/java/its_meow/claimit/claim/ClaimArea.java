@@ -149,7 +149,8 @@ public class ClaimArea {
 		return false;
 	}
 	
-	/** Do NOT use this for permission checking. Only for use in removing members. **/
+	/** Do NOT use this for permission checking. Only for use in removing members. 
+	 * Why: doesn't account for admins or the owner of the claim. It purely returns if a member is in the list.**/
 	public boolean inPermissionList(EnumPerm permission, UUID id) {
 		ArrayList<UUID> array = getArrayForPermission(permission);
 		if(array != null && array.contains(id)) {
@@ -158,6 +159,10 @@ public class ClaimArea {
 		return false;
 	}
 	
+	/** Get the member arrays for a permission 
+	 * @param permission - The permission to get the array for. 
+	 * @return The array used to store members of permission
+	 * **/
 	@Nullable
 	public ArrayList<UUID> getArrayForPermission(EnumPerm permission) {
 		switch(permission) {
@@ -169,11 +174,20 @@ public class ClaimArea {
 		}
 	}
 	
+	/** Adds a member to the member list with a given permission and player object 
+	 * This runs {@link ClaimArea::addMember(EnumPerm, UUID)} after converting the player to UUID
+	 * @param permission - The permission which will be used
+	 * @param player - The player that will be added
+	 * @return Whether the adding was successful or not (if the player is already in the list) **/
 	public boolean addMember(EnumPerm permission, EntityPlayer player) {
 		UUID uuid = EntityPlayer.getUUID(player.getGameProfile());
 		return this.addMember(permission, uuid);
 	}
 	
+	/** Adds a member to the member list with a given permission and UUID
+	 * @param permission - The permission which will be used
+	 * @param uuid - The player UUID that will be added
+	 * @return Whether the adding was successful or not (if the player is already in the list)**/
 	public boolean addMember(EnumPerm permission, UUID uuid) {
 		ArrayList<UUID> array = getArrayForPermission(permission);
 		if(!array.contains(uuid)) {
@@ -229,33 +243,35 @@ public class ClaimArea {
 		return isInXRange && isInZRange;
 	}
 
-	/** Returns posX and posZ as BlockPos **/
+	/** @return posX and posZ as BlockPos **/
 	public BlockPos getMainPosition() {
 		return new BlockPos(posX, 0, posZ);
 	}
 
-	/** Returns the highest X and Z corner **/
+	/** @return the highest X and Z corner **/
 	public BlockPos getHXZPosition() {
 		return new BlockPos(posX + sideLengthX, 0, posZ + sideLengthZ);
 	}
 
-	/** Returns the highest X and lowest Z corner **/
+	/** @return the highest X and lowest Z corner **/
 	public BlockPos getHXLZPosition() {
 		return new BlockPos(posX + sideLengthX, 0, posZ);
 	}
 
-	/** Returns the lowest X and the highest Z corner **/
+	/** @return the lowest X and the highest Z corner **/
 	public BlockPos getLXHZPosition() {
 		return new BlockPos(posX, 0, posZ + sideLengthZ);
 	}
-
+	
+	/** @return The lowest X and Z corner at [0] and the high X and Z corner at [1] **/
 	public BlockPos[] getTwoMainClaimCorners() {
 		BlockPos[] corners = new BlockPos[2];
 		corners[0] = this.getMainPosition();
 		corners[1] = this.getHXZPosition();
 		return corners;
 	}
-
+	
+	/** @return All four corners **/
 	public BlockPos[] getFourCorners() {
 		BlockPos[] corners = new BlockPos[4];
 		corners[0] = this.getMainPosition();
@@ -264,54 +280,72 @@ public class ClaimArea {
 		corners[3] = this.getHXZPosition();
 		return corners;
 	}
-
+	
+	/** @return The length of the claim in the X direction. Keep in mind this does NOT include the initial block so the actual side length is 1 larger. **/
 	public int getSideLengthX() {
 		return sideLengthX;
 	}
-
+	
+	/** @return The length of the claim in the Z direction. Keep in mind this does NOT include the initial block so the actual side length is 1 larger. **/
 	public int getSideLengthZ() {
 		return sideLengthZ;
 	}
 
 	@Nullable
+	/** @return The UUID of the owner of this claim **/
 	public UUID getOwner() {
 		return this.ownerUUID;
 	}
 
 	@Nullable
+	/** @return The offline UUID of the owner of this claim **/
 	public UUID getOwnerOffline() {
 		return this.ownerUUIDOffline;
 	}
 
+	/** @return The dimension ID of this claim (e.g., 0 for overworld) **/
 	public int getDimensionID() {
 		return dimID;
 	}
-
+	
+	/** @return The server's world instance of this claim (retrieved from {@link DimensionManager}.getWorld(int) **/
 	public World getWorld() {
 		return DimensionManager.getWorld(this.dimID);
 	}
-
+	
+	/** @return The XZ area of this claim - (XLength + 1) * (ZLength + 1) **/
 	public int getArea() {
 		return (sideLengthX + 1) * (sideLengthZ + 1);
 	}
 
 	// Versions Store:
 	// 0: {0, dimID, posX, posZ, sideLengthX, sideLengthZ}
-
+	
+	/** @return The claim data as an array for serialization.
+	 * [0]: The version of this data. This is so if there is an update to the serialization format, you can determine what the version is.
+	 * [1]: The dimension ID of this claim 
+	 * [2]: The X position of this claim's lowest corner 
+	 * [3]: The Z position of this claim's lowest corner
+	 * [4]: The side length of this claim in the X direction (excluding base block) 
+	 * [5]: The side length of this claim in the Y direction (excluding base block)
+	 * **/
 	public int[] getSelfAsInt() {
 		// 0 is version for updates to serialization, interpret version if changes are made to serialization structure
 		int[] s = {0, dimID, posX, posZ, sideLengthX, sideLengthZ};
 		return s;
 	}
-
+	
+	/** @return Name used for serialization. Also a Unique ID as it contains all the claim data concatenated.**/
 	public String getSerialName() {
 		return name;
 	}
 	
+	/** @return The view name of this claim. Starts with the UUID of the owner, an underscore, and then whatever name was set/generated **/
 	public String getTrueViewName() {
 		return viewName;
 	}
 	
+	/** @return The view name of this claim that is displayed to the regular user. Can be set by user. **/
 	public String getDisplayedViewName() {
 		if(!viewName.contains("_")) { // The data was edited! Making a new name...
 			this.viewName = ownerUUID.toString() + "_" + Math.abs(posX) + Math.abs(posZ) + dimID + Math.round(Math.random() * 100);
@@ -319,16 +353,12 @@ public class ClaimArea {
 		return viewName.substring(viewName.indexOf('_') + 1);
 	}
 	
-	/** Sets the used name for this ClaimArea. 
-	 * @param nameIn - Name to set
-	 * @param player - Player that owns the claim (will not work if not the true owner)
+	/** Sets the displayed name for this ClaimArea. 
+	 * @param nameIn - Name to set to
 	 * @return True if no other claims by the owner have this as their name **/
-	public boolean setViewName(String nameIn, EntityPlayer player) {
+	public boolean setViewName(String nameIn) {
 		boolean pass = true;
-		if(!this.isTrueOwner(player)) { // Player does not own this claim
-			return false;
-		}
-		for(ClaimArea claim : ClaimManager.getManager().getClaimsList()) {
+		for(ClaimArea claim : ClaimManager.getManager().getClaimsOwnedByPlayer(this.getOwner())) {
 			if(claim.getTrueViewName().equals(nameIn) && claim != this) { // Claim has the same name, is not this claim, and is owned by the same player
 				pass = false;
 			}

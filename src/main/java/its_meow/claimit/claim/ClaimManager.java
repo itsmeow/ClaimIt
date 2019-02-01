@@ -61,8 +61,8 @@ public class ClaimManager {
 		claims.remove(claim);
 	}
 
-	/** Returns a copy of the claims list, not modifiable. **/
-	public Set<ClaimArea> getClaimsList() {
+	/** @return A copy of the claims list. Final. **/
+	public final Set<ClaimArea> getClaimsList() {
 		Set<ClaimArea> claimsList = new HashSet<ClaimArea>();
 		for(ClaimArea claim : claims) {
 			claimsList.add(claim);
@@ -200,7 +200,7 @@ public class ClaimManager {
 
 	/** Gets all claims owned by a UUID
 	 * @param uuid - The UUID of the player to be searched for
-	 * @return A Set<ClaimArea> of ClaimAreas owned by the player. If no claims are owned, returns null.
+	 * @return A {@link Set} of ClaimAreas owned by the player. If no claims are owned, returns null.
 	 * **/
 	@Nullable
 	public Set<ClaimArea> getClaimsOwnedByPlayer(UUID uuid) {
@@ -213,7 +213,7 @@ public class ClaimManager {
 		return owned.size() > 0 ? owned : null;
 	}
 
-	/** Forces a world to save claim data **/
+	/** Forces a world to save claim data. Removes all claim data that is stored and adds current data. **/
 	public void serialize() {
 		ClaimSerializer store = ClaimSerializer.get();
 		if(store != null && store.data != null && store.data.getSize() > 0) {
@@ -254,7 +254,7 @@ public class ClaimManager {
 	}
 
 	/** Forces a world to load claim data. 
-	 * Overwrites new claim data since last load! **/
+	 * Overwrites new claim data since last load (this is because it is used at world/server startup)! A "reload" should probably save before doing this. **/
 	public void deserialize() {
 		claims.clear();
 		ClaimSerializer store = ClaimSerializer.get();
@@ -295,11 +295,14 @@ public class ClaimManager {
 		}
 	}
 
+	/** Attempts to get name from UUID cache, then requests name from Mojang servers. Requires World to get server instance. 
+	 * @param uuid - The UUID to attempt to retrieve the name for
+	 * @param world - A world instance. This is used to get the server instance.
+	 * @return The name of the UUID or null if none was found**/
 	@Nullable
-	/** Attempts to get name from UUID cache, then requests name from Mojang servers. Requires World to get server instance. **/
-	public static String getPlayerName(String uuid, World worldIn) {
+	public static String getPlayerName(UUID uuid, World worldIn) {
 		String name = null;
-		GameProfile profile = worldIn.getMinecraftServer().getPlayerProfileCache().getProfileByUUID(UUID.fromString(uuid));
+		GameProfile profile = worldIn.getMinecraftServer().getPlayerProfileCache().getProfileByUUID(uuid);
 		if(profile != null) {
 			name = profile.getName();
 		}
@@ -332,10 +335,10 @@ public class ClaimManager {
 		}
 		return name;
 	}
-
+	
+	/** Clears the list of stored claims. WARNING: If data is saved after this is done (like, if the server shuts down) all the claims data will be gone permanently. This is only used before deserialization. **/
 	public void clearClaims() {
 		this.claims.clear();
-
 	}
 
 }

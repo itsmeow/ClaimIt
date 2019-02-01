@@ -115,7 +115,7 @@ public class CommandSubClaimMemberList extends CommandBase {
 			}
 			sendMessage(sender, "§a" + filter.toString() + "§9:");
 			for(UUID member : members) {
-				String name = ClaimManager.getPlayerName(member.toString(), sender.getEntityWorld());
+				String name = ClaimManager.getPlayerName(member, sender.getEntityWorld());
 				sendMessage(sender, "§e" + name);
 			}
 		} else {
@@ -142,7 +142,7 @@ public class CommandSubClaimMemberList extends CommandBase {
 				}
 				int end = permString.lastIndexOf(',');
 				permString = permString.substring(0, end);
-				sendMessage(sender, "§e" + ClaimManager.getPlayerName(member.toString(), sender.getEntityWorld()) + "§9:§a " + permString);
+				sendMessage(sender, "§e" + ClaimManager.getPlayerName(member, sender.getEntityWorld()) + "§9:§a " + permString);
 			}
 		} else {
 			throw new WrongUsageException("§cThere is no claim here! Usage: §b" + this.getUsage(sender));

@@ -52,18 +52,17 @@ public class CommandSubClaimList extends CommandBase {
 		if(sender instanceof EntityPlayer) {
 			EntityPlayer player = (EntityPlayer) sender;
 			if(!ClaimManager.getManager().isAdmin(player)) {
-				Set<ClaimArea> claims = ClaimManager.getManager().getClaimsList();
-				int i = 0;
-				for(ClaimArea claim : claims) {
-					if(claim.isTrueOwner(player)) {
+				final Set<ClaimArea> claims = ClaimManager.getManager().getClaimsOwnedByPlayer(player.getGameProfile().getId());
+				if(claims != null) {
+					int i = 0;
+					for(ClaimArea claim : claims) {
 						i++;
 						if(i == 1) {
 							sendMessage(sender, "§1Claim List for §a" + player.getName() + "§1:");
 						}
 						sendMessage(sender, "§9Name: §2" + claim.getDisplayedViewName());
 					}
-				}
-				if(i == 0) {
+				} else {
 					sendMessage(sender, "§cYou don't own any claims!");
 				}
 			} else {
@@ -76,7 +75,7 @@ public class CommandSubClaimList extends CommandBase {
 					if(filter == null || claim.isTrueOwner(filter)) {
 						i++;
 						sendMessage(sender, "##### Claim " + i + " #####");
-						sendMessage(sender, "Owner: " + ClaimManager.getPlayerName(claim.getOwner().toString(), sender.getEntityWorld()));
+						sendMessage(sender, "Owner: " + ClaimManager.getPlayerName(claim.getOwner(), sender.getEntityWorld()));
 						sendMessage(sender, "Claim True Name: " + claim.getTrueViewName());
 						sendMessage(sender, "Dimension: " + claim.getDimensionID());
 						sendMessage(sender, "Location: " + (claim.getMainPosition().getX()) + ", " + (claim.getMainPosition().getZ()));
@@ -94,7 +93,7 @@ public class CommandSubClaimList extends CommandBase {
 				if(filter == null || claim.isTrueOwner(filter)) {
 					i++;
 					sendMessage(sender, "####CLAIM INFO####");
-					sendMessage(sender, "Claim #" + i + ", owned by: " + ClaimManager.getPlayerName(claim.getOwner().toString(), sender.getEntityWorld()));
+					sendMessage(sender, "Claim #" + i + ", owned by: " + ClaimManager.getPlayerName(claim.getOwner(), sender.getEntityWorld()));
 					sendMessage(sender, "Claim True Name: " + claim.getTrueViewName());
 					sendMessage(sender, "Dimension: " + claim.getDimensionID());
 					sendMessage(sender, "Location: " + (claim.getMainPosition().getX()) + ", " + (claim.getMainPosition().getZ()));

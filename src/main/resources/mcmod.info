@@ -2,7 +2,7 @@
 {
   "modid": "claimit",
   "name": "ClaimIt",
-  "description": "Claim areas, share with friends, and view changes.",
+  "description": "Claim areas, share with friends, and manage claims.",
   "version": "${version}",
   "mcversion": "${mcversion}",
   "url": "",

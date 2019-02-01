@@ -72,7 +72,7 @@ public class CommandSubClaimInfo extends CommandBase {
 		World worldIn = player.getEntityWorld();
 		BlockPos[] corners = claim.getTwoMainClaimCorners();
 		UUID owner = claim.getOwner();
-		String ownerName = ClaimManager.getPlayerName(owner.toString(), worldIn);
+		String ownerName = ClaimManager.getPlayerName(owner, worldIn);
 		if(ownerName == null) {
 			ownerName = worldIn.getMinecraftServer().getPlayerProfileCache().getProfileByUUID(owner).getName();
 		}
