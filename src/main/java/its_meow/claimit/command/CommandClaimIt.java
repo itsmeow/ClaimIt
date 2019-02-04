@@ -5,7 +5,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 import its_meow.claimit.Ref;
-import its_meow.claimit.claim.EnumPerm;
+import its_meow.claimit.claim.ClaimPermission;
+import its_meow.claimit.claim.ClaimPermissionRegistry;
 import its_meow.claimit.command.claimit.CommandSubAdmin;
 import its_meow.claimit.command.claimit.CommandSubCancel;
 import its_meow.claimit.command.claimit.CommandSubClaim;
@@ -96,12 +97,12 @@ public class CommandClaimIt extends CommandTreeBase {
 					completions.add("list");
 				}
 				if(args.length == 4) { // claimit claim member * .
-					for(EnumPerm perm : EnumPerm.values()) {
-						completions.add(perm.toString().toLowerCase());
+					for(ClaimPermission perm : ClaimPermissionRegistry.getPermissions()) {
+						completions.add(perm.parsedName);
 					}
 				} else if(args.length == 5 && args[2].equals("list")) { // claimit claim member list * .
-					for(EnumPerm perm : EnumPerm.values()) {
-						completions.add(perm.toString().toLowerCase());
+					for(ClaimPermission perm : ClaimPermissionRegistry.getPermissions()) {
+						completions.add(perm.parsedName);
 					}
 				}
 			}

@@ -26,6 +26,7 @@ import net.minecraftforge.event.world.ExplosionEvent;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.Event.Result;
+import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 @Mod.EventBusSubscriber
@@ -38,7 +39,7 @@ public class ClaimEventHandler {
 		}
 	}
 	
-	@SubscribeEvent
+	@SubscribeEvent(priority = EventPriority.HIGHEST)
 	public void onBlockRightClicked(PlayerInteractEvent.RightClickBlock e) {
 		World world = e.getEntity().getEntityWorld();
 		BlockPos pos = e.getPos();
@@ -47,7 +48,7 @@ public class ClaimEventHandler {
 		if(claim != null && e.getItemStack().isEmpty()) {
 			EntityPlayer player = e.getEntityPlayer();
 			e.setCanceled(!claim.canUse(player));
-		} else if(claim == null && e.getItemStack().getItem() == Items.SHEARS && !world.isRemote) {
+		} else if(claim == null && e.getItemStack().getItem() == Items.SHEARS && !world.isRemote) { // Add a claim with shears
 			EntityPlayer player = e.getEntityPlayer();
 			EnumHand hand = e.getHand();
 			ItemStack stack = player.getHeldItem(hand);
@@ -93,7 +94,7 @@ public class ClaimEventHandler {
 		}
 	}
 
-	@SubscribeEvent
+	@SubscribeEvent(priority = EventPriority.HIGHEST)
 	public void onBlockBroken(BreakEvent e) {
 		World world = e.getWorld();
 		BlockPos pos = e.getPos();
@@ -105,7 +106,7 @@ public class ClaimEventHandler {
 		}
 	}
 
-	@SubscribeEvent
+	@SubscribeEvent(priority = EventPriority.HIGHEST)
 	public void onBlockPlaced(PlaceEvent e) {
 		World world = e.getWorld();
 		BlockPos pos = e.getPos();
@@ -123,7 +124,7 @@ public class ClaimEventHandler {
 		}
 	}
 
-	@SubscribeEvent
+	@SubscribeEvent(priority = EventPriority.HIGHEST)
 	public void onFarmTrample(FarmlandTrampleEvent e) {
 		World world = e.getWorld();
 		BlockPos pos = e.getPos();
@@ -140,7 +141,7 @@ public class ClaimEventHandler {
 		}
 	}
 
-	@SubscribeEvent
+	@SubscribeEvent(priority = EventPriority.HIGHEST)
 	public void onPlayerAttackAnimal(AttackEntityEvent e) {
 		World world = e.getEntityPlayer().getEntityWorld();
 		BlockPos pos = e.getEntityPlayer().getPosition();
@@ -164,7 +165,7 @@ public class ClaimEventHandler {
 		}
 	}
 
-	@SubscribeEvent
+	@SubscribeEvent(priority = EventPriority.HIGHEST)
 	public void onEntityRightClicked(PlayerInteractEvent.EntityInteract e) {
 		World world = e.getEntity().getEntityWorld();
 		BlockPos pos = e.getEntity().getPosition();
@@ -176,7 +177,7 @@ public class ClaimEventHandler {
 		}
 	}
 
-	@SubscribeEvent
+	@SubscribeEvent(priority = EventPriority.HIGHEST)
 	public void onPlayerUse(PlayerInteractEvent.RightClickEmpty e) {
 		World world = e.getEntity().getEntityWorld();
 		BlockPos pos = e.getPos();
@@ -188,7 +189,7 @@ public class ClaimEventHandler {
 		}
 	}
 	
-	@SubscribeEvent
+	@SubscribeEvent(priority = EventPriority.HIGHEST)
 	public void onPlayerUse(PlayerInteractEvent.RightClickItem e) {
 		World world = e.getEntity().getEntityWorld();
 		BlockPos pos = e.getPos();
@@ -200,7 +201,7 @@ public class ClaimEventHandler {
 		}
 	}
 	
-	@SubscribeEvent
+	@SubscribeEvent(priority = EventPriority.HIGHEST)
 	public void onPlayerUse(PlayerInteractEvent.LeftClickEmpty e) {
 		World world = e.getEntity().getEntityWorld();
 		BlockPos pos = e.getPos();
@@ -212,7 +213,7 @@ public class ClaimEventHandler {
 		}
 	}
 
-	@SubscribeEvent
+	@SubscribeEvent(priority = EventPriority.HIGHEST)
 	public void onBlockExplodedByMob(net.minecraftforge.event.entity.EntityMobGriefingEvent e) {
 		World world = e.getEntity().getEntityWorld();
 		BlockPos pos = e.getEntity().getPosition();
@@ -223,7 +224,7 @@ public class ClaimEventHandler {
 		}
 	}
 
-	@SubscribeEvent
+	@SubscribeEvent(priority = EventPriority.HIGHEST)
 	public void onPlayerAttack(net.minecraftforge.event.entity.player.AttackEntityEvent e) {
 		World world = e.getEntity().getEntityWorld();
 		BlockPos pos = e.getEntity().getPosition();
@@ -239,7 +240,7 @@ public class ClaimEventHandler {
 		}
 	}
 
-	@SubscribeEvent
+	@SubscribeEvent(priority = EventPriority.HIGHEST)
 	public void onHurtEvent(LivingHurtEvent e) {
 		EntityLivingBase entity = e.getEntityLiving();
 		DamageSource source = e.getSource();
@@ -261,7 +262,7 @@ public class ClaimEventHandler {
 		}
 	}
 
-	@SubscribeEvent
+	@SubscribeEvent(priority = EventPriority.HIGHEST)
 	public void onPlayerPickupXp(PlayerPickupXpEvent e) {
 		World world = e.getEntity().getEntityWorld();
 		BlockPos pos = e.getEntity().getPosition();
@@ -273,7 +274,7 @@ public class ClaimEventHandler {
 		}
 	}
 
-	@SubscribeEvent
+	@SubscribeEvent(priority = EventPriority.HIGHEST)
 	public void onExplode(ExplosionEvent.Detonate e) {
 		World world = e.getWorld();
 		ClaimManager cm = ClaimManager.getManager();

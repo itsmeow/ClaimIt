@@ -20,6 +20,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
@@ -239,12 +240,12 @@ public class ClaimManager {
 			System.out.println("Owner: " + owner);
 			data.setString("TRUEVIEWNAME", claim.getTrueViewName());
 			NBTTagCompound memberCompound = new NBTTagCompound();
-			for(EnumPerm perm : EnumPerm.values()) {
+			for(ClaimPermission perm : ClaimPermissionRegistry.getPermissions()) {
 				NBTTagList members = new NBTTagList();
 				for(UUID member : claim.getArrayForPermission(perm)) {
 					members.appendTag(new NBTTagString(member.toString()));
 				}
-				memberCompound.setTag(perm.name(), members);
+				memberCompound.setTag(perm.resource.toString(), members);
 			}
 			data.setTag("MEMBERS", memberCompound);
 			store.data.setTag("CLAIM_" + serialName, data);
@@ -277,12 +278,12 @@ public class ClaimManager {
 
 					NBTTagCompound memberCompound = data.getCompoundTag("MEMBERS");
 					for(String permString : memberCompound.getKeySet()) {
-						if(EnumPerm.valueOf(permString) != null) {
+						if(ClaimPermissionRegistry.getPermission(new ResourceLocation(permString)) != null) {
 							NBTTagList tagList = memberCompound.getTagList(permString, Constants.NBT.TAG_STRING);
 							for(int i = 0; i < tagList.tagCount(); i++) {
 								String uuidString = tagList.getStringTagAt(i);
 								UUID member = UUID.fromString(uuidString);
-								claim.addMember(EnumPerm.valueOf(permString), member);
+								claim.addMember(ClaimPermissionRegistry.getPermission(new ResourceLocation(permString)), member);
 							}
 						}
 					}

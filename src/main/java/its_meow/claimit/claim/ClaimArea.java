@@ -35,11 +35,9 @@ public class ClaimArea {
 	/** The name used to refer to this ClaimArea by the player 
 	 * defaults to {@link name}**/
 	private String viewName;
-	/* Private fields for storing member UUIDs */
-	private ArrayList<UUID> membersModify;
-	private ArrayList<UUID> membersUse;
-	private ArrayList<UUID> membersEntity;
-	private ArrayList<UUID> membersPVP;
+	/* Private field for storing member UUIDs */
+	private Map<ClaimPermission, ArrayList<UUID>> memberLists;
+	private Map<ClaimPermission, Boolean> toggles;
 
 	public ClaimArea(int dimID, int posX, int posZ, int sideLengthX, int sideLengthZ, EntityPlayer player) {
 		this(dimID, posX, posZ, sideLengthX, sideLengthZ, EntityPlayer.getUUID(player.getGameProfile()), EntityPlayer.getOfflineUUID(player.getName()));
@@ -53,10 +51,9 @@ public class ClaimArea {
 		this.sideLengthZ = sideLengthZ;
 		this.ownerUUID = ownerUUID;
 		this.ownerUUIDOffline = ownerUUIDOffline;
-		this.membersModify = new ArrayList<UUID>();
-		this.membersUse = new ArrayList<UUID>();
-		this.membersEntity = new ArrayList<UUID>();
-		this.membersPVP = new ArrayList<UUID>();
+		this.memberLists = new HashMap<ClaimPermission, ArrayList<UUID>>();
+		this.toggles = new HashMap<ClaimPermission, Boolean>();
+		
 		// Simplify main corner to the lowest x and y value
 		if(this.sideLengthX < 0 || this.sideLengthZ < 0) {
 			if(this.sideLengthX < 0) {
@@ -123,22 +120,25 @@ public class ClaimArea {
 	}
 
 	public boolean canModify(EntityPlayer player) {
-		return hasPermission(EnumPerm.MODIFY, player);
+		return hasPermission(ClaimPermissions.MODIFY, player);
 	}
 
 	public boolean canUse(EntityPlayer player) {
-		return hasPermission(EnumPerm.USE, player);
+		return hasPermission(ClaimPermissions.USE, player);
 	}
 	
 	public boolean canEntity(EntityPlayer player) {
-		return hasPermission(EnumPerm.ENTITY, player);
+		return hasPermission(ClaimPermissions.ENTITY, player);
 	}
 	
 	public boolean canPVP(EntityPlayer player) {
-		return hasPermission(EnumPerm.PVP, player);
+		return hasPermission(ClaimPermissions.PVP, player);
 	}
 
-	public boolean hasPermission(EnumPerm permission, EntityPlayer player) {
+	public boolean hasPermission(ClaimPermission permission, EntityPlayer player) {
+		if(permission.type == EnumPermissionType.TOGGLE) {
+			return false;
+		}
 		if(this.isOwner(player)) {
 			return true;
 		}
@@ -149,9 +149,13 @@ public class ClaimArea {
 		return false;
 	}
 	
+	public boolean isPermissionToggle(ClaimPermission perm) {
+		return this.toggles.get(perm);
+	}
+
 	/** Do NOT use this for permission checking. Only for use in removing members. 
 	 * Why: doesn't account for admins or the owner of the claim. It purely returns if a member is in the list.**/
-	public boolean inPermissionList(EnumPerm permission, UUID id) {
+	public boolean inPermissionList(ClaimPermission permission, UUID id) {
 		ArrayList<UUID> array = getArrayForPermission(permission);
 		if(array != null && array.contains(id)) {
 			return true;
@@ -164,14 +168,8 @@ public class ClaimArea {
 	 * @return The array used to store members of permission
 	 * **/
 	@Nullable
-	public ArrayList<UUID> getArrayForPermission(EnumPerm permission) {
-		switch(permission) {
-		case MODIFY: return membersModify;
-		case USE: return membersUse;
-		case ENTITY: return membersEntity;
-		case PVP: return membersPVP;
-		default: return null;
-		}
+	public ArrayList<UUID> getArrayForPermission(ClaimPermission permission) {
+		return memberLists.get(permission);
 	}
 	
 	/** Adds a member to the member list with a given permission and player object 
@@ -179,7 +177,7 @@ public class ClaimArea {
 	 * @param permission - The permission which will be used
 	 * @param player - The player that will be added
 	 * @return Whether the adding was successful or not (if the player is already in the list) **/
-	public boolean addMember(EnumPerm permission, EntityPlayer player) {
+	public boolean addMember(ClaimPermission permission, EntityPlayer player) {
 		UUID uuid = EntityPlayer.getUUID(player.getGameProfile());
 		return this.addMember(permission, uuid);
 	}
@@ -188,7 +186,7 @@ public class ClaimArea {
 	 * @param permission - The permission which will be used
 	 * @param uuid - The player UUID that will be added
 	 * @return Whether the adding was successful or not (if the player is already in the list)**/
-	public boolean addMember(EnumPerm permission, UUID uuid) {
+	public boolean addMember(ClaimPermission permission, UUID uuid) {
 		ArrayList<UUID> array = getArrayForPermission(permission);
 		if(!array.contains(uuid)) {
 			array.add(uuid);
@@ -197,12 +195,12 @@ public class ClaimArea {
 		return false;
 	}
 
-	public boolean removeMember(EnumPerm permission, EntityPlayer player) {
+	public boolean removeMember(ClaimPermission permission, EntityPlayer player) {
 		UUID uuid = EntityPlayer.getUUID(player.getGameProfile());
 		return this.removeMember(permission, uuid);
 	}
 	
-	public boolean removeMember(EnumPerm permission, UUID uuid) {
+	public boolean removeMember(ClaimPermission permission, UUID uuid) {
 		ArrayList<UUID> array = getArrayForPermission(permission);
 		if(array.contains(uuid)) {
 			array.remove(uuid);
@@ -211,20 +209,20 @@ public class ClaimArea {
 		return false;
 	}
 	
-	public Map<UUID, HashSet<EnumPerm>> getMembers() {
-		HashMap<UUID, HashSet<EnumPerm>> map = new HashMap<UUID, HashSet<EnumPerm>>();
-		for(EnumPerm perm : EnumPerm.values()) {
+	public Map<UUID, HashSet<ClaimPermission>> getMembers() {
+		HashMap<UUID, HashSet<ClaimPermission>> map = new HashMap<UUID, HashSet<ClaimPermission>>();
+		for(ClaimPermission perm : ClaimPermissionRegistry.getPermissions()) {
 			ArrayList<UUID> members = this.getArrayForPermission(perm);
 			for(UUID member : members) {
 				if(map.get(member) == null) {
-					HashSet<EnumPerm> set = new HashSet<EnumPerm>();
+					HashSet<ClaimPermission> set = new HashSet<ClaimPermission>();
 					set.add(perm);
 					if(map.containsKey(member)) {
 						map.remove(member);
 					}
 					map.put(member, set);
 				} else {
-					HashSet<EnumPerm> set = map.get(member);
+					HashSet<ClaimPermission> set = map.get(member);
 					set.add(perm);
 					if(map.containsKey(member)) {
 						map.remove(member);

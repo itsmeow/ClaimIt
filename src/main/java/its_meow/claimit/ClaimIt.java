@@ -5,6 +5,7 @@ import org.apache.logging.log4j.Logger;
 
 import its_meow.claimit.claim.ClaimEventHandler;
 import its_meow.claimit.claim.ClaimManager;
+import its_meow.claimit.claim.ClaimPermissions;
 import its_meow.claimit.command.CommandClaimIt;
 import its_meow.claimit.command.ConfirmationManager;
 import net.minecraft.creativetab.CreativeTabs;
@@ -40,6 +41,7 @@ public class ClaimIt {
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent event) {
 		logger = LogManager.getLogger("claimit");
+		ClaimPermissions.register();
 		MinecraftForge.EVENT_BUS.register(new ClaimEventHandler());
 	}
 
