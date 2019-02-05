@@ -62,7 +62,7 @@ public class CommandSubClaimMember extends CommandTreeBase {
 				throw new WrongUsageException("Improper argument count! Usage: " + this.getUsage(sender));
 			}
 			String action = args[0].toLowerCase();
-			String permissionStr = args[1].toUpperCase();
+			String permissionStr = args[1];
 			String username = args[2];
 			String claimName = null;
 			if(args.length == 4) {
@@ -72,17 +72,14 @@ public class CommandSubClaimMember extends CommandTreeBase {
 				throw new WrongUsageException("Invalid action! Specify add or remove. Usage: " + this.getUsage(sender));
 			}
 			ClaimPermissionMember permission = null;
-			String validPerms = "";
-			for(ClaimPermissionMember perm : ClaimPermissionRegistry.getMemberPermissions()) {
-				validPerms += perm.parsedName + " ";
-			}
+			String validPerms = ClaimPermissionRegistry.getValidPermissionListMember();
 			try {
-				permission = ClaimPermissionRegistry.parseMember(permissionStr);
+				permission = ClaimPermissionRegistry.getPermissionMember(permissionStr);
 			} catch (IllegalArgumentException e) {
-				throw new WrongUsageException("Invalid permission. Valid Permissions: " + validPerms + "\nUsage: " + this.getUsage(sender));
+				throw new CommandException("Invalid permission. Valid Permissions: " + validPerms + "\nUsage: " + this.getUsage(sender));
 			}
 			if(permission == null) {
-				throw new WrongUsageException("Invalid permission. Valid Permissions: " + validPerms + "\nUsage: " + this.getUsage(sender));
+				throw new CommandException("Invalid permission. Valid Permissions: " + validPerms + "\nUsage: " + this.getUsage(sender));
 			}
 			UUID id = null;
 			GameProfile profile = server.getPlayerProfileCache().getGameProfileForUsername(username);
@@ -123,10 +120,10 @@ public class CommandSubClaimMember extends CommandTreeBase {
 					if(!claim.inPermissionList(permission, id) || claim.isTrueOwner(id)) {
 						if(!(sender instanceof EntityPlayer) && sender.canUseCommand(2, "")) {
 							claim.addMember(permission, id);
-							sendMessage(sender, "§aSuccessfully added " + username + "§a to claim " + claim.getDisplayedViewName() + " with permission " + permission.toString());
+							sendMessage(sender, "§aSuccessfully added " + username + "§a to claim " + claim.getDisplayedViewName() + " with permission " + permission.parsedName);
 						} else if(sender instanceof EntityPlayer && claim.isOwner((EntityPlayer) sender)) {
 							claim.addMember(permission, id);
-							sendMessage(sender, "§aSuccessfully added " + username + "§a to claim " + claim.getDisplayedViewName() + " with permission " + permission.toString());
+							sendMessage(sender, "§aSuccessfully added " + username + "§a to claim " + claim.getDisplayedViewName() + " with permission " + permission.parsedName);
 						}
 					} else {
 						sendMessage(sender, "§eThis player already has that permission!");
@@ -136,10 +133,10 @@ public class CommandSubClaimMember extends CommandTreeBase {
 					if(claim.inPermissionList(permission, id)) {
 						if(!(sender instanceof EntityPlayer) && sender.canUseCommand(2, "")) {
 							claim.removeMember(permission, id);
-							sendMessage(sender, "§aSuccessfully removed permission " + permission.toString() + " from user " + username + " in claim " + claim.getDisplayedViewName());
+							sendMessage(sender, "§aSuccessfully removed permission " + permission.parsedName + " from user " + username + " in claim " + claim.getDisplayedViewName());
 						} else if(sender instanceof EntityPlayer && claim.isOwner((EntityPlayer) sender)) {
 							claim.removeMember(permission, id);
-							sendMessage(sender, "§aSuccessfully removed permission " + permission.toString() + " from user " + username + " in claim " + claim.getDisplayedViewName());
+							sendMessage(sender, "§aSuccessfully removed permission " + permission.parsedName + " from user " + username + " in claim " + claim.getDisplayedViewName());
 						}
 					} else {
 						sendMessage(sender, "§eThis player does not have that permission!");

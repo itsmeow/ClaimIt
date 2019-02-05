@@ -57,8 +57,18 @@ public class ClaimArea {
 		this.ownerUUID = ownerUUID;
 		this.ownerUUIDOffline = ownerUUIDOffline;
 		this.memberLists = new HashMap<ClaimPermissionMember, ArrayList<UUID>>();
+		for(ClaimPermissionMember perm : ClaimPermissionRegistry.getMemberPermissions()) {
+			if(!memberLists.containsKey(perm)) {
+				this.memberLists.put(perm, new ArrayList<UUID>());
+			}
+		}
 		this.toggles = new HashMap<ClaimPermissionToggle, Boolean>();
-		
+		for(ClaimPermissionToggle perm : ClaimPermissionRegistry.getTogglePermissions()) {
+			if(!toggles.containsKey(perm)) {
+				this.toggles.put(perm, perm.defaultValue);
+			}
+		}
+
 		// Simplify main corner to the lowest x and y value
 		if(this.sideLengthX < 0 || this.sideLengthZ < 0) {
 			if(this.sideLengthX < 0) {
@@ -96,7 +106,7 @@ public class ClaimArea {
 			return false;
 		}
 	}
-	
+
 	public boolean isTrueOwner(EntityPlayer player) {
 		try {
 			if(this.getOwner().equals(EntityPlayer.getUUID(player.getGameProfile()))) {
@@ -111,7 +121,7 @@ public class ClaimArea {
 			return false;
 		}
 	}
-	
+
 	public boolean isTrueOwner(UUID owner) {
 		try {
 			if(this.getOwner().equals(owner)) {
@@ -131,11 +141,11 @@ public class ClaimArea {
 	public boolean canUse(EntityPlayer player) {
 		return hasPermission(ClaimPermissions.USE, player);
 	}
-	
+
 	public boolean canEntity(EntityPlayer player) {
 		return hasPermission(ClaimPermissions.ENTITY, player);
 	}
-	
+
 	public boolean canPVP(EntityPlayer player) {
 		return hasPermission(ClaimPermissions.PVP, player);
 	}
@@ -153,7 +163,7 @@ public class ClaimArea {
 		}
 		return false;
 	}
-	
+
 	/** Tells whether a permission is enabled in a claim or not 
 	 *  @param perm - The permission to check
 	 *  @return The toggle status (on = true) **/
@@ -170,7 +180,7 @@ public class ClaimArea {
 		}
 		return false;
 	}
-	
+
 	/** Get the member arrays for a permission 
 	 * @param permission - The permission to get the array for. 
 	 * @return The array used to store members of permission
@@ -179,7 +189,7 @@ public class ClaimArea {
 	public ArrayList<UUID> getArrayForPermission(ClaimPermissionMember permission) {
 		return memberLists.get(permission);
 	}
-	
+
 	/** Adds a member to the member list with a given permission and player object 
 	 * This runs {@link ClaimArea::addMember(ClaimPermissionMember, UUID)} after converting the player to UUID
 	 * @param permission - The permission which will be used
@@ -189,7 +199,7 @@ public class ClaimArea {
 		UUID uuid = EntityPlayer.getUUID(player.getGameProfile());
 		return this.addMember(permission, uuid);
 	}
-	
+
 	/** Adds a member to the member list with a given permission and UUID
 	 * @param permission - The permission which will be used
 	 * @param uuid - The player UUID that will be added
@@ -202,7 +212,7 @@ public class ClaimArea {
 		}
 		return false;
 	}
-	
+
 	/** Removes a member from the member list with a given permission and player object
 	 * This runs {@link ClaimArea::removeMember(ClaimPermissionMember, UUID)} after converting the player to UUID
 	 * @param permission - The permission which will be removed
@@ -212,7 +222,7 @@ public class ClaimArea {
 		UUID uuid = EntityPlayer.getUUID(player.getGameProfile());
 		return this.removeMember(permission, uuid);
 	}
-	
+
 	/** Removes a member from the member list with a given permission and UUID
 	 * @param permission - The permission which will be removed
 	 * @param uuid - The player UUID that will be removed
@@ -225,7 +235,7 @@ public class ClaimArea {
 		}
 		return false;
 	}
-	
+
 	/** Returns a list of member UUIDs along with a set of their permissions. Used for easier displaying of member data. **/
 	public Map<UUID, HashSet<ClaimPermissionMember>> getMembers() {
 		HashMap<UUID, HashSet<ClaimPermissionMember>> map = new HashMap<UUID, HashSet<ClaimPermissionMember>>();
@@ -251,7 +261,7 @@ public class ClaimArea {
 		}
 		return map;
 	}
-	
+
 	/** (Please account for world differences if using this!)
 	 * @param blockPos - The BlockPos to check for
 	 * @return True if the given BlockPos is within the claim's bounds. **/
@@ -281,7 +291,7 @@ public class ClaimArea {
 	public BlockPos getLXHZPosition() {
 		return new BlockPos(posX, 0, posZ + sideLengthZ);
 	}
-	
+
 	/** @return The lowest X and Z corner at [0] and the high X and Z corner at [1] **/
 	public BlockPos[] getTwoMainClaimCorners() {
 		BlockPos[] corners = new BlockPos[2];
@@ -289,7 +299,7 @@ public class ClaimArea {
 		corners[1] = this.getHXZPosition();
 		return corners;
 	}
-	
+
 	/** @return All four corners **/
 	public BlockPos[] getFourCorners() {
 		BlockPos[] corners = new BlockPos[4];
@@ -299,12 +309,12 @@ public class ClaimArea {
 		corners[3] = this.getHXZPosition();
 		return corners;
 	}
-	
+
 	/** @return The length of the claim in the X direction. Keep in mind this does NOT include the initial block so the actual side length is 1 larger. **/
 	public int getSideLengthX() {
 		return sideLengthX;
 	}
-	
+
 	/** @return The length of the claim in the Z direction. Keep in mind this does NOT include the initial block so the actual side length is 1 larger. **/
 	public int getSideLengthZ() {
 		return sideLengthZ;
@@ -326,12 +336,12 @@ public class ClaimArea {
 	public int getDimensionID() {
 		return dimID;
 	}
-	
+
 	/** @return The server's world instance of this claim (retrieved from {@link DimensionManager}.getWorld(int) **/
 	public World getWorld() {
 		return DimensionManager.getWorld(this.dimID);
 	}
-	
+
 	/** @return The XZ area of this claim - (XLength + 1) * (ZLength + 1) **/
 	public int getArea() {
 		return (sideLengthX + 1) * (sideLengthZ + 1);
@@ -339,7 +349,7 @@ public class ClaimArea {
 
 	// Versions Store:
 	// 0: {0, dimID, posX, posZ, sideLengthX, sideLengthZ}
-	
+
 	/** @return The claim data as an array for serialization.
 	 * [0]: The version of this data. This is so if there is an update to the serialization format, you can determine what the version is.
 	 * [1]: The dimension ID of this claim 
@@ -353,17 +363,17 @@ public class ClaimArea {
 		int[] s = {0, dimID, posX, posZ, sideLengthX, sideLengthZ};
 		return s;
 	}
-	
+
 	/** @return Name used for serialization. Also a Unique ID as it contains all the claim data concatenated.**/
 	public String getSerialName() {
 		return name;
 	}
-	
+
 	/** @return The view name of this claim. Starts with the UUID of the owner, an underscore, and then whatever name was set/generated **/
 	public String getTrueViewName() {
 		return viewName;
 	}
-	
+
 	/** @return The view name of this claim that is displayed to the regular user. Can be set by user. **/
 	public String getDisplayedViewName() {
 		if(!viewName.contains("_")) { // The data was edited! Making a new name...
@@ -371,7 +381,7 @@ public class ClaimArea {
 		}
 		return viewName.substring(viewName.indexOf('_') + 1);
 	}
-	
+
 	/** Sets the displayed name for this ClaimArea. 
 	 * @param nameIn - Name to set to
 	 * @return True if no other claims by the owner have this as their name **/

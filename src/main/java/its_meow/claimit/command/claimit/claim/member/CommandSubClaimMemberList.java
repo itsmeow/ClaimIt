@@ -50,7 +50,7 @@ public class CommandSubClaimMemberList extends CommandBase {
 			// Attempt perm filter with no claim name
 
 			try {
-				ClaimPermissionMember filter = ClaimPermissionRegistry.parseMember(args[0]);
+				ClaimPermissionMember filter = ClaimPermissionRegistry.getPermissionMember(args[0]);
 				if(sender instanceof EntityPlayer) {
 					ClaimArea claim = m.getClaimAtLocation(sender.getEntityWorld(), sender.getPosition());
 					outputFiltered(claim, sender, filter);
@@ -80,7 +80,7 @@ public class CommandSubClaimMemberList extends CommandBase {
 			String claimName = args[0];
 			String permStr = args[1];
 			try {
-				ClaimPermissionMember filter = ClaimPermissionRegistry.parseMember(args[0]);
+				ClaimPermissionMember filter = ClaimPermissionRegistry.getPermissionMember(args[0]);
 				
 				if(sender instanceof EntityPlayer) {
 					EntityPlayer player = (EntityPlayer) sender;
@@ -96,7 +96,7 @@ public class CommandSubClaimMemberList extends CommandBase {
 				}
 				
 			} catch(IllegalArgumentException e) {
-				throw new WrongUsageException("§cNo such permission: §a" + permStr);
+				throw new WrongUsageException("§cNo such permission: §a" + permStr + "\n§cValid Permissions: §a" + ClaimPermissionRegistry.getValidPermissionListMember());
 			}
 		} else {
 			throw new WrongUsageException("§cToo many arguments! Usage: " + this.getUsage(sender));
@@ -114,7 +114,7 @@ public class CommandSubClaimMemberList extends CommandBase {
 			if(members.isEmpty()) {
 				throw new CommandException("This claim has no members with that permission.");
 			}
-			sendMessage(sender, "§a" + filter.toString() + "§9:");
+			sendMessage(sender, "§a" + filter.parsedName + "§9:");
 			for(UUID member : members) {
 				String name = ClaimManager.getPlayerName(member, sender.getEntityWorld());
 				sendMessage(sender, "§e" + name);
@@ -139,7 +139,7 @@ public class CommandSubClaimMemberList extends CommandBase {
 				String permString = "";
 				HashSet<ClaimPermissionMember> permSet = permMap.get(member);
 				for(ClaimPermissionMember p : permSet) {
-					permString += p.toString() + ", ";
+					permString += p.parsedName + ", ";
 				}
 				int end = permString.lastIndexOf(',');
 				permString = permString.substring(0, end);
