@@ -7,7 +7,8 @@ import java.util.UUID;
 
 import its_meow.claimit.claim.ClaimArea;
 import its_meow.claimit.claim.ClaimManager;
-import its_meow.claimit.claim.EnumPerm;
+import its_meow.claimit.permission.ClaimPermissionMember;
+import its_meow.claimit.permission.ClaimPermissionRegistry;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
@@ -49,7 +50,7 @@ public class CommandSubClaimMemberList extends CommandBase {
 			// Attempt perm filter with no claim name
 
 			try {
-				EnumPerm filter = EnumPerm.valueOf(args[0].toUpperCase());
+				ClaimPermissionMember filter = ClaimPermissionRegistry.parseMember(args[0]);
 				if(sender instanceof EntityPlayer) {
 					ClaimArea claim = m.getClaimAtLocation(sender.getEntityWorld(), sender.getPosition());
 					outputFiltered(claim, sender, filter);
@@ -77,9 +78,9 @@ public class CommandSubClaimMemberList extends CommandBase {
 
 		} else if(args.length == 2) {
 			String claimName = args[0];
-			String permStr = args[1].toUpperCase();
+			String permStr = args[1];
 			try {
-				EnumPerm filter = EnumPerm.valueOf(permStr);
+				ClaimPermissionMember filter = ClaimPermissionRegistry.parseMember(args[0]);
 				
 				if(sender instanceof EntityPlayer) {
 					EntityPlayer player = (EntityPlayer) sender;
@@ -102,7 +103,7 @@ public class CommandSubClaimMemberList extends CommandBase {
 		}
 	}
 	
-	private void outputFiltered(ClaimArea claim, ICommandSender sender, EnumPerm filter) throws WrongUsageException, CommandException {
+	private void outputFiltered(ClaimArea claim, ICommandSender sender, ClaimPermissionMember filter) throws WrongUsageException, CommandException {
 		if(claim != null) {
 			ArrayList<UUID> members = claim.getArrayForPermission(filter);
 			if(sender instanceof EntityPlayer && !claim.getMembers().keySet().contains(EntityPlayer.getUUID(((EntityPlayer) sender).getGameProfile()))) {
@@ -125,7 +126,7 @@ public class CommandSubClaimMemberList extends CommandBase {
 	
 	private void outputNonFiltered(ClaimArea claim, ICommandSender sender) throws WrongUsageException, CommandException {
 		if(claim != null) {
-			Map<UUID, HashSet<EnumPerm>> permMap = claim.getMembers();
+			Map<UUID, HashSet<ClaimPermissionMember>> permMap = claim.getMembers();
 			if(sender instanceof EntityPlayer && !permMap.keySet().contains(EntityPlayer.getUUID(((EntityPlayer) sender).getGameProfile()))) {
 				if(!claim.isOwner((EntityPlayer) sender)) {
 					throw new CommandException("You cannot view the members of this claim!");
@@ -136,8 +137,8 @@ public class CommandSubClaimMemberList extends CommandBase {
 			}
 			for(UUID member : permMap.keySet()) {
 				String permString = "";
-				HashSet<EnumPerm> permSet = permMap.get(member);
-				for(EnumPerm p : permSet) {
+				HashSet<ClaimPermissionMember> permSet = permMap.get(member);
+				for(ClaimPermissionMember p : permSet) {
 					permString += p.toString() + ", ";
 				}
 				int end = permString.lastIndexOf(',');

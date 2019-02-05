@@ -16,6 +16,8 @@ import com.google.gson.JsonParser;
 import com.mojang.authlib.GameProfile;
 
 import its_meow.claimit.ClaimIt;
+import its_meow.claimit.permission.ClaimPermissionMember;
+import its_meow.claimit.permission.ClaimPermissionRegistry;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -240,7 +242,7 @@ public class ClaimManager {
 			System.out.println("Owner: " + owner);
 			data.setString("TRUEVIEWNAME", claim.getTrueViewName());
 			NBTTagCompound memberCompound = new NBTTagCompound();
-			for(ClaimPermission perm : ClaimPermissionRegistry.getPermissions()) {
+			for(ClaimPermissionMember perm : ClaimPermissionRegistry.getMemberPermissions()) {
 				NBTTagList members = new NBTTagList();
 				for(UUID member : claim.getArrayForPermission(perm)) {
 					members.appendTag(new NBTTagString(member.toString()));
@@ -278,12 +280,12 @@ public class ClaimManager {
 
 					NBTTagCompound memberCompound = data.getCompoundTag("MEMBERS");
 					for(String permString : memberCompound.getKeySet()) {
-						if(ClaimPermissionRegistry.getPermission(new ResourceLocation(permString)) != null) {
+						if(ClaimPermissionRegistry.getPermissionMember(new ResourceLocation(permString)) != null) {
 							NBTTagList tagList = memberCompound.getTagList(permString, Constants.NBT.TAG_STRING);
 							for(int i = 0; i < tagList.tagCount(); i++) {
 								String uuidString = tagList.getStringTagAt(i);
 								UUID member = UUID.fromString(uuidString);
-								claim.addMember(ClaimPermissionRegistry.getPermission(new ResourceLocation(permString)), member);
+								claim.addMember(ClaimPermissionRegistry.getPermissionMember(new ResourceLocation(permString)), member);
 							}
 						}
 					}

@@ -3,7 +3,6 @@ package its_meow.claimit.claim;
 import java.util.HashSet;
 import java.util.Set;
 
-import its_meow.claimit.init.ItemRegistry;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -183,7 +182,7 @@ public class ClaimEventHandler {
 		BlockPos pos = e.getPos();
 		ClaimManager cm = ClaimManager.getManager();
 		ClaimArea claim = cm.getClaimAtLocation(world, pos);
-		if(claim != null && e.getItemStack().getItem() != ItemRegistry.claiminfotool) {
+		if(claim != null) {
 			EntityPlayer player = e.getEntityPlayer();
 			e.setCanceled(!claim.canUse(player));
 		}
@@ -195,7 +194,7 @@ public class ClaimEventHandler {
 		BlockPos pos = e.getPos();
 		ClaimManager cm = ClaimManager.getManager();
 		ClaimArea claim = cm.getClaimAtLocation(world, pos);
-		if(claim != null && e.getItemStack().getItem() != ItemRegistry.claiminfotool) {
+		if(claim != null) {
 			EntityPlayer player = e.getEntityPlayer();
 			e.setCanceled(!claim.canUse(player));
 		}
@@ -207,7 +206,7 @@ public class ClaimEventHandler {
 		BlockPos pos = e.getPos();
 		ClaimManager cm = ClaimManager.getManager();
 		ClaimArea claim = cm.getClaimAtLocation(world, pos);
-		if(claim != null && e.getItemStack().getItem() != ItemRegistry.claiminfotool) {
+		if(claim != null) {
 			EntityPlayer player = e.getEntityPlayer();
 			e.setCanceled(!claim.canUse(player));
 		}

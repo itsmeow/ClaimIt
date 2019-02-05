@@ -8,6 +8,11 @@ import java.util.UUID;
 
 import javax.annotation.Nullable;
 
+import its_meow.claimit.permission.ClaimPermissionMember;
+import its_meow.claimit.permission.ClaimPermissionRegistry;
+import its_meow.claimit.permission.ClaimPermissionToggle;
+import its_meow.claimit.permission.ClaimPermissions;
+import its_meow.claimit.permission.EnumPermissionType;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -36,8 +41,8 @@ public class ClaimArea {
 	 * defaults to {@link name}**/
 	private String viewName;
 	/* Private field for storing member UUIDs */
-	private Map<ClaimPermission, ArrayList<UUID>> memberLists;
-	private Map<ClaimPermission, Boolean> toggles;
+	private Map<ClaimPermissionMember, ArrayList<UUID>> memberLists;
+	private Map<ClaimPermissionToggle, Boolean> toggles;
 
 	public ClaimArea(int dimID, int posX, int posZ, int sideLengthX, int sideLengthZ, EntityPlayer player) {
 		this(dimID, posX, posZ, sideLengthX, sideLengthZ, EntityPlayer.getUUID(player.getGameProfile()), EntityPlayer.getOfflineUUID(player.getName()));
@@ -51,8 +56,8 @@ public class ClaimArea {
 		this.sideLengthZ = sideLengthZ;
 		this.ownerUUID = ownerUUID;
 		this.ownerUUIDOffline = ownerUUIDOffline;
-		this.memberLists = new HashMap<ClaimPermission, ArrayList<UUID>>();
-		this.toggles = new HashMap<ClaimPermission, Boolean>();
+		this.memberLists = new HashMap<ClaimPermissionMember, ArrayList<UUID>>();
+		this.toggles = new HashMap<ClaimPermissionToggle, Boolean>();
 		
 		// Simplify main corner to the lowest x and y value
 		if(this.sideLengthX < 0 || this.sideLengthZ < 0) {
@@ -135,7 +140,7 @@ public class ClaimArea {
 		return hasPermission(ClaimPermissions.PVP, player);
 	}
 
-	public boolean hasPermission(ClaimPermission permission, EntityPlayer player) {
+	public boolean hasPermission(ClaimPermissionMember permission, EntityPlayer player) {
 		if(permission.type == EnumPermissionType.TOGGLE) {
 			return false;
 		}
@@ -149,13 +154,16 @@ public class ClaimArea {
 		return false;
 	}
 	
-	public boolean isPermissionToggle(ClaimPermission perm) {
+	/** Tells whether a permission is enabled in a claim or not 
+	 *  @param perm - The permission to check
+	 *  @return The toggle status (on = true) **/
+	public boolean isPermissionToggled(ClaimPermissionToggle perm) {
 		return this.toggles.get(perm);
 	}
 
 	/** Do NOT use this for permission checking. Only for use in removing members. 
 	 * Why: doesn't account for admins or the owner of the claim. It purely returns if a member is in the list.**/
-	public boolean inPermissionList(ClaimPermission permission, UUID id) {
+	public boolean inPermissionList(ClaimPermissionMember permission, UUID id) {
 		ArrayList<UUID> array = getArrayForPermission(permission);
 		if(array != null && array.contains(id)) {
 			return true;
@@ -168,16 +176,16 @@ public class ClaimArea {
 	 * @return The array used to store members of permission
 	 * **/
 	@Nullable
-	public ArrayList<UUID> getArrayForPermission(ClaimPermission permission) {
+	public ArrayList<UUID> getArrayForPermission(ClaimPermissionMember permission) {
 		return memberLists.get(permission);
 	}
 	
 	/** Adds a member to the member list with a given permission and player object 
-	 * This runs {@link ClaimArea::addMember(EnumPerm, UUID)} after converting the player to UUID
+	 * This runs {@link ClaimArea::addMember(ClaimPermissionMember, UUID)} after converting the player to UUID
 	 * @param permission - The permission which will be used
 	 * @param player - The player that will be added
 	 * @return Whether the adding was successful or not (if the player is already in the list) **/
-	public boolean addMember(ClaimPermission permission, EntityPlayer player) {
+	public boolean addMember(ClaimPermissionMember permission, EntityPlayer player) {
 		UUID uuid = EntityPlayer.getUUID(player.getGameProfile());
 		return this.addMember(permission, uuid);
 	}
@@ -186,7 +194,7 @@ public class ClaimArea {
 	 * @param permission - The permission which will be used
 	 * @param uuid - The player UUID that will be added
 	 * @return Whether the adding was successful or not (if the player is already in the list)**/
-	public boolean addMember(ClaimPermission permission, UUID uuid) {
+	public boolean addMember(ClaimPermissionMember permission, UUID uuid) {
 		ArrayList<UUID> array = getArrayForPermission(permission);
 		if(!array.contains(uuid)) {
 			array.add(uuid);
@@ -194,13 +202,22 @@ public class ClaimArea {
 		}
 		return false;
 	}
-
-	public boolean removeMember(ClaimPermission permission, EntityPlayer player) {
+	
+	/** Removes a member from the member list with a given permission and player object
+	 * This runs {@link ClaimArea::removeMember(ClaimPermissionMember, UUID)} after converting the player to UUID
+	 * @param permission - The permission which will be removed
+	 * @param player - The player that will be removed
+	 * @return Whether the removal was successful or not (false: if the player never had the permission) **/
+	public boolean removeMember(ClaimPermissionMember permission, EntityPlayer player) {
 		UUID uuid = EntityPlayer.getUUID(player.getGameProfile());
 		return this.removeMember(permission, uuid);
 	}
 	
-	public boolean removeMember(ClaimPermission permission, UUID uuid) {
+	/** Removes a member from the member list with a given permission and UUID
+	 * @param permission - The permission which will be removed
+	 * @param uuid - The player UUID that will be removed
+	 * @return Whether the removal was successful or not (false: if the player never had the permission) **/
+	public boolean removeMember(ClaimPermissionMember permission, UUID uuid) {
 		ArrayList<UUID> array = getArrayForPermission(permission);
 		if(array.contains(uuid)) {
 			array.remove(uuid);
@@ -209,20 +226,21 @@ public class ClaimArea {
 		return false;
 	}
 	
-	public Map<UUID, HashSet<ClaimPermission>> getMembers() {
-		HashMap<UUID, HashSet<ClaimPermission>> map = new HashMap<UUID, HashSet<ClaimPermission>>();
-		for(ClaimPermission perm : ClaimPermissionRegistry.getPermissions()) {
+	/** Returns a list of member UUIDs along with a set of their permissions. Used for easier displaying of member data. **/
+	public Map<UUID, HashSet<ClaimPermissionMember>> getMembers() {
+		HashMap<UUID, HashSet<ClaimPermissionMember>> map = new HashMap<UUID, HashSet<ClaimPermissionMember>>();
+		for(ClaimPermissionMember perm : ClaimPermissionRegistry.getMemberPermissions()) {
 			ArrayList<UUID> members = this.getArrayForPermission(perm);
 			for(UUID member : members) {
 				if(map.get(member) == null) {
-					HashSet<ClaimPermission> set = new HashSet<ClaimPermission>();
+					HashSet<ClaimPermissionMember> set = new HashSet<ClaimPermissionMember>();
 					set.add(perm);
 					if(map.containsKey(member)) {
 						map.remove(member);
 					}
 					map.put(member, set);
 				} else {
-					HashSet<ClaimPermission> set = map.get(member);
+					HashSet<ClaimPermissionMember> set = map.get(member);
 					set.add(perm);
 					if(map.containsKey(member)) {
 						map.remove(member);
@@ -234,6 +252,9 @@ public class ClaimArea {
 		return map;
 	}
 	
+	/** (Please account for world differences if using this!)
+	 * @param blockPos - The BlockPos to check for
+	 * @return True if the given BlockPos is within the claim's bounds. **/
 	public boolean isBlockPosInClaim(BlockPos blockPos) {
 		boolean isInXRange = (blockPos.getX() < this.getHXZPosition().getX() + 1) && (blockPos.getX() > this.posX - 1);
 		boolean isInZRange = (blockPos.getZ() < this.getHXZPosition().getZ() + 1) && (blockPos.getZ() > this.posZ - 1);

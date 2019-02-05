@@ -5,12 +5,12 @@ import java.util.LinkedList;
 import java.util.List;
 
 import its_meow.claimit.Ref;
-import its_meow.claimit.claim.ClaimPermission;
-import its_meow.claimit.claim.ClaimPermissionRegistry;
 import its_meow.claimit.command.claimit.CommandSubAdmin;
 import its_meow.claimit.command.claimit.CommandSubCancel;
 import its_meow.claimit.command.claimit.CommandSubClaim;
 import its_meow.claimit.command.claimit.CommandSubConfirm;
+import its_meow.claimit.permission.ClaimPermission;
+import its_meow.claimit.permission.ClaimPermissionRegistry;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.server.MinecraftServer;
@@ -97,11 +97,11 @@ public class CommandClaimIt extends CommandTreeBase {
 					completions.add("list");
 				}
 				if(args.length == 4) { // claimit claim member * .
-					for(ClaimPermission perm : ClaimPermissionRegistry.getPermissions()) {
+					for(ClaimPermission perm : ClaimPermissionRegistry.getMemberPermissions()) {
 						completions.add(perm.parsedName);
 					}
 				} else if(args.length == 5 && args[2].equals("list")) { // claimit claim member list * .
-					for(ClaimPermission perm : ClaimPermissionRegistry.getPermissions()) {
+					for(ClaimPermission perm : ClaimPermissionRegistry.getMemberPermissions()) {
 						completions.add(perm.parsedName);
 					}
 				}

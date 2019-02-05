@@ -5,9 +5,9 @@ import org.apache.logging.log4j.Logger;
 
 import its_meow.claimit.claim.ClaimEventHandler;
 import its_meow.claimit.claim.ClaimManager;
-import its_meow.claimit.claim.ClaimPermissions;
 import its_meow.claimit.command.CommandClaimIt;
 import its_meow.claimit.command.ConfirmationManager;
+import its_meow.claimit.permission.ClaimPermissions;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;

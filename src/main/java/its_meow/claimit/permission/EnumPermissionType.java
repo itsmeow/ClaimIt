@@ -1,4 +1,4 @@
-package its_meow.claimit.claim;
+package its_meow.claimit.permission;
 
 public enum EnumPermissionType {
 	

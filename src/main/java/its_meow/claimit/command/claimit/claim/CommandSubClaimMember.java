@@ -8,8 +8,9 @@ import com.mojang.authlib.GameProfile;
 
 import its_meow.claimit.claim.ClaimArea;
 import its_meow.claimit.claim.ClaimManager;
-import its_meow.claimit.claim.EnumPerm;
 import its_meow.claimit.command.claimit.claim.member.CommandSubClaimMemberList;
+import its_meow.claimit.permission.ClaimPermissionMember;
+import its_meow.claimit.permission.ClaimPermissionRegistry;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommand;
 import net.minecraft.command.ICommandSender;
@@ -70,14 +71,18 @@ public class CommandSubClaimMember extends CommandTreeBase {
 			if(!action.equalsIgnoreCase("add") && !action.equalsIgnoreCase("remove")) {
 				throw new WrongUsageException("Invalid action! Specify add or remove. Usage: " + this.getUsage(sender));
 			}
-			EnumPerm permission = null;
+			ClaimPermissionMember permission = null;
+			String validPerms = "";
+			for(ClaimPermissionMember perm : ClaimPermissionRegistry.getMemberPermissions()) {
+				validPerms += perm.parsedName + " ";
+			}
 			try {
-				permission = EnumPerm.valueOf(permissionStr);
+				permission = ClaimPermissionRegistry.parseMember(permissionStr);
 			} catch (IllegalArgumentException e) {
-				throw new WrongUsageException("Invalid permission. Specify: Modify, Use, Entity, or PVP. Usage: " + this.getUsage(sender));
+				throw new WrongUsageException("Invalid permission. Valid Permissions: " + validPerms + "\nUsage: " + this.getUsage(sender));
 			}
 			if(permission == null) {
-				throw new WrongUsageException("Invalid permission. Specify: Modify, Use, Entity, or PVP. Usage: " + this.getUsage(sender));
+				throw new WrongUsageException("Invalid permission. Valid Permissions: " + validPerms + "\nUsage: " + this.getUsage(sender));
 			}
 			UUID id = null;
 			GameProfile profile = server.getPlayerProfileCache().getGameProfileForUsername(username);
