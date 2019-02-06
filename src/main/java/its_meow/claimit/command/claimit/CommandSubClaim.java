@@ -6,6 +6,7 @@ import its_meow.claimit.command.claimit.claim.CommandSubClaimInfo;
 import its_meow.claimit.command.claimit.claim.CommandSubClaimList;
 import its_meow.claimit.command.claimit.claim.CommandSubClaimMember;
 import its_meow.claimit.command.claimit.claim.CommandSubClaimSetName;
+import its_meow.claimit.command.claimit.claim.CommandSubClaimToggle;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.server.MinecraftServer;
@@ -21,6 +22,7 @@ public class CommandSubClaim extends CommandTreeBase {
 		this.addSubcommand(new CommandSubClaimSetName());
 		this.addSubcommand(new CommandSubClaimMember());
 		this.addSubcommand(new CommandSubClaimDeleteAll());
+		this.addSubcommand(new CommandSubClaimToggle());
 	}
 	
 	@Override
@@ -49,6 +51,7 @@ public class CommandSubClaim extends CommandTreeBase {
 			sendMessage(sender, "§e/claimit claim setname");
 			sendMessage(sender, "§e/claimit claim member");
 			sendMessage(sender, "§e/claimit claim deleteall");
+			sendMessage(sender, "§e/claimit claim toggle");
 		}
 	}
 	

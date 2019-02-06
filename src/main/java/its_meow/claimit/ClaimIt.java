@@ -33,7 +33,7 @@ public class ClaimIt {
 	@EventHandler
 	public void serverLoad(FMLServerStartingEvent event) {
 		ClaimManager.getManager().clearAdmins();
-		ClaimManager.getManager().deserialize();
+		ClaimManager.getManager().deserialize(); // Clears claims list as well
 		ConfirmationManager.getManager().removeAllConfirms();
 		event.registerServerCommand(new CommandClaimIt());
 	}

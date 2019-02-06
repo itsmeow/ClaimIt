@@ -18,6 +18,7 @@ import com.mojang.authlib.GameProfile;
 import its_meow.claimit.ClaimIt;
 import its_meow.claimit.permission.ClaimPermissionMember;
 import its_meow.claimit.permission.ClaimPermissionRegistry;
+import its_meow.claimit.permission.ClaimPermissionToggle;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -248,6 +249,11 @@ public class ClaimManager {
 				}
 				memberCompound.setTag(perm.parsedName, members);
 			}
+			NBTTagCompound toggles = new NBTTagCompound();
+			for(ClaimPermissionToggle perm : ClaimPermissionRegistry.getTogglePermissions()) {
+				toggles.setBoolean(perm.parsedName, claim.isPermissionToggled(perm));
+			}
+			data.setTag("TOGGLES", toggles);
 			data.setTag("MEMBERS", memberCompound);
 			store.data.setTag("CLAIM_" + serialName, data);
 			store.markDirty();
@@ -288,10 +294,18 @@ public class ClaimManager {
 							}
 						}
 					}
+					NBTTagCompound toggles = data.getCompoundTag("TOGGLES");
+					for(String permString : toggles.getKeySet()) {
+						ClaimPermissionToggle perm = ClaimPermissionRegistry.getPermissionToggle(permString);
+						if(perm != null) {
+							claim.setPermissionToggle(perm, toggles.getBoolean(permString));
+						}
+					}
 
 					this.addClaim(claim);
 				} else {
 					ClaimIt.logger.log(Level.FATAL, "Detected version that doesn't exist yet! Mod was downgraded? Claim cannot be loaded.");
+					throw new RuntimeException("Canceled loading to prevent loss of claim data. If you recently downgraded versions, please upgrade or contact author.");
 				}
 			}
 		}

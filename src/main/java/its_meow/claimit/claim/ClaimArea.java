@@ -149,16 +149,18 @@ public class ClaimArea {
 	public boolean canPVP(EntityPlayer player) {
 		return hasPermission(ClaimPermissions.PVP, player);
 	}
+	
+	public boolean canManage(EntityPlayer player) {
+		return hasPermission(ClaimPermissions.MANAGE_PERMS, player);
+	}
+
 
 	public boolean hasPermission(ClaimPermissionMember permission, EntityPlayer player) {
-		if(permission.type == EnumPermissionType.TOGGLE) {
-			return false;
-		}
 		if(this.isOwner(player)) {
 			return true;
 		}
 		ArrayList<UUID> array = getArrayForPermission(permission);
-		if(array != null && array.contains(EntityPlayer.getUUID(player.getGameProfile()))) {
+		if(array != null && array.contains(player.getGameProfile().getId())) {
 			return true;
 		}
 		return false;
@@ -169,6 +171,21 @@ public class ClaimArea {
 	 *  @return The toggle status (on = true) **/
 	public boolean isPermissionToggled(ClaimPermissionToggle perm) {
 		return this.toggles.get(perm);
+	}
+	
+	/** Switches the toggle on a permission. (true to false, false to true)
+	 * @param perm - Permission to flip
+	 * **/
+	public void flipPermissionToggle(ClaimPermissionToggle perm) {
+		this.toggles.put(perm, !this.toggles.get(perm));
+	}
+	
+	/** Sets a permission toggle.
+	 * @param perm - Permission to set
+	 * @param value - What to set the permission to
+	 * **/
+	public void setPermissionToggle(ClaimPermissionToggle perm, boolean value) {
+		this.toggles.put(perm, value);
 	}
 
 	/** Do NOT use this for permission checking. Only for use in removing members. 
@@ -397,5 +414,4 @@ public class ClaimArea {
 		}
 		return pass;
 	}
-
 }

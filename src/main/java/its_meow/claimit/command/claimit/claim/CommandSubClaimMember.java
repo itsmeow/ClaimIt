@@ -8,6 +8,7 @@ import com.mojang.authlib.GameProfile;
 
 import its_meow.claimit.claim.ClaimArea;
 import its_meow.claimit.claim.ClaimManager;
+import its_meow.claimit.command.CommandUtils;
 import its_meow.claimit.command.claimit.claim.member.CommandSubClaimMemberList;
 import its_meow.claimit.permission.ClaimPermissionMember;
 import its_meow.claimit.permission.ClaimPermissionRegistry;
@@ -71,57 +72,16 @@ public class CommandSubClaimMember extends CommandTreeBase {
 			if(!action.equalsIgnoreCase("add") && !action.equalsIgnoreCase("remove")) {
 				throw new WrongUsageException("Invalid action! Specify add or remove. Usage: " + this.getUsage(sender));
 			}
-			ClaimPermissionMember permission = null;
-			String validPerms = ClaimPermissionRegistry.getValidPermissionListMember();
-			try {
-				permission = ClaimPermissionRegistry.getPermissionMember(permissionStr);
-			} catch (IllegalArgumentException e) {
-				throw new CommandException("Invalid permission. Valid Permissions: " + validPerms + "\nUsage: " + this.getUsage(sender));
-			}
-			if(permission == null) {
-				throw new CommandException("Invalid permission. Valid Permissions: " + validPerms + "\nUsage: " + this.getUsage(sender));
-			}
-			UUID id = null;
-			GameProfile profile = server.getPlayerProfileCache().getGameProfileForUsername(username);
-			if(profile != null && profile.getName().equals(username)) { // Found the profile!
-				id = profile.getId();
-			} else {
-				throw new PlayerNotFoundException("Invalid player: " + username);
-			}
+			ClaimPermissionMember permission = CommandUtils.getPermissionMember(permissionStr, this.getUsage(sender));
+			UUID id = CommandUtils.getUUIDForName(username, server);
 			ClaimManager mgr = ClaimManager.getManager();
-			ClaimArea claim = null;
-
-			if(claimName != null && !claimName.equals("")) {
-				if(sender instanceof EntityPlayer) {
-					EntityPlayer player = ((EntityPlayer) sender);
-					claim = mgr.getClaimByNameAndOwner(claimName, player.getUniqueID());
-					if(claim == null && mgr.isAdmin(player)) {
-						sendMessage(sender, "§bUsing true name.");
-						claim = mgr.getClaimByTrueName(claimName);
-					}
-				} else { // sender is console/commandblock
-					if(sender.canUseCommand(2, "")) {
-						sendMessage(sender, "You are console, using true name");
-						claim = mgr.getClaimByTrueName(claimName);
-					}
-				}
-			} else {
-				// Get current location for claim
-				if(sender instanceof EntityPlayer) {
-					claim = mgr.getClaimAtLocation(sender.getEntityWorld(), sender.getPosition());
-				} else {
-					throw new WrongUsageException("Console must specify a true claim name!");
-				}
-			}
+			ClaimArea claim = CommandUtils.getClaimWithNameOrLocation(claimName, sender);
 
 			if(claim != null) {
 				if(action.equals("add"))  {
 					// Add user
 					if(!claim.inPermissionList(permission, id) || claim.isTrueOwner(id)) {
-						if(!(sender instanceof EntityPlayer) && sender.canUseCommand(2, "")) {
-							claim.addMember(permission, id);
-							sendMessage(sender, "§aSuccessfully added " + username + "§a to claim " + claim.getDisplayedViewName() + " with permission " + permission.parsedName);
-						} else if(sender instanceof EntityPlayer && claim.isOwner((EntityPlayer) sender)) {
+						if(!(sender instanceof EntityPlayer) && sender.canUseCommand(2, "") || (sender instanceof EntityPlayer && claim.canManage((EntityPlayer) sender))) {
 							claim.addMember(permission, id);
 							sendMessage(sender, "§aSuccessfully added " + username + "§a to claim " + claim.getDisplayedViewName() + " with permission " + permission.parsedName);
 						}
@@ -131,10 +91,7 @@ public class CommandSubClaimMember extends CommandTreeBase {
 				} else if(action.equals("remove")) {
 					// Remove user
 					if(claim.inPermissionList(permission, id)) {
-						if(!(sender instanceof EntityPlayer) && sender.canUseCommand(2, "")) {
-							claim.removeMember(permission, id);
-							sendMessage(sender, "§aSuccessfully removed permission " + permission.parsedName + " from user " + username + " in claim " + claim.getDisplayedViewName());
-						} else if(sender instanceof EntityPlayer && claim.isOwner((EntityPlayer) sender)) {
+						if(!(sender instanceof EntityPlayer) && sender.canUseCommand(2, "") || (sender instanceof EntityPlayer && claim.canManage((EntityPlayer) sender))) {
 							claim.removeMember(permission, id);
 							sendMessage(sender, "§aSuccessfully removed permission " + permission.parsedName + " from user " + username + " in claim " + claim.getDisplayedViewName());
 						}

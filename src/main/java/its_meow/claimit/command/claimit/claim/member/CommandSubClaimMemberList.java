@@ -7,6 +7,7 @@ import java.util.UUID;
 
 import its_meow.claimit.claim.ClaimArea;
 import its_meow.claimit.claim.ClaimManager;
+import its_meow.claimit.command.CommandUtils;
 import its_meow.claimit.permission.ClaimPermissionMember;
 import its_meow.claimit.permission.ClaimPermissionRegistry;
 import net.minecraft.command.CommandBase;
@@ -43,7 +44,7 @@ public class CommandSubClaimMemberList extends CommandBase {
 				outputNonFiltered(claim, sender);
 			} else {
 				sendMessage(sender, "Must specify name as non-player.");
-				throw new WrongUsageException("Must specify name as non-player.");
+				throw new CommandException("Must specify name as non-player.");
 			}
 		} else if(args.length == 1) {
 
@@ -56,22 +57,12 @@ public class CommandSubClaimMemberList extends CommandBase {
 					outputFiltered(claim, sender, filter);
 				} else {
 					sendMessage(sender, "Must specify name as non-player.");
-					throw new WrongUsageException("Must specify name as non-player.");
+					throw new CommandException("Must specify name as non-player.");
 				}
 			} catch(IllegalArgumentException e) {
 
-				// Try claim name instead of perm filter
-				if(sender instanceof EntityPlayer) {
-					EntityPlayer player = (EntityPlayer) sender;
-					ClaimArea claim = m.getClaimByNameAndOwner(args[0], EntityPlayer.getUUID(player.getGameProfile()));
-					if(claim == null && m.isAdmin(player)) {
-						sendMessage(sender, "§aYou are admin and no claim you own with that name was found. Using true names.");
-						claim = m.getClaimByTrueName(args[0]);
-					}
-					outputNonFiltered(claim, sender);
-				} else {
-					sendMessage(sender, "You are console. Using true name.");
-					ClaimArea claim = m.getClaimByTrueName(args[0]);
+				ClaimArea claim = CommandUtils.getClaimWithName(args[0], sender);
+				if(claim != null) {
 					outputNonFiltered(claim, sender);
 				}
 			}
@@ -82,18 +73,11 @@ public class CommandSubClaimMemberList extends CommandBase {
 			try {
 				ClaimPermissionMember filter = ClaimPermissionRegistry.getPermissionMember(args[0]);
 				
-				if(sender instanceof EntityPlayer) {
-					EntityPlayer player = (EntityPlayer) sender;
-					ClaimArea claim = m.getClaimByNameAndOwner(claimName, EntityPlayer.getUUID(player.getGameProfile()));
-					if(claim == null && m.isAdmin(player)) {
-						sendMessage(sender, "§aYou are admin and no claim you own with that name was found. Using true names.");
-						claim = m.getClaimByTrueName(claimName);
-					}
-					outputFiltered(claim, sender, filter);
-				} else {
-					ClaimArea claim = m.getClaimByTrueName(claimName);
+				ClaimArea claim = CommandUtils.getClaimWithName(args[0], sender);
+				if(claim != null) {
 					outputFiltered(claim, sender, filter);
 				}
+				
 				
 			} catch(IllegalArgumentException e) {
 				throw new WrongUsageException("§cNo such permission: §a" + permStr + "\n§cValid Permissions: §a" + ClaimPermissionRegistry.getValidPermissionListMember());
@@ -106,8 +90,8 @@ public class CommandSubClaimMemberList extends CommandBase {
 	private void outputFiltered(ClaimArea claim, ICommandSender sender, ClaimPermissionMember filter) throws WrongUsageException, CommandException {
 		if(claim != null) {
 			ArrayList<UUID> members = claim.getArrayForPermission(filter);
-			if(sender instanceof EntityPlayer && !claim.getMembers().keySet().contains(EntityPlayer.getUUID(((EntityPlayer) sender).getGameProfile()))) {
-				if(!claim.isOwner((EntityPlayer) sender)) {
+			if(sender instanceof EntityPlayer) {
+				if(!claim.canManage((EntityPlayer) sender)) {
 					throw new CommandException("You cannot view the members of this claim!");
 				}
 			}
@@ -127,8 +111,8 @@ public class CommandSubClaimMemberList extends CommandBase {
 	private void outputNonFiltered(ClaimArea claim, ICommandSender sender) throws WrongUsageException, CommandException {
 		if(claim != null) {
 			Map<UUID, HashSet<ClaimPermissionMember>> permMap = claim.getMembers();
-			if(sender instanceof EntityPlayer && !permMap.keySet().contains(EntityPlayer.getUUID(((EntityPlayer) sender).getGameProfile()))) {
-				if(!claim.isOwner((EntityPlayer) sender)) {
+			if(sender instanceof EntityPlayer) {
+				if(!claim.canManage((EntityPlayer) sender)) {
 					throw new CommandException("You cannot view the members of this claim!");
 				}
 			}

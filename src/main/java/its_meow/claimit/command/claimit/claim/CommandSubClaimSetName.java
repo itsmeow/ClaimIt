@@ -42,7 +42,7 @@ public class CommandSubClaimSetName extends CommandBase {
 								sendMessage(sender, "§bSet this claim's true name to: §a" + claim.getTrueViewName());
 							}
 						} else {
-							sendMessage(sender, "§cFailed to set name. There is another claim " + (ClaimManager.getManager().isAdmin(player) ? "this player" : "you") + " own with this name.");
+							sendMessage(sender, "§cFailed to set name. There is another claim " + (ClaimManager.getManager().isAdmin(player) ? "this player owns" : "you own") + " with this name.");
 						}
 					}
 				} else {
