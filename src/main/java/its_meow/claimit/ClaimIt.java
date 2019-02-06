@@ -26,8 +26,6 @@ public class ClaimIt {
 	@Instance(Ref.MOD_ID) 
 	public static ClaimIt mod;
 
-	public static CreativeTab tab = new CreativeTab("ClaimIt");
-
 	public static Logger logger;
 
 	@EventHandler
@@ -51,20 +49,6 @@ public class ClaimIt {
 
 	@EventHandler
 	public void postInit(FMLPostInitializationEvent e) {
-	}
-
-	public static class CreativeTab extends CreativeTabs {
-
-		public CreativeTab(String tab) {
-			super(tab);
-		}
-
-		@Override
-		public ItemStack getTabIconItem() {
-			return new ItemStack(Blocks.BARRIER);
-		}
-
-
 	}
 
 }

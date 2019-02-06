@@ -47,10 +47,10 @@ public class CommandSubClaimToggle extends CommandBase {
 				for(ClaimPermissionToggle toggle : ClaimPermissionRegistry.getTogglePermissions()) {
 					boolean toggled = claim.isPermissionToggled(toggle);
 					String toggledStr = toggled ? "ON" : "OFF";
-					toggledStr = toggle.defaultValue == toggled ? "§1" + toggledStr : "§4" + toggledStr;
-					out += "§e" + toggle.parsedName + "§a: " + toggledStr + "\n";
+					toggledStr = toggle.defaultValue == toggled ? "§a" + toggledStr : "§c" + toggledStr;
+					out += "§e" + toggle.parsedName + "§9: " + toggledStr + "\n";
 				}
-				throw new CommandException(out.substring(0, out.length()));
+				throw new CommandException(out.trim());
 			}
 		}
 		if(args.length > 2 || args.length < 1) {
