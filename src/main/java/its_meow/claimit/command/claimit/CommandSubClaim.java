@@ -32,7 +32,7 @@ public class CommandSubClaim extends CommandTreeBase {
 
 	@Override
 	public String getUsage(ICommandSender sender) {
-		return "claimit claim <subcommand>";
+		return "/claimit claim <subcommand>";
 	}
 
 	@Override

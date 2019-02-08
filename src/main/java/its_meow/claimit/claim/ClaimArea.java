@@ -12,7 +12,6 @@ import its_meow.claimit.permission.ClaimPermissionMember;
 import its_meow.claimit.permission.ClaimPermissionRegistry;
 import its_meow.claimit.permission.ClaimPermissionToggle;
 import its_meow.claimit.permission.ClaimPermissions;
-import its_meow.claimit.permission.EnumPermissionType;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;

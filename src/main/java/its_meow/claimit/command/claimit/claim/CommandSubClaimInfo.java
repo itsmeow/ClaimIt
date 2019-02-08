@@ -22,7 +22,7 @@ public class CommandSubClaimInfo extends CommandBase {
 
 	@Override
 	public String getUsage(ICommandSender sender) {
-		return "claimit claim info - claimit claim info <name>";
+		return "/claimit claim info [name]";
 	}
 	
 	@Override

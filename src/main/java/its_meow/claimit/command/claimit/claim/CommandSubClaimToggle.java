@@ -1,16 +1,13 @@
 package its_meow.claimit.command.claimit.claim;
 
 import its_meow.claimit.claim.ClaimArea;
-import its_meow.claimit.claim.ClaimManager;
 import its_meow.claimit.command.CommandUtils;
 import its_meow.claimit.permission.ClaimPermissionRegistry;
 import its_meow.claimit.permission.ClaimPermissionToggle;
-import its_meow.claimit.permission.ClaimPermissions;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.command.WrongUsageException;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.text.TextComponentString;
 
@@ -23,7 +20,7 @@ public class CommandSubClaimToggle extends CommandBase {
 
 	@Override
 	public String getUsage(ICommandSender sender) {
-		return "claimit claim toggle [toggle name] [claim name]";
+		return "/claimit claim toggle [toggle name] [claim name]";
 	}
 
 	@Override
@@ -41,7 +38,7 @@ public class CommandSubClaimToggle extends CommandBase {
 		if(claim == null) {
 			throw new CommandException("No claim found.");
 		}
-		if(args.length == 0) {
+		if(args.length == 0 || (args.length == 1 && args[0].equals("list"))) {
 			if(CommandUtils.canManagePerms(sender, claim)) {
 				String out = "";
 				for(ClaimPermissionToggle toggle : ClaimPermissionRegistry.getTogglePermissions()) {

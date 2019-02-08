@@ -27,7 +27,12 @@ public class CommandSubClaimDeleteAll extends CommandBase {
 
 	@Override
 	public String getUsage(ICommandSender sender) {
-		return "claimit claim deleteall - Admin: claimit claim deleteall <playername>";
+		if(sender instanceof EntityPlayer) {
+			if(ClaimManager.getManager().isAdmin((EntityPlayer) sender)) {
+				return "/claimit claim deleteall [username]";
+			}
+		}
+		return "/claimit claim deleteall";
 	}
 
 	@Override

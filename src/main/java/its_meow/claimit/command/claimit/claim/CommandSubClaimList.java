@@ -24,7 +24,12 @@ public class CommandSubClaimList extends CommandBase {
 
 	@Override
 	public String getUsage(ICommandSender sender) {
-		return "claimit claim list - claimit claim list <username>";
+		if(sender instanceof EntityPlayer) {
+			if(ClaimManager.getManager().isAdmin((EntityPlayer) sender)) {
+				return "/claimit claim list [username]";
+			}
+		}
+		return "/claimit claim list";
 	}
 
 	@Override
@@ -39,7 +44,7 @@ public class CommandSubClaimList extends CommandBase {
 		 * Filter by name (admin only) 
 		 */
 		UUID filter = null;
-		if(args.length == 1) {
+		if(args.length == 1 && (((!(sender instanceof EntityPlayer) && sender.canUseCommand(2, "")) || ((sender instanceof EntityPlayer) && ClaimManager.getManager().isAdmin((EntityPlayer) sender)))) ) {
 			String name = args[0];
 			GameProfile profile = server.getPlayerProfileCache().getGameProfileForUsername(name);
 			if(profile != null && profile.getName().equals(name)) { // Found the profile!

@@ -76,7 +76,7 @@ public class CommandClaimIt extends CommandTreeBase {
 		 * * = Wildcard. Could be any value here (may be limited to a set)
 		 * + = General filter. No spot is completed here, but we are completing every part past and at this.
 		 * */
-		
+
 		if(args.length == 1) { // claimit .
 			completions.add("claim");
 			completions.add("admin");
@@ -89,6 +89,7 @@ public class CommandClaimIt extends CommandTreeBase {
 				completions.add("list");
 				completions.add("setname");
 				completions.add("member");
+				completions.add("toggle");
 			}
 			if(args.length > 2 && args[0].equals("claim") && args[1].equals("member")) { // claimit claim member +
 				if(args.length == 3) { // claimit claim member .
@@ -105,9 +106,15 @@ public class CommandClaimIt extends CommandTreeBase {
 						completions.add(perm.parsedName);
 					}
 				}
+			} else if(args.length > 2 && args[0].equals("claim") && args[1].equals("toggle")) { // claimit claim toggle +
+				if(args.length == 3) { // claimit claim toggle .
+					for(ClaimPermission perm : ClaimPermissionRegistry.getTogglePermissions()) {
+						completions.add(perm.parsedName);
+					}
+				}
 			}
 		}
-		
+
 		return completions;
 	}
 

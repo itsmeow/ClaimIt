@@ -71,9 +71,9 @@ public class CommandSubClaimMemberList extends CommandBase {
 			String claimName = args[0];
 			String permStr = args[1];
 			try {
-				ClaimPermissionMember filter = ClaimPermissionRegistry.getPermissionMember(args[0]);
+				ClaimPermissionMember filter = ClaimPermissionRegistry.getPermissionMember(permStr);
 				
-				ClaimArea claim = CommandUtils.getClaimWithName(args[0], sender);
+				ClaimArea claim = CommandUtils.getClaimWithName(claimName, sender);
 				if(claim != null) {
 					outputFiltered(claim, sender, filter);
 				}

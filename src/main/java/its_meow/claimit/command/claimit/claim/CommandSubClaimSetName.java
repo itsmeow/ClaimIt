@@ -19,7 +19,7 @@ public class CommandSubClaimSetName extends CommandBase {
 
 	@Override
 	public String getUsage(ICommandSender sender) {
-		return "claimit claim setname <name>";
+		return "/claimit claim setname <name>";
 	}
 
 	@Override

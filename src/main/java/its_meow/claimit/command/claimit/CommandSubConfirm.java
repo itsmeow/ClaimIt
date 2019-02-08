@@ -22,7 +22,7 @@ public class CommandSubConfirm extends CommandBase {
 
 	@Override
 	public String getUsage(ICommandSender sender) {
-		return "claimit confirm";
+		return "/claimit confirm";
 	}
 	
 	@Override

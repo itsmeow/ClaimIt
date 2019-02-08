@@ -17,7 +17,7 @@ public class CommandSubCancel extends CommandBase {
 
 	@Override
 	public String getUsage(ICommandSender sender) {
-		return "claimit cancel";
+		return "/claimit cancel";
 	}
 	
 	@Override

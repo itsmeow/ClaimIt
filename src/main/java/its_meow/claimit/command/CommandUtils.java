@@ -11,7 +11,6 @@ import its_meow.claimit.claim.ClaimManager;
 import its_meow.claimit.permission.ClaimPermissionMember;
 import its_meow.claimit.permission.ClaimPermissionRegistry;
 import its_meow.claimit.permission.ClaimPermissionToggle;
-import its_meow.claimit.permission.ClaimPermissions;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.command.PlayerNotFoundException;

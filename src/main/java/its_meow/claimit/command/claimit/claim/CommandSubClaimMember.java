@@ -4,18 +4,13 @@ import java.util.UUID;
 
 import javax.annotation.Nullable;
 
-import com.mojang.authlib.GameProfile;
-
 import its_meow.claimit.claim.ClaimArea;
-import its_meow.claimit.claim.ClaimManager;
 import its_meow.claimit.command.CommandUtils;
 import its_meow.claimit.command.claimit.claim.member.CommandSubClaimMemberList;
 import its_meow.claimit.permission.ClaimPermissionMember;
-import its_meow.claimit.permission.ClaimPermissionRegistry;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommand;
 import net.minecraft.command.ICommandSender;
-import net.minecraft.command.PlayerNotFoundException;
 import net.minecraft.command.WrongUsageException;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
@@ -35,7 +30,7 @@ public class CommandSubClaimMember extends CommandTreeBase {
 
 	@Override
 	public String getUsage(ICommandSender sender) {
-		return "claimit claim member <add/remove> <permission> <username> (optional:claimname) - claimit claim member list (optional:permission) (optional:claimname)";
+		return "/claimit claim member <add/remove> <permission> <username> [claimname]" + "\n" + "/claimit claim member list [permission] [claimname]";
 	}
 
 	@Override
@@ -74,7 +69,6 @@ public class CommandSubClaimMember extends CommandTreeBase {
 			}
 			ClaimPermissionMember permission = CommandUtils.getPermissionMember(permissionStr, this.getUsage(sender));
 			UUID id = CommandUtils.getUUIDForName(username, server);
-			ClaimManager mgr = ClaimManager.getManager();
 			ClaimArea claim = CommandUtils.getClaimWithNameOrLocation(claimName, sender);
 
 			if(claim != null) {

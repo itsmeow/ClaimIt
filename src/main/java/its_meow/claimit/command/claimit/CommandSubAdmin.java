@@ -17,7 +17,7 @@ public class CommandSubAdmin extends CommandBase {
 
 	@Override
 	public String getUsage(ICommandSender sender) {
-		return "claimit admin";
+		return "/claimit admin";
 	}
 	
 	@Override
