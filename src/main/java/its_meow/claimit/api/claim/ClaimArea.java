@@ -1,4 +1,4 @@
-package its_meow.claimit.claim;
+package its_meow.claimit.api.claim;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -8,10 +8,10 @@ import java.util.UUID;
 
 import javax.annotation.Nullable;
 
-import its_meow.claimit.permission.ClaimPermissionMember;
-import its_meow.claimit.permission.ClaimPermissionRegistry;
-import its_meow.claimit.permission.ClaimPermissionToggle;
-import its_meow.claimit.permission.ClaimPermissions;
+import its_meow.claimit.api.permission.ClaimPermissionMember;
+import its_meow.claimit.api.permission.ClaimPermissionRegistry;
+import its_meow.claimit.api.permission.ClaimPermissionToggle;
+import its_meow.claimit.claim.ClaimPermissions;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;

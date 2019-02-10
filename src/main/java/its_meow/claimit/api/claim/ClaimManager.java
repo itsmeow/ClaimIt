@@ -1,5 +1,6 @@
-package its_meow.claimit.claim;
+package its_meow.claimit.api.claim;
 
+import java.awt.Point;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.URL;
@@ -16,9 +17,9 @@ import com.google.gson.JsonParser;
 import com.mojang.authlib.GameProfile;
 
 import its_meow.claimit.ClaimIt;
-import its_meow.claimit.permission.ClaimPermissionMember;
-import its_meow.claimit.permission.ClaimPermissionRegistry;
-import its_meow.claimit.permission.ClaimPermissionToggle;
+import its_meow.claimit.api.permission.ClaimPermissionMember;
+import its_meow.claimit.api.permission.ClaimPermissionRegistry;
+import its_meow.claimit.api.permission.ClaimPermissionToggle;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -175,7 +176,19 @@ public class ClaimManager {
 						}
 					}
 				}
-				if(overlaps == 0) { // Not overlapping nearby claims, adding.
+				if(overlaps == 0) { // Not overlapping CORNERS
+					Point l1 = new Point(claim.getHXZPosition().getX(), claim.getHXZPosition().getZ());
+					Point r1 = new Point(claim.getMainPosition().getX(), claim.getMainPosition().getZ());
+					for(ClaimArea claimI: nearbyClaims) {
+						Point l2 = new Point(claimI.getHXZPosition().getX(), claimI.getHXZPosition().getZ());
+						Point r2 = new Point(claimI.getMainPosition().getX(), claimI.getMainPosition().getZ());
+						if(!(l1.x > r2.x || l2.x > r1.x)) {
+							return false; 
+						}
+						if(!(l1.y < r2.y || l2.y < r1.y)) {
+							return false; 
+						}
+					}
 					addClaimToListInsecurely(claim);
 					return true;
 				}
@@ -351,7 +364,7 @@ public class ClaimManager {
 		}
 		return name;
 	}
-	
+
 	/** Clears the list of stored claims. WARNING: If data is saved after this is done (like, if the server shuts down) all the claims data will be gone permanently. This is only used before deserialization. **/
 	public void clearClaims() {
 		this.claims.clear();

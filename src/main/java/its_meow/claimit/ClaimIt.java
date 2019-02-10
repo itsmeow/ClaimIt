@@ -3,12 +3,10 @@ package its_meow.claimit;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import its_meow.claimit.claim.ClaimEventHandler;
-import its_meow.claimit.claim.ClaimManager;
+import its_meow.claimit.api.claim.ClaimManager;
+import its_meow.claimit.claim.ClaimPermissions;
 import its_meow.claimit.command.CommandClaimIt;
-import its_meow.claimit.command.ConfirmationManager;
-import its_meow.claimit.permission.ClaimPermissions;
-import net.minecraftforge.common.MinecraftForge;
+import its_meow.claimit.util.ConfirmationManager;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.Mod.Instance;
@@ -37,7 +35,6 @@ public class ClaimIt {
 	public void preInit(FMLPreInitializationEvent event) {
 		logger = LogManager.getLogger("claimit");
 		ClaimPermissions.register();
-		MinecraftForge.EVENT_BUS.register(new ClaimEventHandler());
 	}
 
 	@EventHandler

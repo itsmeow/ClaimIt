@@ -4,10 +4,10 @@ import java.util.UUID;
 
 import javax.annotation.Nullable;
 
-import its_meow.claimit.claim.ClaimArea;
-import its_meow.claimit.command.CommandUtils;
+import its_meow.claimit.api.claim.ClaimArea;
+import its_meow.claimit.api.permission.ClaimPermissionMember;
 import its_meow.claimit.command.claimit.claim.member.CommandSubClaimMemberList;
-import its_meow.claimit.permission.ClaimPermissionMember;
+import its_meow.claimit.util.CommandUtils;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommand;
 import net.minecraft.command.ICommandSender;
@@ -78,6 +78,8 @@ public class CommandSubClaimMember extends CommandTreeBase {
 						if(!(sender instanceof EntityPlayer) && sender.canUseCommand(2, "") || (sender instanceof EntityPlayer && claim.canManage((EntityPlayer) sender))) {
 							claim.addMember(permission, id);
 							sendMessage(sender, "§aSuccessfully added " + username + "§a to claim " + claim.getDisplayedViewName() + " with permission " + permission.parsedName);
+						} else {
+							sendMessage(sender, "§cYou cannot modify members of this claim!");
 						}
 					} else {
 						sendMessage(sender, "§eThis player already has that permission!");
@@ -88,6 +90,8 @@ public class CommandSubClaimMember extends CommandTreeBase {
 						if(!(sender instanceof EntityPlayer) && sender.canUseCommand(2, "") || (sender instanceof EntityPlayer && claim.canManage((EntityPlayer) sender))) {
 							claim.removeMember(permission, id);
 							sendMessage(sender, "§aSuccessfully removed permission " + permission.parsedName + " from user " + username + " in claim " + claim.getDisplayedViewName());
+						} else {
+							sendMessage(sender, "§cYou cannot modify members of this claim!");
 						}
 					} else {
 						sendMessage(sender, "§eThis player does not have that permission!");

@@ -3,6 +3,8 @@ package its_meow.claimit.claim;
 import java.util.HashSet;
 import java.util.Set;
 
+import its_meow.claimit.api.claim.ClaimArea;
+import its_meow.claimit.api.claim.ClaimManager;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -14,15 +16,16 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
+import net.minecraftforge.event.entity.EntityMountEvent;
+import net.minecraftforge.event.entity.item.ItemTossEvent;
+import net.minecraftforge.event.entity.living.LivingDestroyBlockEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
+import net.minecraftforge.event.entity.player.EntityItemPickupEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.entity.player.PlayerPickupXpEvent;
-import net.minecraftforge.event.world.BlockEvent.BreakEvent;
-import net.minecraftforge.event.world.BlockEvent.FarmlandTrampleEvent;
-import net.minecraftforge.event.world.BlockEvent.PlaceEvent;
+import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.event.world.ExplosionEvent;
-import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.Event.Result;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
@@ -31,15 +34,8 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 @Mod.EventBusSubscriber
 public class ClaimEventHandler {
 
-	@SubscribeEvent
-	public void onWorldSave(WorldEvent.Save e) {
-		if(!e.getWorld().isRemote) {
-			ClaimManager.getManager().serialize();
-		}
-	}
-	
 	@SubscribeEvent(priority = EventPriority.HIGHEST)
-	public void onBlockRightClicked(PlayerInteractEvent.RightClickBlock e) {
+	public static void onBlockRightClicked(PlayerInteractEvent.RightClickBlock e) {
 		World world = e.getEntity().getEntityWorld();
 		BlockPos pos = e.getPos();
 		ClaimManager cm = ClaimManager.getManager();
@@ -76,8 +72,12 @@ public class ClaimEventHandler {
 					// Claim corners are automatically corrected to proper values by constructor
 					ClaimArea newClaim;
 					newClaim = new ClaimArea(player.dimension, c1.getX(), c1.getZ(), sideL.getX(), sideL.getZ(), player);
-					boolean didClaim = ClaimManager.getManager().addClaim(newClaim); // Add claim
-					player.sendMessage(new TextComponentString(didClaim ? "§aClaim added successfully!" : "§cThis claim overlaps another claim!"));
+					if(newClaim.getSideLengthX() >= 1 && newClaim.getSideLengthZ() >= 1) {
+						boolean didClaim = ClaimManager.getManager().addClaim(newClaim); // Add claim
+						player.sendMessage(new TextComponentString(didClaim ? "§aClaim added successfully!" : "§cThis claim overlaps another claim!"));
+					} else {
+						player.sendMessage(new TextComponentString("§cYour claim must have a length of at least 2 in both directions!"));
+					}
 					// Remove data so a new claim can be made.
 					data.removeTag("Corner1");
 				} else {
@@ -88,13 +88,13 @@ public class ClaimEventHandler {
 				data.removeTag("Corner1");
 				player.sendMessage(new TextComponentString("§cYou cannot set a corner inside an existing claim!"));
 			}
-			
-			
+
+
 		}
 	}
 
 	@SubscribeEvent(priority = EventPriority.HIGHEST)
-	public void onBlockBroken(BreakEvent e) {
+	public static void onBlockBroken(BlockEvent.BreakEvent e) {
 		World world = e.getWorld();
 		BlockPos pos = e.getPos();
 		ClaimManager cm = ClaimManager.getManager();
@@ -106,7 +106,7 @@ public class ClaimEventHandler {
 	}
 
 	@SubscribeEvent(priority = EventPriority.HIGHEST)
-	public void onBlockPlaced(PlaceEvent e) {
+	public static void onBlockPlaced(BlockEvent.PlaceEvent e) {
 		World world = e.getWorld();
 		BlockPos pos = e.getPos();
 		ClaimManager cm = ClaimManager.getManager();
@@ -124,7 +124,7 @@ public class ClaimEventHandler {
 	}
 
 	@SubscribeEvent(priority = EventPriority.HIGHEST)
-	public void onFarmTrample(FarmlandTrampleEvent e) {
+	public static void onFarmTrample(BlockEvent.FarmlandTrampleEvent e) {
 		World world = e.getWorld();
 		BlockPos pos = e.getPos();
 		ClaimManager cm = ClaimManager.getManager();
@@ -141,7 +141,7 @@ public class ClaimEventHandler {
 	}
 
 	@SubscribeEvent(priority = EventPriority.HIGHEST)
-	public void onPlayerAttackAnimal(AttackEntityEvent e) {
+	public static void onPlayerAttackAnimal(AttackEntityEvent e) {
 		World world = e.getEntityPlayer().getEntityWorld();
 		BlockPos pos = e.getEntityPlayer().getPosition();
 		ClaimManager cm = ClaimManager.getManager();
@@ -165,19 +165,24 @@ public class ClaimEventHandler {
 	}
 
 	@SubscribeEvent(priority = EventPriority.HIGHEST)
-	public void onEntityRightClicked(PlayerInteractEvent.EntityInteract e) {
+	public static void onEntityRightClicked(PlayerInteractEvent.EntityInteract e) {
 		World world = e.getEntity().getEntityWorld();
 		BlockPos pos = e.getEntity().getPosition();
+		BlockPos pos2 = e.getPos();
 		ClaimManager cm = ClaimManager.getManager();
+		EntityPlayer player = e.getEntityPlayer();
 		ClaimArea claim = cm.getClaimAtLocation(world, pos);
+		ClaimArea claim2 = cm.getClaimAtLocation(world, pos2);
 		if(claim != null) {
-			EntityPlayer player = e.getEntityPlayer();
 			e.setCanceled(!claim.canEntity(player) || !claim.canUse(player));
+		}
+		if(claim2 != null) {
+			e.setCanceled(!claim2.canEntity(player) || !claim2.canUse(player) || e.isCanceled());
 		}
 	}
 
 	@SubscribeEvent(priority = EventPriority.HIGHEST)
-	public void onPlayerUse(PlayerInteractEvent.RightClickEmpty e) {
+	public static void onPlayerUse(PlayerInteractEvent.RightClickEmpty e) {
 		World world = e.getEntity().getEntityWorld();
 		BlockPos pos = e.getPos();
 		ClaimManager cm = ClaimManager.getManager();
@@ -187,9 +192,9 @@ public class ClaimEventHandler {
 			e.setCanceled(!claim.canUse(player));
 		}
 	}
-	
+
 	@SubscribeEvent(priority = EventPriority.HIGHEST)
-	public void onPlayerUse(PlayerInteractEvent.RightClickItem e) {
+	public static void onPlayerUse(PlayerInteractEvent.RightClickItem e) {
 		World world = e.getEntity().getEntityWorld();
 		BlockPos pos = e.getPos();
 		ClaimManager cm = ClaimManager.getManager();
@@ -199,7 +204,7 @@ public class ClaimEventHandler {
 			e.setCanceled(!claim.canUse(player));
 		}
 	}
-	
+
 	@SubscribeEvent(priority = EventPriority.HIGHEST)
 	public void onPlayerUse(PlayerInteractEvent.LeftClickEmpty e) {
 		World world = e.getEntity().getEntityWorld();
@@ -213,7 +218,7 @@ public class ClaimEventHandler {
 	}
 
 	@SubscribeEvent(priority = EventPriority.HIGHEST)
-	public void onBlockExplodedByMob(net.minecraftforge.event.entity.EntityMobGriefingEvent e) {
+	public static void onBlockExplodedByMob(net.minecraftforge.event.entity.EntityMobGriefingEvent e) {
 		World world = e.getEntity().getEntityWorld();
 		BlockPos pos = e.getEntity().getPosition();
 		ClaimManager cm = ClaimManager.getManager();
@@ -224,7 +229,7 @@ public class ClaimEventHandler {
 	}
 
 	@SubscribeEvent(priority = EventPriority.HIGHEST)
-	public void onPlayerAttack(net.minecraftforge.event.entity.player.AttackEntityEvent e) {
+	public static void onPlayerAttack(net.minecraftforge.event.entity.player.AttackEntityEvent e) {
 		World world = e.getEntity().getEntityWorld();
 		BlockPos pos = e.getEntity().getPosition();
 		ClaimManager cm = ClaimManager.getManager();
@@ -240,7 +245,7 @@ public class ClaimEventHandler {
 	}
 
 	@SubscribeEvent(priority = EventPriority.HIGHEST)
-	public void onHurtEvent(LivingHurtEvent e) {
+	public static void onHurtEvent(LivingHurtEvent e) {
 		EntityLivingBase entity = e.getEntityLiving();
 		DamageSource source = e.getSource();
 		if(entity != null && source != null) { // There is an actual damage happening
@@ -262,7 +267,7 @@ public class ClaimEventHandler {
 	}
 
 	@SubscribeEvent(priority = EventPriority.HIGHEST)
-	public void onPlayerPickupXp(PlayerPickupXpEvent e) {
+	public static void onPlayerPickupXp(PlayerPickupXpEvent e) {
 		World world = e.getEntity().getEntityWorld();
 		BlockPos pos = e.getEntity().getPosition();
 		ClaimManager cm = ClaimManager.getManager();
@@ -274,7 +279,7 @@ public class ClaimEventHandler {
 	}
 
 	@SubscribeEvent(priority = EventPriority.HIGHEST)
-	public void onExplode(ExplosionEvent.Detonate e) {
+	public static void onExplode(ExplosionEvent.Detonate e) {
 		World world = e.getWorld();
 		ClaimManager cm = ClaimManager.getManager();
 		Set<BlockPos> removeList = new HashSet<BlockPos>();
@@ -297,6 +302,66 @@ public class ClaimEventHandler {
 
 		for(Entity ent : removeListE) {
 			e.getAffectedEntities().remove(ent);
+		}
+	}
+
+	@SubscribeEvent(priority = EventPriority.HIGHEST)
+	public static void onBlockBrokenLiving(LivingDestroyBlockEvent e) {
+		World world = e.getEntityLiving().getEntityWorld();
+		BlockPos pos = e.getPos();
+		ClaimManager cm = ClaimManager.getManager();
+		ClaimArea claim = cm.getClaimAtLocation(world, pos);
+		if(claim != null) {
+			if(!(e.getEntityLiving() instanceof EntityPlayer)) {
+				e.setCanceled(!claim.isPermissionToggled(ClaimPermissions.LIVING_MODIFY));
+			} else if(e.getEntityLiving() instanceof EntityPlayer){
+				EntityPlayer player = (EntityPlayer) e.getEntityLiving();
+				e.setCanceled(!claim.canModify(player));
+			}
+		}
+	}
+
+	@SubscribeEvent(priority = EventPriority.HIGHEST)
+	public static void onEntityMount(EntityMountEvent e) {
+		if(e.isMounting()) {
+			if(e.getEntityMounting() instanceof EntityPlayer) {
+				EntityPlayer player = (EntityPlayer) e.getEntityMounting();
+				ClaimArea claim = ClaimManager.getManager().getClaimAtLocation(e.getWorldObj(), e.getEntityBeingMounted().getPosition());
+				if(claim != null) {
+					e.setCanceled(!claim.canEntity(player));
+				}
+			}
+		}
+	}
+
+	@SubscribeEvent(priority = EventPriority.HIGHEST)
+	public static void onItemThrow(ItemTossEvent e) {
+		World world = e.getPlayer().world;
+		EntityPlayer player = e.getPlayer();
+		BlockPos pos = player.getPosition();
+		ClaimArea claim = ClaimManager.getManager().getClaimAtLocation(world, pos);
+		if(claim != null) {
+			if(!claim.isPermissionToggled(ClaimPermissions.DROP_ITEM)) {
+				if(!claim.canUse(player)) {
+					e.setCanceled(true);
+					player.addItemStackToInventory(e.getEntityItem().getItem()); // Re-add items because canceling event deletes items
+				}
+			}
+		}
+	}
+	
+	@SubscribeEvent(priority = EventPriority.HIGHEST)
+	public static void onItemPickup(EntityItemPickupEvent e) {
+		World world = e.getEntityPlayer().world;
+		EntityPlayer player = e.getEntityPlayer();
+		BlockPos pos = e.getItem().getPosition();
+		ClaimArea claim = ClaimManager.getManager().getClaimAtLocation(world, pos);
+		if(claim != null) {
+			if(!claim.isPermissionToggled(ClaimPermissions.PICKUP_ITEM)) {
+				if(!claim.canUse(player)) {
+					e.setCanceled(true);
+				}
+			}
 		}
 	}
 

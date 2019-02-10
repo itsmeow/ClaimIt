@@ -1,8 +1,8 @@
 package its_meow.claimit.command.claimit.claim;
 
-import its_meow.claimit.claim.ClaimArea;
-import its_meow.claimit.claim.ClaimManager;
-import its_meow.claimit.command.CommandUtils;
+import its_meow.claimit.api.claim.ClaimArea;
+import its_meow.claimit.api.claim.ClaimManager;
+import its_meow.claimit.util.CommandUtils;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
@@ -41,7 +41,7 @@ public class CommandSubClaimDelete extends CommandBase {
 			throw new CommandException("There is no claim with this name you own!");
 		}
 
-		if(claim.isOwner((EntityPlayer) sender) || ClaimManager.getManager().isAdmin((EntityPlayer) sender) || (!(sender instanceof EntityPlayer) && sender.canUseCommand(2, ""))) {
+		if((sender instanceof EntityPlayer && (claim.isOwner((EntityPlayer) sender) || ClaimManager.getManager().isAdmin((EntityPlayer) sender))) || (!(sender instanceof EntityPlayer) && sender.canUseCommand(2, ""))) {
 			ClaimManager.getManager().deleteClaim(claim);
 			sendMessage(sender, "§eClaim deleted.");
 		} else {

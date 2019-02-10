@@ -2,8 +2,8 @@ package its_meow.claimit.command.claimit.claim;
 
 import java.util.UUID;
 
-import its_meow.claimit.claim.ClaimArea;
-import its_meow.claimit.claim.ClaimManager;
+import its_meow.claimit.api.claim.ClaimArea;
+import its_meow.claimit.api.claim.ClaimManager;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;

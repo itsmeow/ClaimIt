@@ -5,8 +5,8 @@ import java.util.UUID;
 
 import com.mojang.authlib.GameProfile;
 
-import its_meow.claimit.claim.ClaimArea;
-import its_meow.claimit.claim.ClaimManager;
+import its_meow.claimit.api.claim.ClaimArea;
+import its_meow.claimit.api.claim.ClaimManager;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;

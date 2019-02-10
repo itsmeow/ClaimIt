@@ -1,7 +1,7 @@
 package its_meow.claimit.command.claimit.claim;
 
-import its_meow.claimit.claim.ClaimArea;
-import its_meow.claimit.claim.ClaimManager;
+import its_meow.claimit.api.claim.ClaimArea;
+import its_meow.claimit.api.claim.ClaimManager;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
@@ -44,6 +44,8 @@ public class CommandSubClaimSetName extends CommandBase {
 						} else {
 							sendMessage(sender, "§cFailed to set name. There is another claim " + (ClaimManager.getManager().isAdmin(player) ? "this player owns" : "you own") + " with this name.");
 						}
+					} else {
+						sendMessage(sender, "§cYou do not own this claim!");
 					}
 				} else {
 					sendMessage(sender, "§cNo claim there or you don't own the claim!");

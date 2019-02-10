@@ -1,4 +1,4 @@
-package its_meow.claimit.permission;
+package its_meow.claimit.api.permission;
 
 public class ClaimPermissionMember extends ClaimPermission {
 	

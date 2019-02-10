@@ -1,4 +1,4 @@
-package its_meow.claimit.command;
+package its_meow.claimit.util;
 
 import java.util.UUID;
 
@@ -6,11 +6,11 @@ import javax.annotation.Nullable;
 
 import com.mojang.authlib.GameProfile;
 
-import its_meow.claimit.claim.ClaimArea;
-import its_meow.claimit.claim.ClaimManager;
-import its_meow.claimit.permission.ClaimPermissionMember;
-import its_meow.claimit.permission.ClaimPermissionRegistry;
-import its_meow.claimit.permission.ClaimPermissionToggle;
+import its_meow.claimit.api.claim.ClaimArea;
+import its_meow.claimit.api.claim.ClaimManager;
+import its_meow.claimit.api.permission.ClaimPermissionMember;
+import its_meow.claimit.api.permission.ClaimPermissionRegistry;
+import its_meow.claimit.api.permission.ClaimPermissionToggle;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.command.PlayerNotFoundException;

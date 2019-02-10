@@ -5,12 +5,12 @@ import java.util.LinkedList;
 import java.util.List;
 
 import its_meow.claimit.Ref;
+import its_meow.claimit.api.permission.ClaimPermission;
+import its_meow.claimit.api.permission.ClaimPermissionRegistry;
 import its_meow.claimit.command.claimit.CommandSubAdmin;
 import its_meow.claimit.command.claimit.CommandSubCancel;
 import its_meow.claimit.command.claimit.CommandSubClaim;
 import its_meow.claimit.command.claimit.CommandSubConfirm;
-import its_meow.claimit.permission.ClaimPermission;
-import its_meow.claimit.permission.ClaimPermissionRegistry;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.server.MinecraftServer;

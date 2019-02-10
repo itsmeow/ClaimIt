@@ -1,4 +1,4 @@
-package its_meow.claimit.claim;
+package its_meow.claimit.api.claim;
 
 import its_meow.claimit.Ref;
 import net.minecraft.nbt.NBTTagCompound;

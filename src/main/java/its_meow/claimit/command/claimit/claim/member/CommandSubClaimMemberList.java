@@ -5,11 +5,11 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.UUID;
 
-import its_meow.claimit.claim.ClaimArea;
-import its_meow.claimit.claim.ClaimManager;
-import its_meow.claimit.command.CommandUtils;
-import its_meow.claimit.permission.ClaimPermissionMember;
-import its_meow.claimit.permission.ClaimPermissionRegistry;
+import its_meow.claimit.api.claim.ClaimArea;
+import its_meow.claimit.api.claim.ClaimManager;
+import its_meow.claimit.api.permission.ClaimPermissionMember;
+import its_meow.claimit.api.permission.ClaimPermissionRegistry;
+import its_meow.claimit.util.CommandUtils;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;

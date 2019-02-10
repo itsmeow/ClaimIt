@@ -1,7 +1,7 @@
 package its_meow.claimit.command.claimit;
 
-import its_meow.claimit.EnumConfirmableAction;
-import its_meow.claimit.command.ConfirmationManager;
+import its_meow.claimit.util.ConfirmationManager;
+import its_meow.claimit.util.EnumConfirmableAction;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;

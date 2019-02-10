@@ -1,9 +1,9 @@
 package its_meow.claimit.command.claimit.claim;
 
-import its_meow.claimit.claim.ClaimArea;
-import its_meow.claimit.command.CommandUtils;
-import its_meow.claimit.permission.ClaimPermissionRegistry;
-import its_meow.claimit.permission.ClaimPermissionToggle;
+import its_meow.claimit.api.claim.ClaimArea;
+import its_meow.claimit.api.permission.ClaimPermissionRegistry;
+import its_meow.claimit.api.permission.ClaimPermissionToggle;
+import its_meow.claimit.util.CommandUtils;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
@@ -61,6 +61,8 @@ public class CommandSubClaimToggle extends CommandBase {
 			boolean toggled = claim.isPermissionToggled(perm);
 			String toggledStr = toggled ? "ON" : "OFF";
 			sendMessage(sender, "§aSet §e" + perm.parsedName + "§a to §9" + toggledStr);
+		} else {
+			sendMessage(sender, "§cYou cannot modify toggles of this claim!");
 		}
 
 	}

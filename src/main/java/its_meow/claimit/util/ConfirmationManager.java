@@ -1,8 +1,7 @@
-package its_meow.claimit.command;
+package its_meow.claimit.util;
 
 import java.util.HashMap;
 
-import its_meow.claimit.EnumConfirmableAction;
 import net.minecraft.command.ICommandSender;
 
 public class ConfirmationManager {
