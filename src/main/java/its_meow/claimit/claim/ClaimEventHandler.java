@@ -1,27 +1,39 @@
 package its_meow.claimit.claim;
 
 import java.util.HashSet;
+import java.util.Random;
 import java.util.Set;
 
 import its_meow.claimit.Ref;
 import its_meow.claimit.api.claim.ClaimArea;
 import its_meow.claimit.api.claim.ClaimManager;
+import net.minecraft.block.BlockGrass;
+import net.minecraft.block.BlockTallGrass;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.ActionResult;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
+import net.minecraftforge.common.util.BlockSnapshot;
 import net.minecraftforge.event.entity.EntityMountEvent;
+import net.minecraftforge.event.entity.ProjectileImpactEvent;
 import net.minecraftforge.event.entity.item.ItemTossEvent;
 import net.minecraftforge.event.entity.living.LivingDestroyBlockEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
+import net.minecraftforge.event.entity.player.ArrowNockEvent;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
+import net.minecraftforge.event.entity.player.BonemealEvent;
 import net.minecraftforge.event.entity.player.EntityItemPickupEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.entity.player.PlayerPickupXpEvent;
@@ -350,7 +362,7 @@ public class ClaimEventHandler {
 			}
 		}
 	}
-	
+
 	@SubscribeEvent(priority = EventPriority.HIGHEST)
 	public static void onItemPickup(EntityItemPickupEvent e) {
 		World world = e.getEntityPlayer().world;
@@ -360,6 +372,108 @@ public class ClaimEventHandler {
 		if(claim != null) {
 			if(!claim.isPermissionToggled(ClaimPermissions.PICKUP_ITEM)) {
 				if(!claim.canUse(player)) {
+					e.setCanceled(true);
+				}
+			}
+		}
+	}
+
+	@SubscribeEvent(priority = EventPriority.HIGHEST)
+	public static void onBonemeal(BonemealEvent e) {
+		if(e.getBlock() instanceof BlockGrass) {
+			int nearby = 0;
+			for(ClaimArea claimI : ClaimManager.getManager().getClaimsList()) {
+				if(claimI.getDimensionID() == e.getWorld().provider.getDimension()) {
+					int xDistance = Math.abs(claimI.getMainPosition().getX() - e.getPos().getX());
+					int zDistance = Math.abs(claimI.getMainPosition().getZ() - e.getPos().getZ());
+					if(xDistance < 4 || zDistance < 4) {
+						nearby++;
+					}
+				}
+			}
+			e.setCanceled(nearby > 0);
+		}
+		ClaimArea originalClaim = ClaimManager.getManager().getClaimAtLocation(e.getWorld(), e.getPos());
+		if(e.isCanceled()) {
+			Random rand = new Random();
+			BlockPos blockpos = e.getPos().up();
+
+			for (int i = 0; i < 128; ++i)
+			{
+				BlockPos blockpos1 = blockpos;
+				int j = 0;
+
+				while (true)
+				{
+					if (j >= i / 16)
+					{
+						ClaimArea claimAtLoc = ClaimManager.getManager().getClaimAtLocation(e.getWorld(), blockpos1);
+						if (e.getWorld().isAirBlock(blockpos1) && (claimAtLoc == null || (claimAtLoc  == originalClaim && claimAtLoc.canModify(e.getEntityPlayer()))))
+						{
+							if (rand.nextInt(8) == 0) {
+								e.getWorld().getBiome(blockpos1).plantFlower(e.getWorld(), rand, blockpos1);
+							}
+							else
+							{
+								IBlockState iblockstate1 = Blocks.TALLGRASS.getDefaultState().withProperty(BlockTallGrass.TYPE, BlockTallGrass.EnumType.GRASS);
+
+								if (Blocks.TALLGRASS.canBlockStay(e.getWorld(), blockpos1, iblockstate1))
+								{
+									e.getWorld().setBlockState(blockpos1, iblockstate1, 3);
+								}
+							}
+						}
+
+						break;
+					}
+
+					blockpos1 = blockpos1.add(rand.nextInt(3) - 1, (rand.nextInt(3) - 1) * rand.nextInt(3) / 2, rand.nextInt(3) - 1);
+
+					if (e.getWorld().getBlockState(blockpos1.down()).getBlock() != Blocks.GRASS || e.getWorld().getBlockState(blockpos1).isNormalCube())
+					{
+						break;
+					}
+
+					++j;
+				}
+			}
+		}
+	}
+
+	@SubscribeEvent(priority = EventPriority.HIGHEST)
+	public static void onMultiPlace(BlockEvent.MultiPlaceEvent e) {
+		World world = e.getWorld();
+		EntityPlayer player = e.getPlayer();
+		for(BlockSnapshot snap : e.getReplacedBlockSnapshots()) {
+			BlockPos pos = snap.getPos();
+			ClaimArea claim = ClaimManager.getManager().getClaimAtLocation(world, pos);
+			if(claim != null) {
+				e.setCanceled(!claim.canModify(player) || e.isCanceled());
+			}
+		}
+	}
+
+	@SubscribeEvent(priority = EventPriority.HIGHEST)
+	public static void onBowUse(ArrowNockEvent e) {
+		World world = e.getWorld();
+		EntityPlayer player = e.getEntityPlayer();
+		BlockPos pos = player.getPosition();
+		ClaimArea claim = ClaimManager.getManager().getClaimAtLocation(world, pos);
+		if(claim != null) {
+			if(!claim.canUse(player)) { 
+				e.setAction(new ActionResult<ItemStack>(EnumActionResult.FAIL, e.getBow()));
+			}
+		}
+	}
+	
+	@SubscribeEvent(priority = EventPriority.HIGHEST)
+	public static void onProjectileImpact(ProjectileImpactEvent e) {
+		Entity entity = e.getRayTraceResult().entityHit;
+		if(entity instanceof EntityLiving) {
+			EntityLiving el = (EntityLiving) entity;
+			ClaimArea claim = ClaimManager.getManager().getClaimAtLocation(el.world, el.getPosition());
+			if(claim != null) {
+				if(!claim.isPermissionToggled(ClaimPermissions.ALLOW_PROJECTILES)) {
 					e.setCanceled(true);
 				}
 			}
