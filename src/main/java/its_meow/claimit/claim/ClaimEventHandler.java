@@ -3,6 +3,7 @@ package its_meow.claimit.claim;
 import java.util.HashSet;
 import java.util.Set;
 
+import its_meow.claimit.Ref;
 import its_meow.claimit.api.claim.ClaimArea;
 import its_meow.claimit.api.claim.ClaimManager;
 import net.minecraft.entity.Entity;
@@ -31,7 +32,7 @@ import net.minecraftforge.fml.common.eventhandler.Event.Result;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
-@Mod.EventBusSubscriber
+@Mod.EventBusSubscriber(modid = Ref.MOD_ID)
 public class ClaimEventHandler {
 
 	@SubscribeEvent(priority = EventPriority.HIGHEST)
@@ -40,7 +41,7 @@ public class ClaimEventHandler {
 		BlockPos pos = e.getPos();
 		ClaimManager cm = ClaimManager.getManager();
 		ClaimArea claim = cm.getClaimAtLocation(world, pos);
-		if(claim != null && e.getItemStack().isEmpty()) {
+		if(claim != null) {
 			EntityPlayer player = e.getEntityPlayer();
 			e.setCanceled(!claim.canUse(player));
 		} else if(claim == null && e.getItemStack().getItem() == Items.SHEARS && !world.isRemote) { // Add a claim with shears
