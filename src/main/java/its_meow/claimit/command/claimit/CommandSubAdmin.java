@@ -7,6 +7,7 @@ import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.text.TextComponentString;
+import static net.minecraft.util.text.TextFormatting.*;
 
 public class CommandSubAdmin extends CommandBase {
 
@@ -31,13 +32,13 @@ public class CommandSubAdmin extends CommandBase {
 			if(this.checkPermission(server, sender)) {
 				if(ClaimManager.getManager().isAdmin((EntityPlayer) sender)) {
 					ClaimManager.getManager().removeAdmin((EntityPlayer) sender);
-					sendMessage(sender, "§aAdmin bypass disabled.");
+					sendMessage(sender, GREEN + "Admin bypass disabled.");
 				} else {
 					ClaimManager.getManager().addAdmin((EntityPlayer) sender);
-					sendMessage(sender, "§aAdmin bypass enabled. You may now manage all claims.");
+					sendMessage(sender, GREEN + "Admin bypass enabled. You may now manage all claims.");
 				}
 			} else {
-				sendMessage(sender, "§cYou do not have permission to use this command!");
+				sendMessage(sender, RED + "You do not have permission to use this command!");
 			}
 		} else {
 			sendMessage(sender, "You must be a player to use this command!");

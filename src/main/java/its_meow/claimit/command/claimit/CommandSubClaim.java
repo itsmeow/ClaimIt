@@ -12,6 +12,7 @@ import net.minecraft.command.ICommandSender;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraftforge.server.command.CommandTreeBase;
+import static net.minecraft.util.text.TextFormatting.*;
 
 public class CommandSubClaim extends CommandTreeBase {
 	
@@ -44,14 +45,14 @@ public class CommandSubClaim extends CommandTreeBase {
 	public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
 		super.execute(server, sender, args);
 		if(args.length == 0) {
-			sendMessage(sender, "§b§lSubcommands: ");
-			sendMessage(sender, "§e/claimit claim info");
-			sendMessage(sender, "§e/claimit claim delete");
-			sendMessage(sender, "§e/claimit claim list");
-			sendMessage(sender, "§e/claimit claim setname");
-			sendMessage(sender, "§e/claimit claim member");
-			sendMessage(sender, "§e/claimit claim deleteall");
-			sendMessage(sender, "§e/claimit claim toggle");
+			sendMessage(sender, AQUA + "" + BOLD + "Subcommands: ");
+			sendMessage(sender, YELLOW + "/claimit claim info");
+			sendMessage(sender, YELLOW + "/claimit claim delete");
+			sendMessage(sender, YELLOW + "/claimit claim list");
+			sendMessage(sender, YELLOW + "/claimit claim setname");
+			sendMessage(sender, YELLOW + "/claimit claim member");
+			sendMessage(sender, YELLOW + "/claimit claim deleteall");
+			sendMessage(sender, YELLOW + "/claimit claim toggle");
 		}
 	}
 	

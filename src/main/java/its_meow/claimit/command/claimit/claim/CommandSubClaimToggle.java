@@ -10,6 +10,7 @@ import net.minecraft.command.ICommandSender;
 import net.minecraft.command.WrongUsageException;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.text.TextComponentString;
+import static net.minecraft.util.text.TextFormatting.*;
 
 public class CommandSubClaimToggle extends CommandBase {
 
@@ -44,8 +45,8 @@ public class CommandSubClaimToggle extends CommandBase {
 				for(ClaimPermissionToggle toggle : ClaimPermissionRegistry.getTogglePermissions()) {
 					boolean toggled = claim.isPermissionToggled(toggle);
 					String toggledStr = toggled ? "ON" : "OFF";
-					toggledStr = toggle.defaultValue == toggled ? "§a" + toggledStr : "§c" + toggledStr;
-					out += "§e" + toggle.parsedName + "§9: " + toggledStr + "\n";
+					toggledStr = toggle.defaultValue == toggled ? GREEN + toggledStr : RED + toggledStr;
+					out += YELLOW + toggle.parsedName + BLUE + ": " + toggledStr + "\n";
 				}
 				throw new CommandException(out.trim());
 			}
@@ -64,9 +65,9 @@ public class CommandSubClaimToggle extends CommandBase {
 			claim.flipPermissionToggle(perm);
 			boolean toggled = claim.isPermissionToggled(perm);
 			String toggledStr = toggled ? "ON" : "OFF";
-			sendMessage(sender, "§aSet §e" + perm.parsedName + "§a to §9" + toggledStr);
+			sendMessage(sender, GREEN + "Set " + YELLOW + perm.parsedName + GREEN + " to " + BLUE + toggledStr);
 		} else {
-			sendMessage(sender, "§cYou cannot modify toggles of this claim!");
+			sendMessage(sender, RED + "You cannot modify toggles of this claim!");
 		}
 
 	}

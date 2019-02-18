@@ -9,6 +9,7 @@ import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.text.TextComponentString;
+import static net.minecraft.util.text.TextFormatting.*;
 
 public class CommandSubClaimDelete extends CommandBase {
 
@@ -43,9 +44,9 @@ public class CommandSubClaimDelete extends CommandBase {
 
 		if((sender instanceof EntityPlayer && (claim.isOwner((EntityPlayer) sender) || ClaimManager.getManager().isAdmin((EntityPlayer) sender))) || (!(sender instanceof EntityPlayer) && sender.canUseCommand(2, ""))) {
 			ClaimManager.getManager().deleteClaim(claim);
-			sendMessage(sender, "§eClaim deleted.");
+			sendMessage(sender, YELLOW + "Claim deleted.");
 		} else {
-			sendMessage(sender, "§cYou do not own this claim!");
+			sendMessage(sender, RED + "You do not own this claim!");
 		}
 
 	}

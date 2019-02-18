@@ -9,6 +9,7 @@ import net.minecraft.command.SyntaxErrorException;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.text.TextComponentString;
+import static net.minecraft.util.text.TextFormatting.*;
 
 public class CommandSubClaimSetName extends CommandBase {
 
@@ -37,18 +38,18 @@ public class CommandSubClaimSetName extends CommandBase {
 					if(claim.isOwner(player)) {
 						boolean pass = claim.setViewName(args[0]);
 						if(pass) {
-							sendMessage(sender, "§bSet this claim's name to: §a" + claim.getDisplayedViewName());
+							sendMessage(sender, AQUA + "Set this claim's name to: " + GREEN + claim.getDisplayedViewName());
 							if(ClaimManager.getManager().isAdmin(player)) {
-								sendMessage(sender, "§bSet this claim's true name to: §a" + claim.getTrueViewName());
+								sendMessage(sender, AQUA + "Set this claim's true name to: " + GREEN + claim.getTrueViewName());
 							}
 						} else {
-							sendMessage(sender, "§cFailed to set name. There is another claim " + (ClaimManager.getManager().isAdmin(player) ? "this player owns" : "you own") + " with this name.");
+							sendMessage(sender, RED + "Failed to set name. There is another claim " + (ClaimManager.getManager().isAdmin(player) ? "this player owns" : "you own") + " with this name.");
 						}
 					} else {
-						sendMessage(sender, "§cYou do not own this claim!");
+						sendMessage(sender, RED + "You do not own this claim!");
 					}
 				} else {
-					sendMessage(sender, "§cNo claim there or you don't own the claim!");
+					sendMessage(sender, RED + "No claim there or you don't own the claim!");
 				}
 			} else {
 				sendMessage(sender, "You must be a player to use this command!");

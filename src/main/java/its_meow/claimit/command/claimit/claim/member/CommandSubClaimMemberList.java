@@ -17,6 +17,7 @@ import net.minecraft.command.WrongUsageException;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.text.TextComponentString;
+import static net.minecraft.util.text.TextFormatting.*;
 
 public class CommandSubClaimMemberList extends CommandBase {
 
@@ -80,10 +81,10 @@ public class CommandSubClaimMemberList extends CommandBase {
 				
 				
 			} catch(IllegalArgumentException e) {
-				throw new WrongUsageException("§cNo such permission: §a" + permStr + "\n§cValid Permissions: §a" + ClaimPermissionRegistry.getValidPermissionListMember());
+				throw new WrongUsageException(RED + "No such permission: " + GREEN + permStr + "\n" + RED + "Valid Permissions: " + GREEN + ClaimPermissionRegistry.getValidPermissionListMember());
 			}
 		} else {
-			throw new WrongUsageException("§cToo many arguments! Usage: " + this.getUsage(sender));
+			throw new WrongUsageException(RED + "Too many arguments! Usage: " + this.getUsage(sender));
 		}
 	}
 	
@@ -98,13 +99,13 @@ public class CommandSubClaimMemberList extends CommandBase {
 			if(members.isEmpty()) {
 				throw new CommandException("This claim has no members with that permission.");
 			}
-			sendMessage(sender, "§a" + filter.parsedName + "§9:");
+			sendMessage(sender, GREEN + filter.parsedName + BLUE + ":");
 			for(UUID member : members) {
 				String name = ClaimManager.getPlayerName(member, sender.getEntityWorld());
-				sendMessage(sender, "§e" + name);
+				sendMessage(sender, YELLOW + name);
 			}
 		} else {
-			throw new WrongUsageException("§cThere is no claim here! Usage: §b" + this.getUsage(sender));
+			throw new WrongUsageException(RED + "There is no claim here! Usage: " + AQUA + this.getUsage(sender));
 		}
 	}
 	
@@ -127,10 +128,10 @@ public class CommandSubClaimMemberList extends CommandBase {
 				}
 				int end = permString.lastIndexOf(',');
 				permString = permString.substring(0, end);
-				sendMessage(sender, "§e" + ClaimManager.getPlayerName(member, sender.getEntityWorld()) + "§9:§a " + permString);
+				sendMessage(sender, YELLOW + ClaimManager.getPlayerName(member, sender.getEntityWorld()) + BLUE + ":" + GREEN + permString);
 			}
 		} else {
-			throw new WrongUsageException("§cThere is no claim here! Usage: §b" + this.getUsage(sender));
+			throw new WrongUsageException(RED+ "There is no claim here! Usage: " + AQUA + this.getUsage(sender));
 		}
 	}
 

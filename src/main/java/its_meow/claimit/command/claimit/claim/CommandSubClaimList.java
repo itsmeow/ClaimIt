@@ -14,6 +14,7 @@ import net.minecraft.command.PlayerNotFoundException;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.text.TextComponentString;
+import static net.minecraft.util.text.TextFormatting.*;
 
 public class CommandSubClaimList extends CommandBase {
 
@@ -63,16 +64,16 @@ public class CommandSubClaimList extends CommandBase {
 					for(ClaimArea claim : claims) {
 						i++;
 						if(i == 1) {
-							sendMessage(sender, "§1Claim List for §a" + player.getName() + "§1:");
+							sendMessage(sender, DARK_BLUE + "Claim List for " + GREEN + player.getName() + DARK_BLUE + ":");
 						}
-						sendMessage(sender, "§9Name: §2" + claim.getDisplayedViewName());
+						sendMessage(sender, BLUE + "Name: " + DARK_GREEN + claim.getDisplayedViewName());
 					}
 				} else {
-					sendMessage(sender, "§cYou don't own any claims!");
+					sendMessage(sender, RED + "You don't own any claims!");
 				}
 			} else {
 				if(filter == null) {
-					sendMessage(sender, "§cYou are admin. Getting all claims. Specify a name to get only their claims.");
+					sendMessage(sender, RED + "You are admin. Getting all claims. Specify a name to get only their claims.");
 				}
 				Set<ClaimArea> claims = ClaimManager.getManager().getClaimsList();
 				int i = 0;

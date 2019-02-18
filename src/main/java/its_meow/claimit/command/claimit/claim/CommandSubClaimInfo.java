@@ -12,6 +12,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
+import static net.minecraft.util.text.TextFormatting.*;
 
 public class CommandSubClaimInfo extends CommandBase {
 
@@ -42,7 +43,7 @@ public class CommandSubClaimInfo extends CommandBase {
 				if(claim != null) {
 					outputClaimInfo(claim, (EntityPlayer) sender);
 				} else {
-					sendMessage(sender, "§cThere is no claim here!");
+					sendMessage(sender, RED + "There is no claim here!");
 				}
 			}
 		}
@@ -58,13 +59,13 @@ public class CommandSubClaimInfo extends CommandBase {
 				if(claim != null) {
 					outputClaimInfo(claim, player);
 				} else {
-					sendMessage(sender, "§cNo claim with this name that you own!");
+					sendMessage(sender, RED + "No claim with this name that you own!");
 				}
 			}
 		}
 		
 		if(args.length > 1) {
-			sendMessage(sender, "§cInvalid argument count. Maximum 1 argument after \"info\". Usage: " + this.getUsage(sender));
+			sendMessage(sender, RED + "Invalid argument count. Maximum 1 argument after \"info\". Usage: " + this.getUsage(sender));
 		}
 	}
 	
@@ -78,15 +79,15 @@ public class CommandSubClaimInfo extends CommandBase {
 		}
 		int dim = claim.getDimensionID();
 
-		sendMessage(player, "§9§lInformation for claim owned by §a§l" + ownerName + "§9§l:");
-		sendMessage(player, "§9Claim Name: §2" + claim.getDisplayedViewName());
+		sendMessage(player, BLUE + "" + BOLD + "Information for claim owned by " + GREEN + "" + BOLD + ownerName + BLUE + "" + BOLD + ":");
+		sendMessage(player, BLUE + "Claim Name: " + DARK_GREEN + claim.getDisplayedViewName());
 		if(ClaimManager.getManager().isAdmin(player)) {
-			sendMessage(player, "§9Claim True Name: §2" + claim.getTrueViewName());
+			sendMessage(player, BLUE + "Claim True Name: " + DARK_GREEN + claim.getTrueViewName());
 		}
-		sendMessage(player, "§9Dimension: §5" + dim);
-		sendMessage(player, "§9Area: §b" + (claim.getSideLengthX() + 1) + "§9x§b" + (claim.getSideLengthZ() + 1) + " §9(§b" + claim.getArea() + "§9) ");
-		sendMessage(player, "§9Corner 1: §2" + (corners[0].getX()) + ", " + (corners[0].getZ()));
-		sendMessage(player, "§9Corner 2: §2" + (corners[1].getX()) + ", " + (corners[1].getZ()));
+		sendMessage(player, BLUE + "Dimension: " + DARK_PURPLE + dim);
+		sendMessage(player, BLUE + "Area: " + AQUA + (claim.getSideLengthX() + 1) + BLUE + "x" + AQUA + (claim.getSideLengthZ() + 1) + BLUE + " (" + AQUA + claim.getArea() + BLUE + ")");
+		sendMessage(player, BLUE + "Corner 1: " + DARK_GREEN + (corners[0].getX()) + ", " + (corners[0].getZ()));
+		sendMessage(player, BLUE + "Corner 2: " + DARK_GREEN + (corners[1].getX()) + ", " + (corners[1].getZ()));
 	}
 	
 	private static void sendMessage(ICommandSender sender, String message) {

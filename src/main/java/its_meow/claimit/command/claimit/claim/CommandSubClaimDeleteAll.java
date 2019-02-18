@@ -17,6 +17,7 @@ import net.minecraft.command.WrongUsageException;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.text.TextComponentString;
+import static net.minecraft.util.text.TextFormatting.*;
 
 public class CommandSubClaimDeleteAll extends CommandBase {
 
@@ -49,13 +50,13 @@ public class CommandSubClaimDeleteAll extends CommandBase {
 				if(ownedClaims != null) {
 					if(!ConfirmationManager.getManager().needsConfirm(sender)) {
 						ConfirmationManager.getManager().addConfirm(sender, EnumConfirmableAction.DELETEALL);
-						sendMessage(sender, "§4This will delete ALL of your claims. Are you sure you want to do this? Run §b'/claimit confirm'§4 to confirm. If you do not want to do this, run §b'/claimit cancel'§4.");
+						sendMessage(sender, DARK_RED + "This will delete ALL of your claims. Are you sure you want to do this? Run " + AQUA + "'/claimit confirm'" + DARK_RED + " to confirm. If you do not want to do this, run " + AQUA + "'/claimit cancel'" + DARK_RED + ".");
 					} else {
-						sendMessage(sender, "§cCanceling preexisting action. Run this command again to delete all claims.");
+						sendMessage(sender, RED + "Canceling preexisting action. Run this command again to delete all claims.");
 						ConfirmationManager.getManager().removeConfirm(sender);
 					}
 				} else {
-					sendMessage(sender, "§cYou don't own any claims!");
+					sendMessage(sender, RED + "You don't own any claims!");
 				}
 			} else {
 				sendMessage(sender, "You must be a player to use this command.");
@@ -86,7 +87,7 @@ public class CommandSubClaimDeleteAll extends CommandBase {
 					}
 					sendMessage(sender, "Removed " + username + "'s claims.");
 				} else {
-					sendMessage(sender, "§cYou must be admin to use the playername argument!");
+					sendMessage(sender, RED + "You must be admin to use the playername argument!");
 				}
 			}
 		} else {

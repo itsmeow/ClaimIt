@@ -17,6 +17,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraftforge.server.command.CommandTreeBase;
+import static net.minecraft.util.text.TextFormatting.*;
 
 public class CommandClaimIt extends CommandTreeBase {
 
@@ -53,11 +54,11 @@ public class CommandClaimIt extends CommandTreeBase {
 	public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
 		super.execute(server, sender, args);
 		if(args.length == 0) {
-			sendMessage(sender, "§7§lClaimIt§r§5 Version §e" + Ref.VERSION + "§5 by §4§lits_meow");
-			sendMessage(sender, "§b§lSubcommands: ");
-			sendMessage(sender, "§e/claimit claim");
-			sendMessage(sender, "§e/claimit admin");
-			sendMessage(sender, "§bAlias(es): §e" + aliasList);
+			sendMessage(sender, GRAY + "" + BOLD + "ClaimIt" + RESET + "" + DARK_PURPLE + " Version " + YELLOW + Ref.VERSION + DARK_PURPLE + " by " + DARK_RED + "" + BOLD + "its_meow");
+			sendMessage(sender, AQUA + "" + BOLD + "Subcommands: ");
+			sendMessage(sender, YELLOW + "/claimit claim");
+			sendMessage(sender, YELLOW + "/claimit admin");
+			sendMessage(sender, AQUA + "Alias(es): " + YELLOW + aliasList);
 		}
 	}
 

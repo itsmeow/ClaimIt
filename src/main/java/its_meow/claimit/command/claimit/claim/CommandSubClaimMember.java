@@ -16,6 +16,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraftforge.server.command.CommandTreeBase;
+import static net.minecraft.util.text.TextFormatting.*;
 
 public class CommandSubClaimMember extends CommandTreeBase {
 
@@ -77,33 +78,33 @@ public class CommandSubClaimMember extends CommandTreeBase {
 					if(!claim.inPermissionList(permission, id) || claim.isTrueOwner(id)) {
 						if(!(sender instanceof EntityPlayer) && sender.canUseCommand(2, "") || (sender instanceof EntityPlayer && claim.canManage((EntityPlayer) sender))) {
 							claim.addMember(permission, id);
-							sendMessage(sender, "§aSuccessfully added " + username + "§a to claim " + claim.getDisplayedViewName() + " with permission " + permission.parsedName);
+							sendMessage(sender, GREEN + "Successfully added " + YELLOW + username + GREEN + " to claim " + DARK_GREEN + claim.getDisplayedViewName() + GREEN + " with permission " + AQUA + permission.parsedName);
 						} else {
-							sendMessage(sender, "§cYou cannot modify members of this claim!");
+							sendMessage(sender, RED + "You cannot modify members of this claim!");
 						}
 					} else {
-						sendMessage(sender, "§eThis player already has that permission!");
+						sendMessage(sender, YELLOW + "This player already has that permission!");
 					}
 				} else if(action.equals("remove")) {
 					// Remove user
 					if(claim.inPermissionList(permission, id)) {
 						if(!(sender instanceof EntityPlayer) && sender.canUseCommand(2, "") || (sender instanceof EntityPlayer && claim.canManage((EntityPlayer) sender))) {
 							claim.removeMember(permission, id);
-							sendMessage(sender, "§aSuccessfully removed permission " + permission.parsedName + " from user " + username + " in claim " + claim.getDisplayedViewName());
+							sendMessage(sender, GREEN + "Successfully removed permission " + AQUA + permission.parsedName + GREEN + " from user " + YELLOW + username + GREEN + " in claim " + DARK_GREEN + claim.getDisplayedViewName());
 						} else {
-							sendMessage(sender, "§cYou cannot modify members of this claim!");
+							sendMessage(sender, RED + "You cannot modify members of this claim!");
 						}
 					} else {
-						sendMessage(sender, "§eThis player does not have that permission!");
+						sendMessage(sender, YELLOW + "This player does not have that permission!");
 					}
 				} else {
 					throw new WrongUsageException("Invalid action! Specify add or remove. Usage: " + this.getUsage(sender));
 				}
 			} else {
 				if(claimName != null && !claimName.equals("")) {
-					sendMessage(sender, "§cNo claim with this name was found.");
+					sendMessage(sender, RED + "No claim with this name was found.");
 				} else {
-					sendMessage(sender, "§cThere is no claim here! Specify a name to get a specific claim.");
+					sendMessage(sender, RED + "There is no claim here! Specify a name to get a specific claim.");
 				}
 			}
 		}
