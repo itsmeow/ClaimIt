@@ -328,8 +328,12 @@ public class ClaimManager {
 					}
 					
 					EventClaimDeserialization event = new EventClaimDeserialization(claim);
-					if(MinecraftForge.EVENT_BUS.post(event)) {
+					MinecraftForge.EVENT_BUS.post(event);
+					
+					if(!event.isCanceled()) {
 						this.addClaim(event.getClaim());
+					} else {
+						ClaimIt.logger.log(Level.INFO, "Event cancelled loading of this claim. ");
 					}
 				} else {
 					ClaimIt.logger.log(Level.FATAL, "Detected version that doesn't exist yet! Mod was downgraded? Claim cannot be loaded.");

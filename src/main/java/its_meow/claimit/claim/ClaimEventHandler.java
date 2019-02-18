@@ -46,6 +46,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.Event.Result;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import static net.minecraft.util.text.TextFormatting.*;
 
 @Mod.EventBusSubscriber(modid = Ref.MOD_ID)
 public class ClaimEventHandler {
@@ -80,7 +81,7 @@ public class ClaimEventHandler {
 			if(!isInClaim) {
 				int[] posArray = {pos.getX(), pos.getZ()};
 				if(data.hasKey("Corner1")) {
-					player.sendMessage(new TextComponentString("§9Added corner 2 at §b" + posArray[0] + "§9, §b" + posArray[1]));
+					player.sendMessage(new TextComponentString(BLUE + "Added corner 2 at " + AQUA + posArray[0] + BLUE + ", " + AQUA + posArray[1]));
 					int[] corner1 = data.getIntArray("Corner1");
 					int[] corner2 = posArray;
 					BlockPos c1 = new BlockPos(corner1[0], 0, corner1[1]);
@@ -97,19 +98,19 @@ public class ClaimEventHandler {
 					newClaim = new ClaimArea(player.dimension, c1.getX(), c1.getZ(), sideL.getX(), sideL.getZ(), player);
 					if(newClaim.getSideLengthX() >= 1 && newClaim.getSideLengthZ() >= 1) {
 						boolean didClaim = ClaimManager.getManager().addClaim(newClaim); // Add claim
-						player.sendMessage(new TextComponentString(didClaim ? "§aClaim added successfully!" : "§cThis claim overlaps another claim!"));
+						player.sendMessage(new TextComponentString(didClaim ? GREEN + "Claim added successfully!" : RED + "This claim overlaps another claim!"));
 					} else {
-						player.sendMessage(new TextComponentString("§cYour claim must have a length of at least 2 in both directions!"));
+						player.sendMessage(new TextComponentString(RED + "Your claim must have a length of at least 2 in both directions!"));
 					}
 					// Remove data so a new claim can be made.
 					data.removeTag("Corner1");
 				} else {
 					data.setIntArray("Corner1", posArray);
-					player.sendMessage(new TextComponentString("§9Added corner 1 at §b" + posArray[0] + "§9, §b" + posArray[1]));
+					player.sendMessage(new TextComponentString(BLUE + "Added corner 1 at " + AQUA + posArray[0] + BLUE + ", " + AQUA + posArray[1]));
 				}
 			} else {
 				data.removeTag("Corner1");
-				player.sendMessage(new TextComponentString("§cYou cannot set a corner inside an existing claim!"));
+				player.sendMessage(new TextComponentString(RED + "You cannot set a corner inside an existing claim!"));
 			}
 
 
