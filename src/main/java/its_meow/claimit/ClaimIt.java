@@ -18,6 +18,7 @@ import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
+import net.minecraftforge.fml.common.event.FMLServerStoppingEvent;
 
 @Mod(modid = Ref.MOD_ID, name = Ref.NAME, version = Ref.VERSION, acceptedMinecraftVersions = Ref.acceptedMCV, updateJSON = Ref.updateJSON, acceptableRemoteVersions = "*")
 public class ClaimIt {
@@ -35,7 +36,12 @@ public class ClaimIt {
 		ConfirmationManager.getManager().removeAllConfirms();
 		event.registerServerCommand(new CommandClaimIt());
 	}
-
+	
+	@EventHandler
+	public void serverStop(FMLServerStoppingEvent event) {
+		ClaimManager.getManager().serialize();
+	}
+	
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent event) {
 		logger = LogManager.getLogger("claimit");

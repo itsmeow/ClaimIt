@@ -1,6 +1,5 @@
 package its_meow.claimit.api.claim;
 
-import java.awt.Point;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.URL;
@@ -139,71 +138,37 @@ public class ClaimManager {
 		return false;
 	}
 
-	private static int dimT = 0;
 
 	/** Check claim is not overlapping/illegal and add to list 
 	 * @param claim - The claim to be added 
 	 * @returns true if claim was added, false if not. **/
 	public boolean addClaim(ClaimArea claim) {
-		dimT = 0;
-		claims.stream().forEach(c -> dimT += c.getDimensionID() != claim.getDimensionID() ? 0 : 1);
-		if(dimT != 0) {
-			//Check for nearby claims
-			int nearby = 0;
-			Set<ClaimArea> nearbyClaims = new HashSet<ClaimArea>();
+		if(claims.size() != 0) {
 			for(ClaimArea claimI : claims) {
 				if(claimI.getDimensionID() == claim.getDimensionID()) {
-					int xDistance = Math.abs(claim.getMainPosition().getX() - claimI.getMainPosition().getX());
-					int zDistance = Math.abs(claim.getMainPosition().getZ() - claimI.getMainPosition().getZ());
-					if(xDistance < (claimI.getSideLengthX() + claim.getSideLengthX()) && zDistance < (claimI.getSideLengthZ() + claim.getSideLengthZ())) {
-						nearby++;
-						nearbyClaims.add(claimI);
+					for(int i = 0; i <= claim.getSideLengthX(); i++) {
+						for(int j = 0; j <= claim.getSideLengthZ(); j++) {
+							BlockPos toCheck = new BlockPos(claim.getMainPosition().getX() + i, 0, claim.getMainPosition().getZ() + j);
+							if(claimI.isBlockPosInClaim(toCheck)) {
+								return false;
+							}
+						}
+					}
+					
+					for(int i = 0; i <= claimI.getSideLengthX(); i++) {
+						for(int j = 0; j <= claimI.getSideLengthZ(); j++) {
+							BlockPos toCheck = new BlockPos(claimI.getMainPosition().getX() + i, 0, claimI.getMainPosition().getZ() + j);
+							if(claim.isBlockPosInClaim(toCheck)) {
+								return false;
+							}
+						}
 					}
 				}
 			}
-			if(nearby > 0) { // Some claims could overlap nearby
-				BlockPos[] claimCorners = claim.getFourCorners();
-				int overlaps = 0;
-				for(BlockPos corner : claimCorners) { // Check if any corners are in nearby claims
-					for(ClaimArea claimI : nearbyClaims) {
-						if(claimI.isBlockPosInClaim(corner)) {
-							overlaps++;
-						}
-					}
-				}
-				for(ClaimArea claimI : nearbyClaims) { // Check if any corners are in nearby claims
-					BlockPos[] claimCornerForThis = claimI.getFourCorners();
-					for(BlockPos corner : claimCornerForThis) {
-						if(claim.isBlockPosInClaim(corner)) {
-							overlaps++;
-						}
-					}
-				}
-				if(overlaps == 0) { // Not overlapping CORNERS
-					Point l1 = new Point(claim.getHXZPosition().getX(), claim.getHXZPosition().getZ());
-					Point r1 = new Point(claim.getMainPosition().getX(), claim.getMainPosition().getZ());
-					for(ClaimArea claimI: nearbyClaims) {
-						Point l2 = new Point(claimI.getHXZPosition().getX(), claimI.getHXZPosition().getZ());
-						Point r2 = new Point(claimI.getMainPosition().getX(), claimI.getMainPosition().getZ());
-						if(!(l1.x > r2.x || l2.x > r1.x)) {
-							return false; 
-						}
-						if(!(l1.y < r2.y || l2.y < r1.y)) {
-							return false; 
-						}
-					}
-					addClaimToListInsecurely(claim);
-					return true;
-				}
-			} else { // No claims within side lengths, can add freely
-				addClaimToListInsecurely(claim);
-				return true;
-			}
-		} else { // New dimension, don't need to check
-			addClaimToListInsecurely(claim);
-			return true;
 		}
-		return false;
+
+		addClaimToListInsecurely(claim);
+		return true;
 	}
 
 	/** Clears the list of players with admin enabled. **/
@@ -326,10 +291,10 @@ public class ClaimManager {
 							}
 						}
 					}
-					
+
 					EventClaimDeserialization event = new EventClaimDeserialization(claim);
 					MinecraftForge.EVENT_BUS.post(event);
-					
+
 					if(!event.isCanceled()) {
 						this.addClaim(event.getClaim());
 					} else {
