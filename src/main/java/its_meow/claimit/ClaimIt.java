@@ -9,6 +9,7 @@ import its_meow.claimit.api.claim.ClaimManager;
 import its_meow.claimit.claim.ClaimPermissions;
 import its_meow.claimit.command.CommandClaimIt;
 import its_meow.claimit.config.ClaimConfig;
+import its_meow.claimit.userconfig.UserConfigs;
 import its_meow.claimit.util.ConfirmationManager;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.fml.common.Mod;
@@ -50,6 +51,7 @@ public class ClaimIt {
 		ClaimConfig.readConfig();
 		
 		ClaimPermissions.register();
+		UserConfigs.register();
 	}
 
 	@EventHandler

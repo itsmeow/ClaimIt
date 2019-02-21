@@ -70,11 +70,11 @@ public class CommandSubClaimDeleteAll extends CommandBase {
 			} else {
 				throw new PlayerNotFoundException("Invalid player: " + args[0]);
 			}
-			Set<ClaimArea> owned = ClaimManager.getManager().getClaimsOwnedByPlayer(id);
-			if(owned == null) {
-				throw new CommandException("This player owns no claims.");
-			}
 			if(!(sender instanceof EntityPlayer) && sender.canUseCommand(2, "")) {
+				Set<ClaimArea> owned = ClaimManager.getManager().getClaimsOwnedByPlayer(id);
+				if(owned == null) {
+					throw new CommandException("This player owns no claims.");
+				}
 				for(ClaimArea claim : owned) {
 					ClaimManager.getManager().deleteClaim(claim);
 				}
@@ -82,6 +82,10 @@ public class CommandSubClaimDeleteAll extends CommandBase {
 			} else if(sender instanceof EntityPlayer) {
 				EntityPlayer player = (EntityPlayer) sender;
 				if(ClaimManager.getManager().isAdmin(player)) {
+					Set<ClaimArea> owned = ClaimManager.getManager().getClaimsOwnedByPlayer(id);
+					if(owned == null) {
+						throw new CommandException("This player owns no claims.");
+					}
 					for(ClaimArea claim : owned) {
 						ClaimManager.getManager().deleteClaim(claim);
 					}

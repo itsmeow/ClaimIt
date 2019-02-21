@@ -50,7 +50,7 @@ import static net.minecraft.util.text.TextFormatting.*;
 
 @Mod.EventBusSubscriber(modid = Ref.MOD_ID)
 public class ClaimEventHandler {
-	
+
 	@SubscribeEvent
 	public static void onWorldSave(WorldEvent.Save e) {
 		if(!e.getWorld().isRemote) {
@@ -243,12 +243,14 @@ public class ClaimEventHandler {
 
 	@SubscribeEvent(priority = EventPriority.HIGHEST)
 	public static void onMobGrief(net.minecraftforge.event.entity.EntityMobGriefingEvent e) {
-		World world = e.getEntity().getEntityWorld();
-		BlockPos pos = e.getEntity().getPosition();
-		ClaimManager cm = ClaimManager.getManager();
-		ClaimArea claim = cm.getClaimAtLocation(world, pos);
-		if(claim != null) {
-			e.setResult(Result.DENY);
+		if(e.getEntity() != null && e.getEntity().getEntityWorld() != null) {
+			World world = e.getEntity().getEntityWorld();
+			BlockPos pos = e.getEntity().getPosition();
+			ClaimManager cm = ClaimManager.getManager();
+			ClaimArea claim = cm.getClaimAtLocation(world, pos);
+			if(claim != null) {
+				e.setResult(Result.DENY);
+			}
 		}
 	}
 
@@ -476,7 +478,7 @@ public class ClaimEventHandler {
 			}
 		}
 	}
-	
+
 	@SubscribeEvent(priority = EventPriority.HIGHEST)
 	public static void onProjectileImpact(ProjectileImpactEvent e) {
 		Entity entity = e.getRayTraceResult().entityHit;
@@ -490,7 +492,7 @@ public class ClaimEventHandler {
 			}
 		}
 	}
-	
+
 	@SubscribeEvent(priority = EventPriority.HIGHEST)
 	public static void onEntitySpawn(LivingSpawnEvent.CheckSpawn e) {
 		ClaimArea claim = ClaimManager.getManager().getClaimAtLocation(e.getWorld(), new BlockPos(e.getX(), e.getY(), e.getZ()));
@@ -500,5 +502,5 @@ public class ClaimEventHandler {
 			}
 		}
 	}
-	
+
 }

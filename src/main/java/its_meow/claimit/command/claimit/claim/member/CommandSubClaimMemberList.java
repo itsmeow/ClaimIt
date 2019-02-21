@@ -96,7 +96,7 @@ public class CommandSubClaimMemberList extends CommandBase {
 					throw new CommandException("You cannot view the members of this claim!");
 				}
 			}
-			if(members.isEmpty()) {
+			if(members == null || members.isEmpty()) {
 				throw new CommandException("This claim has no members with that permission.");
 			}
 			sendMessage(sender, GREEN + filter.parsedName + BLUE + ":");
@@ -117,7 +117,7 @@ public class CommandSubClaimMemberList extends CommandBase {
 					throw new CommandException("You cannot view the members of this claim!");
 				}
 			}
-			if(permMap.isEmpty()) {
+			if(permMap == null || permMap.isEmpty()) {
 				throw new CommandException("This claim has no members.");
 			}
 			for(UUID member : permMap.keySet()) {
