@@ -11,6 +11,7 @@ import its_meow.claimit.command.claimit.CommandSubAdmin;
 import its_meow.claimit.command.claimit.CommandSubCancel;
 import its_meow.claimit.command.claimit.CommandSubClaim;
 import its_meow.claimit.command.claimit.CommandSubConfirm;
+import its_meow.claimit.command.claimit.CommandSubHelp;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.server.MinecraftServer;
@@ -26,6 +27,7 @@ public class CommandClaimIt extends CommandTreeBase {
 		this.addSubcommand(new CommandSubAdmin());
 		this.addSubcommand(new CommandSubConfirm());
 		this.addSubcommand(new CommandSubCancel());
+		this.addSubcommand(new CommandSubHelp());
 	}
 
 	@Override
@@ -58,6 +60,7 @@ public class CommandClaimIt extends CommandTreeBase {
 			sendMessage(sender, AQUA + "" + BOLD + "Subcommands: ");
 			sendMessage(sender, YELLOW + "/claimit claim");
 			sendMessage(sender, YELLOW + "/claimit admin");
+			sendMessage(sender, LIGHT_PURPLE + "/claimit help");
 			sendMessage(sender, AQUA + "Alias(es): " + YELLOW + aliasList);
 		}
 	}
