@@ -25,21 +25,21 @@ public class UserConfigManager {
 		return instance;
 	}
 	
-	private Map<UUID, Set<UserConfigBasic>> configs = new HashMap<UUID, Set<UserConfigBasic>>(); 
+	private Map<UUID, Set<UserConfig<?>>> configs = new HashMap<UUID, Set<UserConfig<?>>>(); 
 	
-	public Set<UserConfigBasic> getUserConfigs(UUID uuid) {
+	public <T> Set<UserConfig<T>> getUserConfigs(UUID uuid) {
 		if(!configs.containsKey(uuid)) {
-			configs.put(uuid, new HashSet<UserConfigBasic>());
+			configs.put(uuid, new HashSet<UserConfig<?>>());
 		}
 		return configs.get(uuid);
 	}
 	
 	@Nullable
-	public UserConfigBasic getUserConfig(UUID uuid, UserConfig config) {
-		Set<UserConfigBasic> configs = this.getUserConfigs(uuid);
-		for(UserConfigBasic basic : configs) {
-			if(config.parsedName.equals(basic.parsedName)) {
-				return basic;
+	public <T> T getUserConfig(UUID uuid, UserConfig<T> config) {
+		Set<UserConfig<T>> configs = this.getUserConfigs(uuid);
+		for(UserConfig<T> config : configs) {
+			if(config.parsedName.equals(config.parsedName)) {
+				return config;
 			}
 		}
 		return null;
