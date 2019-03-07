@@ -6,6 +6,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import its_meow.claimit.api.claim.ClaimManager;
+import its_meow.claimit.api.userconfig.UserConfigManager;
 import its_meow.claimit.claim.ClaimPermissions;
 import its_meow.claimit.command.CommandClaimIt;
 import its_meow.claimit.config.ClaimConfig;
@@ -34,6 +35,7 @@ public class ClaimIt {
 	public void serverLoad(FMLServerStartingEvent event) {
 		ClaimManager.getManager().clearAdmins();
 		ClaimManager.getManager().deserialize(); // Clears claims list as well
+		UserConfigManager.getManager().deserialize();
 		ConfirmationManager.getManager().removeAllConfirms();
 		event.registerServerCommand(new CommandClaimIt());
 	}
@@ -41,6 +43,7 @@ public class ClaimIt {
 	@EventHandler
 	public void serverStop(FMLServerStoppingEvent event) {
 		ClaimManager.getManager().serialize();
+		UserConfigManager.getManager().serialize();
 	}
 	
 	@EventHandler

@@ -7,6 +7,7 @@ import java.util.Set;
 import its_meow.claimit.Ref;
 import its_meow.claimit.api.claim.ClaimArea;
 import its_meow.claimit.api.claim.ClaimManager;
+import its_meow.claimit.api.userconfig.UserConfigManager;
 import its_meow.claimit.config.ClaimConfig;
 import net.minecraft.block.BlockGrass;
 import net.minecraft.block.BlockTallGrass;
@@ -55,6 +56,7 @@ public class ClaimEventHandler {
 	public static void onWorldSave(WorldEvent.Save e) {
 		if(!e.getWorld().isRemote) {
 			ClaimManager.getManager().serialize();
+			UserConfigManager.getManager().serialize();
 		}
 	}
 

@@ -1,5 +1,14 @@
 package its_meow.claimit.command;
 
+import static net.minecraft.util.text.TextFormatting.AQUA;
+import static net.minecraft.util.text.TextFormatting.BOLD;
+import static net.minecraft.util.text.TextFormatting.DARK_PURPLE;
+import static net.minecraft.util.text.TextFormatting.DARK_RED;
+import static net.minecraft.util.text.TextFormatting.GRAY;
+import static net.minecraft.util.text.TextFormatting.LIGHT_PURPLE;
+import static net.minecraft.util.text.TextFormatting.RESET;
+import static net.minecraft.util.text.TextFormatting.YELLOW;
+
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -10,6 +19,7 @@ import its_meow.claimit.api.permission.ClaimPermissionRegistry;
 import its_meow.claimit.command.claimit.CommandSubAdmin;
 import its_meow.claimit.command.claimit.CommandSubCancel;
 import its_meow.claimit.command.claimit.CommandSubClaim;
+import its_meow.claimit.command.claimit.CommandSubConfig;
 import its_meow.claimit.command.claimit.CommandSubConfirm;
 import its_meow.claimit.command.claimit.CommandSubHelp;
 import net.minecraft.command.CommandException;
@@ -18,7 +28,6 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraftforge.server.command.CommandTreeBase;
-import static net.minecraft.util.text.TextFormatting.*;
 
 public class CommandClaimIt extends CommandTreeBase {
 
@@ -27,6 +36,7 @@ public class CommandClaimIt extends CommandTreeBase {
 		this.addSubcommand(new CommandSubAdmin());
 		this.addSubcommand(new CommandSubConfirm());
 		this.addSubcommand(new CommandSubCancel());
+		this.addSubcommand(new CommandSubConfig());
 		this.addSubcommand(new CommandSubHelp());
 	}
 
@@ -59,6 +69,7 @@ public class CommandClaimIt extends CommandTreeBase {
 			sendMessage(sender, GRAY + "" + BOLD + "ClaimIt" + RESET + "" + DARK_PURPLE + " Version " + YELLOW + Ref.VERSION + DARK_PURPLE + " by " + DARK_RED + "" + BOLD + "its_meow");
 			sendMessage(sender, AQUA + "" + BOLD + "Subcommands: ");
 			sendMessage(sender, YELLOW + "/claimit claim");
+			sendMessage(sender, YELLOW + "/claimit config");
 			sendMessage(sender, YELLOW + "/claimit admin");
 			sendMessage(sender, LIGHT_PURPLE + "/claimit help");
 			sendMessage(sender, AQUA + "Alias(es): " + YELLOW + aliasList);
@@ -83,6 +94,7 @@ public class CommandClaimIt extends CommandTreeBase {
 
 		if(args.length == 1) { // claimit .
 			completions.add("claim");
+			completions.add("config");
 			completions.add("admin");
 			completions.add("cancel");
 			completions.add("confirm");
