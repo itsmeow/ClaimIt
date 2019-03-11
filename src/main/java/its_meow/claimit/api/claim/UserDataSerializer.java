@@ -1,4 +1,4 @@
-package its_meow.claimit.api.userconfig;
+package its_meow.claimit.api.claim;
 
 import its_meow.claimit.Ref;
 import net.minecraft.nbt.NBTTagCompound;
@@ -6,15 +6,15 @@ import net.minecraft.world.World;
 import net.minecraft.world.storage.WorldSavedData;
 import net.minecraftforge.common.DimensionManager;
 
-public class UserConfigSerializer extends WorldSavedData {
-	private static final String DATA_NAME = Ref.MOD_ID + "_UserConfigData";
+public class UserDataSerializer extends WorldSavedData {
+	private static final String DATA_NAME = Ref.MOD_ID + "_UsersData";
 	public NBTTagCompound data = new NBTTagCompound();
 	
-	public UserConfigSerializer() {
+	public UserDataSerializer() {
 		super(DATA_NAME);
 	}
 	
-	public UserConfigSerializer(String s) {
+	public UserDataSerializer(String s) {
 		super(s);
 	}
 	
@@ -28,11 +28,11 @@ public class UserConfigSerializer extends WorldSavedData {
 		return compound;
 	}
 	
-	public static UserConfigSerializer get() {
+	public static UserDataSerializer get() {
 		World world = DimensionManager.getWorld(0);
-		UserConfigSerializer save = (UserConfigSerializer) world.getMapStorage().getOrLoadData(UserConfigSerializer.class, DATA_NAME);
+		UserDataSerializer save = (UserDataSerializer) world.getMapStorage().getOrLoadData(UserDataSerializer.class, DATA_NAME);
 		if(save == null) {
-			save = new UserConfigSerializer();
+			save = new UserDataSerializer();
 			world.getMapStorage().setData(DATA_NAME, save);
 		}
 		return save;

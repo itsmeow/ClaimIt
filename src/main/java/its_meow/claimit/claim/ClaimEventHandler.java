@@ -1,5 +1,11 @@
 package its_meow.claimit.claim;
 
+import static net.minecraft.util.text.TextFormatting.AQUA;
+import static net.minecraft.util.text.TextFormatting.BLUE;
+import static net.minecraft.util.text.TextFormatting.GREEN;
+import static net.minecraft.util.text.TextFormatting.RED;
+
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
@@ -50,8 +56,6 @@ import net.minecraftforge.fml.common.eventhandler.Event.Result;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.PlayerTickEvent;
-
-import static net.minecraft.util.text.TextFormatting.*;
 
 @Mod.EventBusSubscriber(modid = Ref.MOD_ID)
 public class ClaimEventHandler {
@@ -508,22 +512,34 @@ public class ClaimEventHandler {
 			}
 		}
 	}
+	
+	private static HashMap<EntityPlayer, BlockPos> lastMsPos = new HashMap<EntityPlayer, BlockPos>();
 
 	@SubscribeEvent
 	public static void onPlayerTick(PlayerTickEvent e) {
 		ClaimManager mgr = ClaimManager.getManager();
-		if(mgr.isBlockInAnyClaim(e.player.world, new BlockPos(e.player.lastTickPosX, e.player.lastTickPosY, e.player.lastTickPosZ))) {
-			if(!mgr.isBlockInAnyClaim(e.player.world, e.player.getPosition())) {
-				if(UserConfigManager.getManager().get(e.player.getGameProfile().getId(), UserConfigs.EXIT_MESSAGE)) {
-					e.player.sendStatusMessage(new TextComponentString(TextFormatting.GOLD + "You are no longer in a claimed area."), true);
+		if(!e.player.world.isRemote && e.player.ticksExisted % 5 == 0) {
+			if(e.player.ticksExisted % 2500 == 0) {
+				lastMsPos.clear();
+			}
+			if(lastMsPos.get(e.player) == null) {
+				lastMsPos.put(e.player, e.player.getPosition());
+			}
+			BlockPos pos = e.player.getPosition();
+			if(mgr.isBlockInAnyClaim(e.player.world, lastMsPos.get(e.player))) {
+				if(!mgr.isBlockInAnyClaim(e.player.world, pos)) {
+					if(UserConfigManager.getManager().get(e.player.getGameProfile().getId(), UserConfigs.EXIT_MESSAGE)) {
+						e.player.sendStatusMessage(new TextComponentString(TextFormatting.GOLD + "You are no longer in a claimed area."), true);
+					}
+				}
+			} else {
+				if(mgr.isBlockInAnyClaim(e.player.world, pos)) {
+					if(UserConfigManager.getManager().get(e.player.getGameProfile().getId(), UserConfigs.ENTRY_MESSAGE)) {
+						e.player.sendStatusMessage(new TextComponentString(TextFormatting.LIGHT_PURPLE + "You are now in a claimed area."), true);
+					}
 				}
 			}
-		} else {
-			if(mgr.isBlockInAnyClaim(e.player.world, e.player.getPosition())) {
-				if(UserConfigManager.getManager().get(e.player.getGameProfile().getId(), UserConfigs.ENTRY_MESSAGE)) {
-					e.player.sendStatusMessage(new TextComponentString(TextFormatting.LIGHT_PURPLE + "You are now in a claimed area."), true);
-				}
-			}
+			lastMsPos.put(e.player, pos);
 		}
 	}
 
