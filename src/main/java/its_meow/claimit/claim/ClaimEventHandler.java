@@ -9,6 +9,7 @@ import its_meow.claimit.api.claim.ClaimArea;
 import its_meow.claimit.api.claim.ClaimManager;
 import its_meow.claimit.api.userconfig.UserConfigManager;
 import its_meow.claimit.config.ClaimConfig;
+import its_meow.claimit.userconfig.UserConfigs;
 import net.minecraft.block.BlockGrass;
 import net.minecraft.block.BlockTallGrass;
 import net.minecraft.block.state.IBlockState;
@@ -26,6 +27,7 @@ import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.BlockSnapshot;
 import net.minecraftforge.event.entity.EntityMountEvent;
@@ -47,6 +49,8 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.Event.Result;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.TickEvent.PlayerTickEvent;
+
 import static net.minecraft.util.text.TextFormatting.*;
 
 @Mod.EventBusSubscriber(modid = Ref.MOD_ID)
@@ -501,6 +505,24 @@ public class ClaimEventHandler {
 		if(claim != null) {
 			if(!claim.isPermissionToggled(ClaimPermissions.ENTITY_SPAWN)) {
 				e.setResult(Result.DENY);
+			}
+		}
+	}
+
+	@SubscribeEvent
+	public static void onPlayerTick(PlayerTickEvent e) {
+		ClaimManager mgr = ClaimManager.getManager();
+		if(mgr.isBlockInAnyClaim(e.player.world, new BlockPos(e.player.lastTickPosX, e.player.lastTickPosY, e.player.lastTickPosZ))) {
+			if(!mgr.isBlockInAnyClaim(e.player.world, e.player.getPosition())) {
+				if(UserConfigManager.getManager().get(e.player.getGameProfile().getId(), UserConfigs.EXIT_MESSAGE)) {
+					e.player.sendStatusMessage(new TextComponentString(TextFormatting.GOLD + "You are no longer in a claimed area."), true);
+				}
+			}
+		} else {
+			if(mgr.isBlockInAnyClaim(e.player.world, e.player.getPosition())) {
+				if(UserConfigManager.getManager().get(e.player.getGameProfile().getId(), UserConfigs.ENTRY_MESSAGE)) {
+					e.player.sendStatusMessage(new TextComponentString(TextFormatting.LIGHT_PURPLE + "You are now in a claimed area."), true);
+				}
 			}
 		}
 	}
