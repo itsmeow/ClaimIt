@@ -6,7 +6,7 @@ import java.util.UUID;
 
 import org.apache.commons.lang3.tuple.Pair;
 
-import its_meow.claimit.api.claim.UserDataSerializer;
+import its_meow.claimit.api.serialization.UserDataSerializer;
 import net.minecraft.nbt.NBTTagCompound;
 
 public class UserConfigManager {

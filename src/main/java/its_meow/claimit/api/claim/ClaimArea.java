@@ -158,6 +158,10 @@ public class ClaimArea {
 		if(this.isOwner(player)) {
 			return true;
 		}
+		ClaimPermissionToggle toggle = ClaimPermissionRegistry.getToggleFor(permission);
+		if(toggle != null && isPermissionToggled(toggle)) {
+			return true;
+		}
 		ArrayList<UUID> array = getArrayForPermission(permission);
 		if(array != null && array.contains(player.getGameProfile().getId())) {
 			return true;
@@ -169,6 +173,9 @@ public class ClaimArea {
 	 *  @param perm - The permission to check
 	 *  @return The toggle status (on = true) **/
 	public boolean isPermissionToggled(ClaimPermissionToggle perm) {
+		if(!toggles.containsKey(perm)) {
+			return perm.defaultValue;
+		}
 		return this.toggles.get(perm);
 	}
 	
@@ -207,7 +214,7 @@ public class ClaimArea {
 	}
 
 	/** Adds a member to the member list with a given permission and player object 
-	 * This runs {@link ClaimArea::addMember(ClaimPermissionMember, UUID)} after converting the player to UUID
+	 * This runs {@link ClaimArea#addMember(ClaimPermissionMember, UUID)} after converting the player to UUID
 	 * @param permission - The permission which will be used
 	 * @param player - The player that will be added
 	 * @return Whether the adding was successful or not (if the player is already in the list) **/
@@ -230,7 +237,7 @@ public class ClaimArea {
 	}
 
 	/** Removes a member from the member list with a given permission and player object
-	 * This runs {@link ClaimArea::removeMember(ClaimPermissionMember, UUID)} after converting the player to UUID
+	 * This runs {@link ClaimArea#removeMember(ClaimPermissionMember, UUID)} after converting the player to UUID
 	 * @param permission - The permission which will be removed
 	 * @param player - The player that will be removed
 	 * @return Whether the removal was successful or not (false: if the player never had the permission) **/
