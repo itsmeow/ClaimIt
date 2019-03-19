@@ -7,6 +7,7 @@ import java.util.Set;
 import its_meow.claimit.Ref;
 import its_meow.claimit.api.claim.ClaimArea;
 import its_meow.claimit.api.claim.ClaimManager;
+import its_meow.claimit.config.ClaimConfig;
 import net.minecraft.block.BlockGrass;
 import net.minecraft.block.BlockTallGrass;
 import net.minecraft.block.state.IBlockState;
@@ -31,6 +32,7 @@ import net.minecraftforge.event.entity.ProjectileImpactEvent;
 import net.minecraftforge.event.entity.item.ItemTossEvent;
 import net.minecraftforge.event.entity.living.LivingDestroyBlockEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
+import net.minecraftforge.event.entity.living.LivingSpawnEvent;
 import net.minecraftforge.event.entity.player.ArrowNockEvent;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
 import net.minecraftforge.event.entity.player.BonemealEvent;
@@ -39,6 +41,7 @@ import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.entity.player.PlayerPickupXpEvent;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.event.world.ExplosionEvent;
+import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.Event.Result;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
@@ -46,6 +49,13 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 @Mod.EventBusSubscriber(modid = Ref.MOD_ID)
 public class ClaimEventHandler {
+	
+	@SubscribeEvent
+	public static void onWorldSave(WorldEvent.Save e) {
+		if(!e.getWorld().isRemote) {
+			ClaimManager.getManager().serialize();
+		}
+	}
 
 	@SubscribeEvent(priority = EventPriority.HIGHEST)
 	public static void onBlockRightClicked(PlayerInteractEvent.RightClickBlock e) {
@@ -162,7 +172,7 @@ public class ClaimEventHandler {
 		if(claim != null) {
 			EntityPlayer player = e.getEntityPlayer();
 			if(e.getTarget() instanceof EntityPlayer) {
-				e.setCanceled(!claim.canPVP(player));
+				e.setCanceled(!claim.canPVP(player)  || ClaimConfig.forceNoPVPInClaim);
 			} else {
 				e.setCanceled(!claim.canEntity(player));
 			}
@@ -170,7 +180,7 @@ public class ClaimEventHandler {
 		ClaimArea claim2 = cm.getClaimAtLocation(world, e.getTarget().getPosition());
 		if(claim2 != null) {
 			if(e.getTarget() instanceof EntityPlayer) {
-				e.setCanceled(!claim2.canPVP(e.getEntityPlayer()) || e.isCanceled());
+				e.setCanceled(!claim2.canPVP(e.getEntityPlayer()) || e.isCanceled()  || ClaimConfig.forceNoPVPInClaim);
 			} else {
 				e.setCanceled(!claim2.canEntity(e.getEntityPlayer()) || e.isCanceled());;
 			}
@@ -231,7 +241,7 @@ public class ClaimEventHandler {
 	}
 
 	@SubscribeEvent(priority = EventPriority.HIGHEST)
-	public static void onBlockExplodedByMob(net.minecraftforge.event.entity.EntityMobGriefingEvent e) {
+	public static void onMobGrief(net.minecraftforge.event.entity.EntityMobGriefingEvent e) {
 		World world = e.getEntity().getEntityWorld();
 		BlockPos pos = e.getEntity().getPosition();
 		ClaimManager cm = ClaimManager.getManager();
@@ -250,7 +260,7 @@ public class ClaimEventHandler {
 		if(claim != null || cm.getClaimAtLocation(world, e.getEntityPlayer().getPosition()) != null) {
 			EntityPlayer player = e.getEntityPlayer();
 			if(e.getTarget() instanceof EntityPlayer) {
-				e.setCanceled(!claim.canPVP(player));
+				e.setCanceled(!claim.canPVP(player)  || ClaimConfig.forceNoPVPInClaim);
 			} else {
 				e.setCanceled(!claim.canEntity(player));
 			}
@@ -267,7 +277,7 @@ public class ClaimEventHandler {
 				ClaimArea claim = ClaimManager.getManager().getClaimAtLocation(entity.getEntityWorld(), player.getPosition()); // Claim the damage-doer is in
 				ClaimArea claim2 = ClaimManager.getManager().getClaimAtLocation(entity.getEntityWorld(), entity.getPosition()); // Claim the damaged is in
 				if(entity instanceof EntityPlayer) { // whether the damaged is a player or not
-					e.setCanceled((claim != null && !claim.canPVP(player)) || (claim2 != null && !claim2.canPVP(player))); // if either one disallows PVP block it
+					e.setCanceled((claim != null && !claim.canPVP(player)) || (claim2 != null && !claim2.canPVP(player))  || ClaimConfig.forceNoPVPInClaim); // if either one disallows PVP block it
 				} else {
 					e.setCanceled((claim != null && !claim.canEntity(player)) || (claim2 != null && !claim2.canEntity(player))); // if either one disallows entity block it
 				}
@@ -460,7 +470,7 @@ public class ClaimEventHandler {
 		BlockPos pos = player.getPosition();
 		ClaimArea claim = ClaimManager.getManager().getClaimAtLocation(world, pos);
 		if(claim != null) {
-			if(!claim.canUse(player)) { 
+			if(!claim.canUse(player) || ClaimConfig.forceNoPVPInClaim) { 
 				e.setAction(new ActionResult<ItemStack>(EnumActionResult.FAIL, e.getBow()));
 			}
 		}
@@ -479,5 +489,15 @@ public class ClaimEventHandler {
 			}
 		}
 	}
-
+	
+	@SubscribeEvent(priority = EventPriority.HIGHEST)
+	public static void onEntitySpawn(LivingSpawnEvent.CheckSpawn e) {
+		ClaimArea claim = ClaimManager.getManager().getClaimAtLocation(e.getWorld(), new BlockPos(e.getX(), e.getY(), e.getZ()));
+		if(claim != null) {
+			if(!claim.isPermissionToggled(ClaimPermissions.ENTITY_SPAWN)) {
+				e.setResult(Result.DENY);
+			}
+		}
+	}
+	
 }

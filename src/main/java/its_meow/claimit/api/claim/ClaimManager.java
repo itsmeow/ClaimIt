@@ -17,6 +17,8 @@ import com.google.gson.JsonParser;
 import com.mojang.authlib.GameProfile;
 
 import its_meow.claimit.ClaimIt;
+import its_meow.claimit.api.event.EventClaimDeserialization;
+import its_meow.claimit.api.event.EventClaimSerialization;
 import its_meow.claimit.api.permission.ClaimPermissionMember;
 import its_meow.claimit.api.permission.ClaimPermissionRegistry;
 import its_meow.claimit.api.permission.ClaimPermissionToggle;
@@ -26,6 +28,7 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.Constants;
 
 public class ClaimManager {
@@ -231,6 +234,7 @@ public class ClaimManager {
 
 	/** Forces a world to save claim data. Removes all claim data that is stored and adds current data. **/
 	public void serialize() {
+		ClaimIt.logger.info("Saving claims data.");
 		ClaimSerializer store = ClaimSerializer.get();
 		if(store != null && store.data != null && store.data.getSize() > 0) {
 			Set<String> toRemove = new HashSet<String>();
@@ -252,7 +256,6 @@ public class ClaimManager {
 			data.setIntArray("CLAIMINFO", claimVals);
 			data.setString("OWNERUID", owner.toString());
 			data.setString("OWNERUIDOFF", ownerOffline.toString());
-			System.out.println("Owner: " + owner);
 			data.setString("TRUEVIEWNAME", claim.getTrueViewName());
 			NBTTagCompound memberCompound = new NBTTagCompound();
 			for(ClaimPermissionMember perm : ClaimPermissionRegistry.getMemberPermissions()) {
@@ -268,9 +271,14 @@ public class ClaimManager {
 			}
 			data.setTag("TOGGLES", toggles);
 			data.setTag("MEMBERS", memberCompound);
-			store.data.setTag("CLAIM_" + serialName, data);
-			store.markDirty();
-			System.out.println("Saving claim: " + serialName);
+
+			EventClaimSerialization event = new EventClaimSerialization(data);
+			MinecraftForge.EVENT_BUS.post(event);
+
+			if(!event.isCanceled()) {
+				store.data.setTag("CLAIM_" + serialName, data);
+				store.markDirty();
+			}
 		}
 	}
 
@@ -311,11 +319,18 @@ public class ClaimManager {
 					for(String permString : toggles.getKeySet()) {
 						ClaimPermissionToggle perm = ClaimPermissionRegistry.getPermissionToggle(permString);
 						if(perm != null) {
-							claim.setPermissionToggle(perm, toggles.getBoolean(permString));
+							if(perm.force) {
+								claim.setPermissionToggle(perm, perm.toForce);
+							} else {
+								claim.setPermissionToggle(perm, toggles.getBoolean(permString));
+							}
 						}
 					}
-
-					this.addClaim(claim);
+					
+					EventClaimDeserialization event = new EventClaimDeserialization(claim);
+					if(MinecraftForge.EVENT_BUS.post(event)) {
+						this.addClaim(event.getClaim());
+					}
 				} else {
 					ClaimIt.logger.log(Level.FATAL, "Detected version that doesn't exist yet! Mod was downgraded? Claim cannot be loaded.");
 					throw new RuntimeException("Canceled loading to prevent loss of claim data. If you recently downgraded versions, please upgrade or contact author.");
