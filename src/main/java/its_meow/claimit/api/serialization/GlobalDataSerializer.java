@@ -6,15 +6,15 @@ import net.minecraft.world.World;
 import net.minecraft.world.storage.WorldSavedData;
 import net.minecraftforge.common.DimensionManager;
 
-public class UserDataSerializer extends WorldSavedData {
-	private static final String DATA_NAME = Ref.MOD_ID + "_UsersData";
+public class GlobalDataSerializer extends WorldSavedData {
+	private static final String DATA_NAME = Ref.MOD_ID + "_GlobalData";
 	public NBTTagCompound data = new NBTTagCompound();
 	
-	public UserDataSerializer() {
+	public GlobalDataSerializer() {
 		super(DATA_NAME);
 	}
 	
-	public UserDataSerializer(String s) {
+	public GlobalDataSerializer(String s) {
 		super(s);
 	}
 	
@@ -28,11 +28,11 @@ public class UserDataSerializer extends WorldSavedData {
 		return compound;
 	}
 	
-	public static UserDataSerializer get() {
+	public static GlobalDataSerializer get() {
 		World world = DimensionManager.getWorld(0);
-		UserDataSerializer save = (UserDataSerializer) world.getMapStorage().getOrLoadData(UserDataSerializer.class, DATA_NAME);
+		GlobalDataSerializer save = (GlobalDataSerializer) world.getMapStorage().getOrLoadData(GlobalDataSerializer.class, DATA_NAME);
 		if(save == null) {
-			save = new UserDataSerializer();
+			save = new GlobalDataSerializer();
 			world.getMapStorage().setData(DATA_NAME, save);
 		}
 		return save;

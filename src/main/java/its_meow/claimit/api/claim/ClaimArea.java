@@ -8,6 +8,8 @@ import java.util.UUID;
 
 import javax.annotation.Nullable;
 
+import its_meow.claimit.api.group.Group;
+import its_meow.claimit.api.group.GroupManager;
 import its_meow.claimit.api.permission.ClaimPermissionMember;
 import its_meow.claimit.api.permission.ClaimPermissionRegistry;
 import its_meow.claimit.api.permission.ClaimPermissionToggle;
@@ -23,8 +25,7 @@ public class ClaimArea {
 	private int posX;
 	/** Z position of the lowest (closest to -inf, -inf) corner **/
 	private int posZ;
-	/** Dimension ID of the claim's location -
-	 *  FINAL **/
+	/** Dimension ID of the claim's location **/
 	private final int dimID;
 	/** Length of the side in the X direction extending from +1 of posX **/
 	private int sideLengthX;
@@ -165,6 +166,11 @@ public class ClaimArea {
 		ArrayList<UUID> array = getArrayForPermission(permission);
 		if(array != null && array.contains(player.getGameProfile().getId())) {
 			return true;
+		}
+		for(Group group : GroupManager.getGroups()) {
+		    if(group.hasPermissionInClaim(player, permission, this)) {
+		        return true;
+		    }
 		}
 		return false;
 	}

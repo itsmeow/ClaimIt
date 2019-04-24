@@ -6,7 +6,7 @@ import java.util.UUID;
 
 import org.apache.commons.lang3.tuple.Pair;
 
-import its_meow.claimit.api.serialization.UserDataSerializer;
+import its_meow.claimit.api.serialization.GlobalDataSerializer;
 import net.minecraft.nbt.NBTTagCompound;
 
 public class UserConfigManager {
@@ -81,7 +81,7 @@ public class UserConfigManager {
 	}
 	
 	public void serialize() {
-		NBTTagCompound data = UserDataSerializer.get().data;
+		NBTTagCompound data = GlobalDataSerializer.get().data;
 		for(UUID uuid : configs.keySet()) {
 			NBTTagCompound configData = new NBTTagCompound();
 			for(String str : configs.get(uuid).keySet()) {
@@ -101,7 +101,7 @@ public class UserConfigManager {
 	}
 	
 	public void deserialize() {
-		NBTTagCompound data = UserDataSerializer.get().data;
+		NBTTagCompound data = GlobalDataSerializer.get().data;
 		for(String uuidStr : data.getKeySet()) {
 			UUID uuid = UUID.fromString(uuidStr);
 			configs.put(uuid, new HashMap<String, Pair<UserConfig<?>, ?>>());

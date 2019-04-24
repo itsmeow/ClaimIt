@@ -96,12 +96,6 @@ public class ClaimEventHandler {
 					int[] corner2 = posArray;
 					BlockPos c1 = new BlockPos(corner1[0], 0, corner1[1]);
 					BlockPos c2 = new BlockPos(corner2[0], 0, corner2[1]);
-					/* Not needed due to ClaimArea constructor
-						if(c1.subtract(c2).getX() < 0 && c1.subtract(c2).getY() < 0) {
-							BlockPos c = c1; // Swap values to make c1 the proper corner
-							c1 = c2;
-							c2 = c;
-						}*/
 					BlockPos sideL = c2.subtract(c1); // Subtract to get side lengths
 					// Claim corners are automatically corrected to proper values by constructor
 					ClaimArea newClaim;
@@ -148,10 +142,6 @@ public class ClaimEventHandler {
 		if(claim != null) {
 			EntityPlayer player = e.getPlayer();
 			if(!claim.canModify(player)) {
-				/*if(!player.capabilities.isCreativeMode) {
-					player.addItemStackToInventory(new ItemStack(e.getPlayer().getHeldItem(e.getHand()).getItem(), 1));
-				}*/
-
 				e.setCanceled(true);
 			}
 		}
@@ -193,7 +183,7 @@ public class ClaimEventHandler {
 			if(e.getTarget() instanceof EntityPlayer) {
 				e.setCanceled(!claim2.canPVP(e.getEntityPlayer()) || e.isCanceled()  || ClaimConfig.forceNoPVPInClaim);
 			} else {
-				e.setCanceled(!claim2.canEntity(e.getEntityPlayer()) || e.isCanceled());;
+				e.setCanceled(!claim2.canEntity(e.getEntityPlayer()) || e.isCanceled());
 			}
 		}
 	}
@@ -402,66 +392,62 @@ public class ClaimEventHandler {
 	}
 
 	@SubscribeEvent(priority = EventPriority.HIGHEST)
-	public static void onBonemeal(BonemealEvent e) {
-		if(e.getBlock() instanceof BlockGrass) {
-			int nearby = 0;
-			for(ClaimArea claimI : ClaimManager.getManager().getClaimsList()) {
-				if(claimI.getDimensionID() == e.getWorld().provider.getDimension()) {
-					int xDistance = Math.abs(claimI.getMainPosition().getX() - e.getPos().getX());
-					int zDistance = Math.abs(claimI.getMainPosition().getZ() - e.getPos().getZ());
-					if(xDistance < 4 || zDistance < 4) {
-						nearby++;
-					}
-				}
-			}
-			e.setCanceled(nearby > 0);
-		}
-		ClaimArea originalClaim = ClaimManager.getManager().getClaimAtLocation(e.getWorld(), e.getPos());
-		if(e.isCanceled()) {
-			Random rand = new Random();
-			BlockPos blockpos = e.getPos().up();
+    public static void onBonemeal(BonemealEvent e) {
+        if(e.getBlock() instanceof BlockGrass) {
+            int nearby = 0;
+            for(ClaimArea claimI : ClaimManager.getManager().getClaimsList()) {
+                if(claimI.getDimensionID() == e.getWorld().provider.getDimension()) {
+                    int xDistance = Math.abs(claimI.getMainPosition().getX() - e.getPos().getX());
+                    int zDistance = Math.abs(claimI.getMainPosition().getZ() - e.getPos().getZ());
+                    if(xDistance < 4 || zDistance < 4) {
+                        nearby++;
+                    }
+                }
+            }
+            e.setCanceled(nearby > 0);
+        }
+        ClaimArea originalClaim = ClaimManager.getManager().getClaimAtLocation(e.getWorld(), e.getPos());
+        if(e.isCanceled()) {
+            Random rand = new Random();
+            BlockPos blockpos = e.getPos().up();
 
-			for (int i = 0; i < 128; ++i)
-			{
-				BlockPos blockpos1 = blockpos;
-				int j = 0;
+            for(int i = 0; i < 128; ++i) {
+                BlockPos blockpos1 = blockpos;
+                int j = 0;
 
-				while (true)
-				{
-					if (j >= i / 16)
-					{
-						ClaimArea claimAtLoc = ClaimManager.getManager().getClaimAtLocation(e.getWorld(), blockpos1);
-						if (e.getWorld().isAirBlock(blockpos1) && (claimAtLoc == null || (claimAtLoc  == originalClaim && claimAtLoc.canModify(e.getEntityPlayer()))))
-						{
-							if (rand.nextInt(8) == 0) {
-								e.getWorld().getBiome(blockpos1).plantFlower(e.getWorld(), rand, blockpos1);
-							}
-							else
-							{
-								IBlockState iblockstate1 = Blocks.TALLGRASS.getDefaultState().withProperty(BlockTallGrass.TYPE, BlockTallGrass.EnumType.GRASS);
+                while(true) {
+                    if(j >= i / 16) {
+                        ClaimArea claimAtLoc = ClaimManager.getManager().getClaimAtLocation(e.getWorld(), blockpos1);
+                        if(e.getWorld().isAirBlock(blockpos1) && (claimAtLoc == null
+                                || (claimAtLoc == originalClaim && claimAtLoc.canModify(e.getEntityPlayer())))) {
+                            if(rand.nextInt(8) == 0) {
+                                e.getWorld().getBiome(blockpos1).plantFlower(e.getWorld(), rand, blockpos1);
+                            } else {
+                                IBlockState iblockstate1 = Blocks.TALLGRASS.getDefaultState()
+                                        .withProperty(BlockTallGrass.TYPE, BlockTallGrass.EnumType.GRASS);
 
-								if (Blocks.TALLGRASS.canBlockStay(e.getWorld(), blockpos1, iblockstate1))
-								{
-									e.getWorld().setBlockState(blockpos1, iblockstate1, 3);
-								}
-							}
-						}
+                                if(Blocks.TALLGRASS.canBlockStay(e.getWorld(), blockpos1, iblockstate1)) {
+                                    e.getWorld().setBlockState(blockpos1, iblockstate1, 3);
+                                }
+                            }
+                        }
 
-						break;
-					}
+                        break;
+                    }
 
-					blockpos1 = blockpos1.add(rand.nextInt(3) - 1, (rand.nextInt(3) - 1) * rand.nextInt(3) / 2, rand.nextInt(3) - 1);
+                    blockpos1 = blockpos1.add(rand.nextInt(3) - 1, (rand.nextInt(3) - 1) * rand.nextInt(3) / 2,
+                            rand.nextInt(3) - 1);
 
-					if (e.getWorld().getBlockState(blockpos1.down()).getBlock() != Blocks.GRASS || e.getWorld().getBlockState(blockpos1).isNormalCube())
-					{
-						break;
-					}
+                    if(e.getWorld().getBlockState(blockpos1.down()).getBlock() != Blocks.GRASS
+                            || e.getWorld().getBlockState(blockpos1).isNormalCube()) {
+                        break;
+                    }
 
-					++j;
-				}
-			}
-		}
-	}
+                    ++j;
+                }
+            }
+        }
+    }
 
 	@SubscribeEvent(priority = EventPriority.HIGHEST)
 	public static void onMultiPlace(BlockEvent.MultiPlaceEvent e) {
