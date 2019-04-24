@@ -13,10 +13,10 @@ import net.minecraft.entity.player.EntityPlayer;
 public class Group {
 	
 	private final String name;
-	/* Private field for storing member UUIDs */
-	private Map<ClaimPermissionMember, ArrayList<UUID>> memberLists;
-	private ArrayList<UUID> members = new ArrayList<UUID>();
-	private ArrayList<ClaimArea> claims = new ArrayList<ClaimArea>();
+	/* Package fields for storing data */
+	Map<ClaimPermissionMember, ArrayList<UUID>> memberLists;
+	ArrayList<UUID> members = new ArrayList<UUID>();
+	ArrayList<ClaimArea> claims = new ArrayList<ClaimArea>();
 	
 	public Group(String name) {
 		this.name = name;
@@ -28,23 +28,23 @@ public class Group {
 		}
 	}
 	
-	public boolean addMember(UUID uuid) {
+	boolean addMember(UUID uuid) {
 		return members.add(uuid);
 	}
 	
-	public boolean addMember(EntityPlayer player) {
+	boolean addMember(EntityPlayer player) {
 		return addMember(player.getGameProfile().getId());
 	}
 	
-	public boolean addMemberPermission(UUID uuid, ClaimPermissionMember permission) {
+	boolean addMemberPermission(UUID uuid, ClaimPermissionMember permission) {
 		return this.memberLists.get(permission).add(uuid);
 	}
 	
-	public boolean addMemberPermission(EntityPlayer player, ClaimPermissionMember permission) {
+	boolean addMemberPermission(EntityPlayer player, ClaimPermissionMember permission) {
 		return addMemberPermission(player.getGameProfile().getId(), permission);
 	}
 	
-	public boolean addClaim(ClaimArea claim) {
+	boolean addClaim(ClaimArea claim) {
 		return claims.add(claim);
 	}
 	

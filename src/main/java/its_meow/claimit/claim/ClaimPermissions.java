@@ -26,10 +26,10 @@ public class ClaimPermissions {
 
 	public static void register() {
 		// Members
-		ClaimPermissionRegistry.addPermission(MODIFY);
-		ClaimPermissionRegistry.addPermission(USE);
-		ClaimPermissionRegistry.addPermission(ENTITY);
-		ClaimPermissionRegistry.addPermission(PVP);
+		ClaimPermissionRegistry.addPermission(MODIFY, MODIFY_TOGGLE);
+		ClaimPermissionRegistry.addPermission(USE, USE_TOGGLE);
+		ClaimPermissionRegistry.addPermission(ENTITY, ENTITY_TOGGLE);
+		ClaimPermissionRegistry.addPermission(PVP, PVP_TOGGLE);
 		ClaimPermissionRegistry.addPermission(MANAGE_PERMS);
 
 		// Toggles
@@ -38,12 +38,6 @@ public class ClaimPermissions {
 		ClaimPermissionRegistry.addPermission(PICKUP_ITEM);
 		ClaimPermissionRegistry.addPermission(ALLOW_PROJECTILES);
 		ClaimPermissionRegistry.addPermission(ENTITY_SPAWN);
-
-		// Member Toggles
-		ClaimPermissionRegistry.addPermission(MODIFY_TOGGLE);
-		ClaimPermissionRegistry.addPermission(USE_TOGGLE);
-		ClaimPermissionRegistry.addPermission(ENTITY_TOGGLE);
-		ClaimPermissionRegistry.addPermission(PVP_TOGGLE);
 	}
 
 }
