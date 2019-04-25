@@ -82,6 +82,7 @@ public class UserConfigManager {
 	
 	public void serialize() {
 		NBTTagCompound data = GlobalDataSerializer.get().data;
+		NBTTagCompound configsData = new NBTTagCompound();
 		for(UUID uuid : configs.keySet()) {
 			NBTTagCompound configData = new NBTTagCompound();
 			for(String str : configs.get(uuid).keySet()) {
@@ -96,26 +97,30 @@ public class UserConfigManager {
 					configData.setString(str, (String) pair.getRight());
 				}
 			}
-			data.setTag(uuid.toString(), configData);
+			configsData.setTag(uuid.toString(), configData);
 		}
+		data.setTag("USERCONFIG", configsData);
+        GlobalDataSerializer.get().markDirty();
 	}
 	
 	public void deserialize() {
 		NBTTagCompound data = GlobalDataSerializer.get().data;
-		for(String uuidStr : data.getKeySet()) {
+		
+		NBTTagCompound configsData = data.getCompoundTag("USERCONFIG");
+		for(String uuidStr : configsData.getKeySet()) {
 			UUID uuid = UUID.fromString(uuidStr);
 			configs.put(uuid, new HashMap<String, Pair<UserConfig<?>, ?>>());
-			for(String parsedName : data.getCompoundTag(uuidStr).getKeySet()) {
+			for(String parsedName : configsData.getCompoundTag(uuidStr).getKeySet()) {
 				UserConfig<?> config = UserConfigRegistry.getConfig(parsedName);
 				Object value = config.defaultValue;
 				if(config instanceof UserConfigBoolean) {
-					value = data.getCompoundTag(uuidStr).getBoolean(parsedName);
+					value = configsData.getCompoundTag(uuidStr).getBoolean(parsedName);
 				}
 				if(config instanceof UserConfigFloat) {
-					value = data.getCompoundTag(uuidStr).getFloat(parsedName);
+					value = configsData.getCompoundTag(uuidStr).getFloat(parsedName);
 				}
 				if(config instanceof UserConfigString) {
-					value = data.getCompoundTag(uuidStr).getString(parsedName);
+					value = configsData.getCompoundTag(uuidStr).getString(parsedName);
 				}
 				configs.get(uuid).put(parsedName, Pair.of(config, value));
 			}

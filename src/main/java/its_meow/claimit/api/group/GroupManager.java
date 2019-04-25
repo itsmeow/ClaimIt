@@ -1,8 +1,6 @@
 package its_meow.claimit.api.group;
 
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Set;
 
 import javax.annotation.Nullable;
 
@@ -51,21 +49,13 @@ public class GroupManager {
     public static void serialize() {
         GlobalDataSerializer store = GlobalDataSerializer.get();
         NBTTagCompound comp = store.data;
-        if(store != null && store.data != null && store.data.getSize() > 0) {
-            Set<String> toRemove = new HashSet<String>();
-            for(String key : store.data.getKeySet()) { // Remove all data
-                if(!key.equals("")) {
-                    toRemove.add(key);
-                }
-            }
-            for(String key : toRemove) {
-                store.data.removeTag(key);
-            }
-        }
+        NBTTagCompound groupsTag = new NBTTagCompound();
         for(String groupName : groups.keySet()) {
             NBTTagCompound groupCompound = groups.get(groupName).serialize();
-            comp.setTag(groupName, groupCompound);
+            groupsTag.setTag(groupName, groupCompound);
         }
+        comp.setTag("GROUPS", groupsTag);
+        store.markDirty();
     }
     
     public static void deserialize() {
@@ -73,9 +63,10 @@ public class GroupManager {
         GlobalDataSerializer store = GlobalDataSerializer.get();
         NBTTagCompound comp = store.data;
         if(comp != null) {
-            for(String key : comp.getKeySet()) {
+            NBTTagCompound groupsTag = comp.getCompoundTag("GROUPS");
+            for(String key : groupsTag.getKeySet()) {
                 System.out.println("Loading " + key);
-                Group group = Group.deserialize(comp.getCompoundTag(key));
+                Group group = Group.deserialize(groupsTag.getCompoundTag(key));
                 if(!addGroup(group)) {
                     ClaimIt.logger.error("Duplicate group name of " + group.name + " failed to load! Was the data edited?");
                 }
