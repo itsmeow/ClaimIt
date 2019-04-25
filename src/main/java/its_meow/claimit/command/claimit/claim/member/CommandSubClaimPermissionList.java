@@ -19,7 +19,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.text.TextComponentString;
 import static net.minecraft.util.text.TextFormatting.*;
 
-public class CommandSubClaimMemberList extends CommandBase {
+public class CommandSubClaimPermissionList extends CommandBase {
 
 	@Override
 	public String getName() {
@@ -28,7 +28,7 @@ public class CommandSubClaimMemberList extends CommandBase {
 
 	@Override
 	public String getUsage(ICommandSender sender) {
-		return "claimit claim member list (optional:claimname) (and/or) (optional:permission)";
+		return "claimit claim permission list (optional:claimname) (and/or) (optional:permission)";
 	}
 
 	@Override

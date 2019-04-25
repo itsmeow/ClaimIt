@@ -1,12 +1,14 @@
 package its_meow.claimit.command.claimit.claim;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 import javax.annotation.Nullable;
 
 import its_meow.claimit.api.claim.ClaimArea;
 import its_meow.claimit.api.permission.ClaimPermissionMember;
-import its_meow.claimit.command.claimit.claim.member.CommandSubClaimMemberList;
+import its_meow.claimit.command.claimit.claim.member.CommandSubClaimPermissionList;
 import its_meow.claimit.util.CommandUtils;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommand;
@@ -18,28 +20,34 @@ import net.minecraft.util.text.TextComponentString;
 import net.minecraftforge.server.command.CommandTreeBase;
 import static net.minecraft.util.text.TextFormatting.*;
 
-public class CommandSubClaimMember extends CommandTreeBase {
+public class CommandSubClaimPermission extends CommandTreeBase {
 
-	public CommandSubClaimMember() {
-		this.addSubcommand(new CommandSubClaimMemberList());
+	public CommandSubClaimPermission() {
+		this.addSubcommand(new CommandSubClaimPermissionList());
 	}
 
 	@Override
 	public String getName() {
-		return "member";
+		return "permission";
 	}
+	
+    @Override
+    public List<String> getAliases() {
+        ArrayList<String> list = new ArrayList<String>();
+        list.add("permission");
+        list.add("perm");
+        return list;
+    }
 
 	@Override
 	public String getUsage(ICommandSender sender) {
-		return "/claimit claim member <add/remove> <permission> <username> [claimname]" + "\n" + "/claimit claim member list [permission] [claimname]";
+		return "/claimit claim permission <add/remove> <permission> <username> [claimname]" + "\n" + "/claimit claim permission list [permission] [claimname]";
 	}
 
 	@Override
 	public boolean checkPermission(MinecraftServer server, ICommandSender sender) {
 		return true;
 	}
-
-
 
 	@Override
 	public boolean isUsernameIndex(String[] args, int index) {

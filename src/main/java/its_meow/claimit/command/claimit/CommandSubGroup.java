@@ -4,8 +4,10 @@ import static net.minecraft.util.text.TextFormatting.AQUA;
 import static net.minecraft.util.text.TextFormatting.BOLD;
 import static net.minecraft.util.text.TextFormatting.YELLOW;
 
+import its_meow.claimit.command.claimit.group.CommandSubGroupClaim;
 import its_meow.claimit.command.claimit.group.CommandSubGroupCreate;
 import its_meow.claimit.command.claimit.group.CommandSubGroupDelete;
+import its_meow.claimit.command.claimit.group.CommandSubGroupPermission;
 import its_meow.claimit.command.claimit.group.CommandSubGroupSetName;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
@@ -19,6 +21,8 @@ public class CommandSubGroup extends CommandTreeBase {
         this.addSubcommand(new CommandSubGroupCreate());
         this.addSubcommand(new CommandSubGroupSetName());
         this.addSubcommand(new CommandSubGroupDelete());
+        this.addSubcommand(new CommandSubGroupPermission());
+        this.addSubcommand(new CommandSubGroupClaim());
     }
     
     @Override
@@ -46,7 +50,7 @@ public class CommandSubGroup extends CommandTreeBase {
             sendMessage(sender, YELLOW + "/claimit group delete");
             sendMessage(sender, YELLOW + "/claimit group list");
             sendMessage(sender, YELLOW + "/claimit group setname");
-            sendMessage(sender, YELLOW + "/claimit group member");
+            sendMessage(sender, YELLOW + "/claimit group permission");
             sendMessage(sender, YELLOW + "/claimit group claim");
         }
     }

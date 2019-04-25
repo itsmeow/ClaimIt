@@ -4,7 +4,7 @@ import its_meow.claimit.command.claimit.claim.CommandSubClaimDelete;
 import its_meow.claimit.command.claimit.claim.CommandSubClaimDeleteAll;
 import its_meow.claimit.command.claimit.claim.CommandSubClaimInfo;
 import its_meow.claimit.command.claimit.claim.CommandSubClaimList;
-import its_meow.claimit.command.claimit.claim.CommandSubClaimMember;
+import its_meow.claimit.command.claimit.claim.CommandSubClaimPermission;
 import its_meow.claimit.command.claimit.claim.CommandSubClaimSetName;
 import its_meow.claimit.command.claimit.claim.CommandSubClaimToggle;
 import net.minecraft.command.CommandException;
@@ -21,7 +21,7 @@ public class CommandSubClaim extends CommandTreeBase {
 		this.addSubcommand(new CommandSubClaimDelete());
 		this.addSubcommand(new CommandSubClaimList());
 		this.addSubcommand(new CommandSubClaimSetName());
-		this.addSubcommand(new CommandSubClaimMember());
+		this.addSubcommand(new CommandSubClaimPermission());
 		this.addSubcommand(new CommandSubClaimDeleteAll());
 		this.addSubcommand(new CommandSubClaimToggle());
 	}
@@ -50,7 +50,7 @@ public class CommandSubClaim extends CommandTreeBase {
 			sendMessage(sender, YELLOW + "/claimit claim delete");
 			sendMessage(sender, YELLOW + "/claimit claim list");
 			sendMessage(sender, YELLOW + "/claimit claim setname");
-			sendMessage(sender, YELLOW + "/claimit claim member");
+			sendMessage(sender, YELLOW + "/claimit claim permission");
 			sendMessage(sender, YELLOW + "/claimit claim deleteall");
 			sendMessage(sender, YELLOW + "/claimit claim toggle");
 		}

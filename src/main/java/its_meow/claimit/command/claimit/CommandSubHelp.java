@@ -63,8 +63,8 @@ public class CommandSubHelp extends CommandBase {
 				sendMessage(sender, GOLD + "" + UNDERLINE + "Available choices:" + YELLOW + " /claimit help <choice>");
 				sendMessage(sender, GREEN + "claim delete");
 				sendMessage(sender, GREEN + "claim info");
-				sendMessage(sender, GREEN + "claim member");
-				sendMessage(sender, GREEN + "claim member list");
+				sendMessage(sender, GREEN + "claim permission");
+				sendMessage(sender, GREEN + "claim permission list");
 				sendMessage(sender, GREEN + "claim list");
 				sendMessage(sender, GREEN + "claim deleteall");
 				sendMessage(sender, GREEN + "claim setname");
