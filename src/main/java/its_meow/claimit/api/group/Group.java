@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 
 import its_meow.claimit.api.claim.ClaimArea;
 import its_meow.claimit.api.permission.ClaimPermissionMember;
@@ -271,5 +272,17 @@ public class Group {
      */
     public boolean inPermissionList(ClaimPermissionMember permission, UUID id) {
         return this.memberLists.get(permission).contains(id);
+    }
+
+    public UUID getOwner() {
+        return this.owner;
+    }
+    
+    public ImmutableList<UUID> getMembers() {
+        return ImmutableList.copyOf(this.members);
+    }
+    
+    public ImmutableMap<ClaimPermissionMember, ArrayList<UUID>> getMemberPermissions() {
+        return ImmutableMap.copyOf(this.memberLists);
     }
 }

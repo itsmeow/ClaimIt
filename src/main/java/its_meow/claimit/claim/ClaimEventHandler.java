@@ -13,6 +13,7 @@ import java.util.Set;
 import its_meow.claimit.Ref;
 import its_meow.claimit.api.claim.ClaimArea;
 import its_meow.claimit.api.claim.ClaimManager;
+import its_meow.claimit.api.claim.ClaimPermissions;
 import its_meow.claimit.api.group.GroupManager;
 import its_meow.claimit.api.userconfig.UserConfigManager;
 import its_meow.claimit.config.ClaimConfig;

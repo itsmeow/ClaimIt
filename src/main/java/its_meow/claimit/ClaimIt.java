@@ -6,9 +6,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import its_meow.claimit.api.claim.ClaimManager;
+import its_meow.claimit.api.claim.ClaimPermissions;
 import its_meow.claimit.api.group.GroupManager;
 import its_meow.claimit.api.userconfig.UserConfigManager;
-import its_meow.claimit.claim.ClaimPermissions;
 import its_meow.claimit.command.CommandClaimIt;
 import its_meow.claimit.config.ClaimConfig;
 import its_meow.claimit.userconfig.UserConfigs;

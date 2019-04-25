@@ -1,4 +1,4 @@
-package its_meow.claimit.claim;
+package its_meow.claimit.api.claim;
 
 import its_meow.claimit.api.permission.ClaimPermissionMember;
 import its_meow.claimit.api.permission.ClaimPermissionRegistry;
