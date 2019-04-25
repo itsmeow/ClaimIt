@@ -4,6 +4,9 @@ import static net.minecraft.util.text.TextFormatting.AQUA;
 import static net.minecraft.util.text.TextFormatting.BOLD;
 import static net.minecraft.util.text.TextFormatting.YELLOW;
 
+import its_meow.claimit.command.claimit.group.CommandSubGroupCreate;
+import its_meow.claimit.command.claimit.group.CommandSubGroupDelete;
+import its_meow.claimit.command.claimit.group.CommandSubGroupSetName;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.server.MinecraftServer;
@@ -13,7 +16,9 @@ import net.minecraftforge.server.command.CommandTreeBase;
 public class CommandSubGroup extends CommandTreeBase {
     
     public CommandSubGroup() {
-        
+        this.addSubcommand(new CommandSubGroupCreate());
+        this.addSubcommand(new CommandSubGroupSetName());
+        this.addSubcommand(new CommandSubGroupDelete());
     }
     
     @Override

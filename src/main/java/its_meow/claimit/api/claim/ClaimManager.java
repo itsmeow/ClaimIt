@@ -18,18 +18,12 @@ import com.mojang.authlib.GameProfile;
 import its_meow.claimit.ClaimIt;
 import its_meow.claimit.api.event.EventClaimDeserialization;
 import its_meow.claimit.api.event.EventClaimSerialization;
-import its_meow.claimit.api.permission.ClaimPermissionMember;
-import its_meow.claimit.api.permission.ClaimPermissionRegistry;
-import its_meow.claimit.api.permission.ClaimPermissionToggle;
 import its_meow.claimit.api.serialization.ClaimSerializer;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
-import net.minecraft.nbt.NBTTagString;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.util.Constants;
 
 public class ClaimManager {
 
@@ -214,30 +208,9 @@ public class ClaimManager {
 			}
 		}
 		for(ClaimArea claim : claims) {
-			int[] claimVals = claim.getSelfAsInt();
-			UUID owner = claim.getOwner();
-			UUID ownerOffline = claim.getOwnerOffline();
-			String serialName = claim.getSerialName();
-			NBTTagCompound data = new NBTTagCompound();
-			data.setIntArray("CLAIMINFO", claimVals);
-			data.setString("OWNERUID", owner.toString());
-			data.setString("OWNERUIDOFF", ownerOffline.toString());
-			data.setString("TRUEVIEWNAME", claim.getTrueViewName());
-			NBTTagCompound memberCompound = new NBTTagCompound();
-			for(ClaimPermissionMember perm : ClaimPermissionRegistry.getMemberPermissions()) {
-				NBTTagList members = new NBTTagList();
-				for(UUID member : claim.getArrayForPermission(perm)) {
-					members.appendTag(new NBTTagString(member.toString()));
-				}
-				memberCompound.setTag(perm.parsedName, members);
-			}
-			NBTTagCompound toggles = new NBTTagCompound();
-			for(ClaimPermissionToggle perm : ClaimPermissionRegistry.getTogglePermissions()) {
-				toggles.setBoolean(perm.parsedName, claim.isPermissionToggled(perm));
-			}
-			data.setTag("TOGGLES", toggles);
-			data.setTag("MEMBERS", memberCompound);
-
+	        String serialName = claim.getSerialName();
+	        NBTTagCompound data = claim.serialize();
+	        
 			EventClaimSerialization event = new EventClaimSerialization(data);
 			MinecraftForge.EVENT_BUS.post(event);
 
@@ -254,57 +227,19 @@ public class ClaimManager {
 		claims.clear();
 		ClaimSerializer store = ClaimSerializer.get();
 		NBTTagCompound comp = store.data;
-		if(comp != null ) {
+		if(comp != null) {
 			for(String key : comp.getKeySet()) {
 				System.out.println("Loading " + key);
-				NBTTagCompound data = comp.getCompoundTag(key);
-				int[] claimVals = data.getIntArray("CLAIMINFO");
-				UUID owner = UUID.fromString(data.getString("OWNERUID"));
-				UUID ownerOffline = UUID.fromString(data.getString("OWNERUIDOFF"));
-				System.out.println("Owner: " + owner);
-				String trueViewName = data.getString("TRUEVIEWNAME");
-				if(trueViewName == null || trueViewName.equals("")) {
-					trueViewName = key;
-				}
-				if(claimVals.length > 0 && claimVals[0] == 0) {
-					System.out.println("Valid version.");
-					ClaimArea claim = new ClaimArea(claimVals[1], claimVals[2], claimVals[3], claimVals[4], claimVals[5], owner, ownerOffline, trueViewName);
+	            ClaimArea claim = ClaimArea.deserialize(comp.getCompoundTag(key), key);
 
-					NBTTagCompound memberCompound = data.getCompoundTag("MEMBERS");
-					for(String permString : memberCompound.getKeySet()) {
-						if(ClaimPermissionRegistry.getPermissionMember(permString) != null) {
-							NBTTagList tagList = memberCompound.getTagList(permString, Constants.NBT.TAG_STRING);
-							for(int i = 0; i < tagList.tagCount(); i++) {
-								String uuidString = tagList.getStringTagAt(i);
-								UUID member = UUID.fromString(uuidString);
-								claim.addMember(ClaimPermissionRegistry.getPermissionMember(permString), member);
-							}
-						}
-					}
-					NBTTagCompound toggles = data.getCompoundTag("TOGGLES");
-					for(String permString : toggles.getKeySet()) {
-						ClaimPermissionToggle perm = ClaimPermissionRegistry.getPermissionToggle(permString);
-						if(perm != null) {
-							if(perm.force) {
-								claim.setPermissionToggle(perm, perm.toForce);
-							} else {
-								claim.setPermissionToggle(perm, toggles.getBoolean(permString));
-							}
-						}
-					}
+	            EventClaimDeserialization event = new EventClaimDeserialization(claim);
+	            MinecraftForge.EVENT_BUS.post(event);
 
-					EventClaimDeserialization event = new EventClaimDeserialization(claim);
-					MinecraftForge.EVENT_BUS.post(event);
-
-					if(!event.isCanceled()) {
-						this.addClaim(event.getClaim());
-					} else {
-						ClaimIt.logger.log(Level.INFO, "Event cancelled loading of this claim. ");
-					}
-				} else {
-					ClaimIt.logger.log(Level.FATAL, "Detected version that doesn't exist yet! Mod was downgraded? Claim cannot be loaded.");
-					throw new RuntimeException("Canceled loading to prevent loss of claim data. If you recently downgraded versions, please upgrade or contact author.");
-				}
+	            if(!event.isCanceled()) {
+	                this.addClaim(event.getClaim());
+	            } else {
+	                ClaimIt.logger.log(Level.INFO, "Event cancelled loading of this claim. ");
+	            }
 			}
 		}
 	}

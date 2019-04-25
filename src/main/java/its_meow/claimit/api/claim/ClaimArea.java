@@ -8,13 +8,20 @@ import java.util.UUID;
 
 import javax.annotation.Nullable;
 
+import org.apache.logging.log4j.Level;
+
+import com.google.common.collect.ImmutableMap;
+
+import its_meow.claimit.ClaimIt;
 import its_meow.claimit.api.group.Group;
 import its_meow.claimit.api.group.GroupManager;
 import its_meow.claimit.api.permission.ClaimPermissionMember;
 import its_meow.claimit.api.permission.ClaimPermissionRegistry;
 import its_meow.claimit.api.permission.ClaimPermissionToggle;
+import its_meow.claimit.api.util.ClaimNBTUtil;
 import its_meow.claimit.claim.ClaimPermissions;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.DimensionManager;
@@ -199,6 +206,10 @@ public class ClaimArea {
 	public void setPermissionToggle(ClaimPermissionToggle perm, boolean value) {
 		this.toggles.put(perm, value);
 	}
+	
+	public ImmutableMap<ClaimPermissionToggle, Boolean> getToggles() {
+	    return ImmutableMap.copyOf(this.toggles);
+	}
 
 	/** Do NOT use this for permission checking. Only for use in removing members. 
 	 * Why: doesn't account for admins or the owner of the claim. It purely returns if a member is in the list.**/
@@ -209,6 +220,10 @@ public class ClaimArea {
 		}
 		return false;
 	}
+	
+	protected void setToggles(Map<ClaimPermissionToggle, Boolean> toggles) {
+	    toggles.forEach((p, b) -> this.toggles.put(p, b));
+	}
 
 	/** Get the member arrays for a permission 
 	 * @param permission - The permission to get the array for. 
@@ -217,6 +232,14 @@ public class ClaimArea {
 	@Nullable
 	public ArrayList<UUID> getArrayForPermission(ClaimPermissionMember permission) {
 		return memberLists.get(permission);
+	}
+	
+	/**
+	 * Get the members arrays for all permissions
+	 * @return A map of member permissions to UUID lists (members)
+	 */
+	public ImmutableMap<ClaimPermissionMember, ArrayList<UUID>> getPermissionArrays() {
+	    return ImmutableMap.copyOf(this.memberLists);
 	}
 
 	/** Adds a member to the member list with a given permission and player object 
@@ -263,6 +286,10 @@ public class ClaimArea {
 			return true;
 		}
 		return false;
+	}
+	
+	protected void addMembers(Map<ClaimPermissionMember, ArrayList<UUID>> memberLists) {
+	    this.memberLists = ClaimNBTUtil.mergeMembers(this.memberLists, memberLists);
 	}
 
 	/** Returns a list of member UUIDs along with a set of their permissions. Used for easier displaying of member data. **/
@@ -425,5 +452,41 @@ public class ClaimArea {
 			this.viewName = this.ownerUUID + "_" + nameIn;
 		}
 		return pass;
+	}
+	
+	public NBTTagCompound serialize() {
+	    int[] claimVals = this.getSelfAsInt();
+        UUID owner = this.getOwner();
+        UUID ownerOffline = this.getOwnerOffline();
+        NBTTagCompound data = new NBTTagCompound();
+        data.setIntArray("CLAIMINFO", claimVals);
+        data.setString("OWNERUID", owner.toString());
+        data.setString("OWNERUIDOFF", ownerOffline.toString());
+        data.setString("TRUEVIEWNAME", this.getTrueViewName());
+        
+        data = ClaimNBTUtil.writeMembers(data, this.getPermissionArrays());
+        data = ClaimNBTUtil.writeToggles(data, this.getToggles());
+        return data;
+	}
+	
+	public static ClaimArea deserialize(NBTTagCompound tag, String keyName) {
+	    int[] claimVals = tag.getIntArray("CLAIMINFO");
+        UUID owner = UUID.fromString(tag.getString("OWNERUID"));
+        UUID ownerOffline = UUID.fromString(tag.getString("OWNERUIDOFF"));
+        System.out.println("Owner: " + owner);
+        String trueViewName = tag.getString("TRUEVIEWNAME");
+        if(trueViewName == null || trueViewName.equals("")) {
+            trueViewName = keyName;
+        }
+        if(claimVals.length > 0 && claimVals[0] == 0) {
+            System.out.println("Valid version.");
+            ClaimArea claim = new ClaimArea(claimVals[1], claimVals[2], claimVals[3], claimVals[4], claimVals[5], owner, ownerOffline, trueViewName);
+            claim.addMembers(ClaimNBTUtil.readMembers(tag));
+            claim.setToggles(ClaimNBTUtil.readToggles(tag));
+            return claim;
+        } else {
+            ClaimIt.logger.log(Level.FATAL, "Detected version that doesn't exist yet! Mod was downgraded? Claim cannot be loaded.");
+            throw new RuntimeException("Canceled loading to prevent loss of claim data. If you recently downgraded versions, please upgrade or contact author.");
+        }
 	}
 }

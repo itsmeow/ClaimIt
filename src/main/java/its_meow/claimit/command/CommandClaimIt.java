@@ -21,6 +21,7 @@ import its_meow.claimit.command.claimit.CommandSubCancel;
 import its_meow.claimit.command.claimit.CommandSubClaim;
 import its_meow.claimit.command.claimit.CommandSubConfig;
 import its_meow.claimit.command.claimit.CommandSubConfirm;
+import its_meow.claimit.command.claimit.CommandSubGroup;
 import its_meow.claimit.command.claimit.CommandSubHelp;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
@@ -33,6 +34,7 @@ public class CommandClaimIt extends CommandTreeBase {
 
 	public CommandClaimIt() {
 		this.addSubcommand(new CommandSubClaim());
+		this.addSubcommand(new CommandSubGroup());
 		this.addSubcommand(new CommandSubAdmin());
 		this.addSubcommand(new CommandSubConfirm());
 		this.addSubcommand(new CommandSubCancel());
@@ -69,6 +71,7 @@ public class CommandClaimIt extends CommandTreeBase {
 			sendMessage(sender, GRAY + "" + BOLD + "ClaimIt" + RESET + "" + DARK_PURPLE + " Version " + YELLOW + Ref.VERSION + DARK_PURPLE + " by " + DARK_RED + "" + BOLD + "its_meow");
 			sendMessage(sender, AQUA + "" + BOLD + "Subcommands: ");
 			sendMessage(sender, YELLOW + "/claimit claim");
+			sendMessage(sender, YELLOW + "/claimit group");
 			sendMessage(sender, YELLOW + "/claimit config");
 			sendMessage(sender, YELLOW + "/claimit admin");
 			sendMessage(sender, LIGHT_PURPLE + "/claimit help");

@@ -10,7 +10,9 @@ import com.google.common.collect.ImmutableList;
 import its_meow.claimit.api.claim.ClaimArea;
 import its_meow.claimit.api.permission.ClaimPermissionMember;
 import its_meow.claimit.api.permission.ClaimPermissionRegistry;
+import its_meow.claimit.api.util.ClaimNBTUtil;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.nbt.NBTTagCompound;
 
 public class Group {
 
@@ -100,10 +102,42 @@ public class Group {
     }
 
     public boolean isOwner(EntityPlayer player) {
-        return false;
+        return isOwner(player.getGameProfile().getId());
     }
     
     public boolean isOwner(UUID uuid) {
-        return false;
+        return this.owner.equals(uuid);
+    }
+    
+    protected void addMembers(ArrayList<UUID> members) {
+        this.members.addAll(members);
+    }
+    
+    protected void addMemberPerms(Map<ClaimPermissionMember, ArrayList<UUID>> memberLists) {
+        this.memberLists = ClaimNBTUtil.mergeMembers(this.memberLists, memberLists);
+    }
+    
+    protected void addClaims(ArrayList<ClaimArea> claims) {
+        this.claims.addAll(claims);
+    }
+    
+    public NBTTagCompound serialize() {
+        NBTTagCompound compound = new NBTTagCompound();
+        compound.setUniqueId("owner", this.owner);
+        compound.setString("name", name);
+        compound = ClaimNBTUtil.writeUUIDs(compound, "MEMBERSLIST", this.members);
+        compound = ClaimNBTUtil.writeMembers(compound, this.memberLists);
+        compound = ClaimNBTUtil.writeClaimNames(compound, this.claims);
+        return compound;
+    }
+    
+    public static Group deserialize(NBTTagCompound compound) {
+        UUID owner = compound.getUniqueId("owner");
+        String name = compound.getString("name");
+        Group group = new Group(name, owner);
+        group.addMembers(ClaimNBTUtil.readUUIDs(compound, "MEMBERSLIST"));
+        group.addMemberPerms(ClaimNBTUtil.readMembers(compound));
+        group.addClaims(ClaimNBTUtil.readClaimNames(compound));
+        return group;
     }
 }
