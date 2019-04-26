@@ -5,7 +5,6 @@ import static net.minecraft.util.text.TextFormatting.BLUE;
 import static net.minecraft.util.text.TextFormatting.GREEN;
 import static net.minecraft.util.text.TextFormatting.RED;
 
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
@@ -14,10 +13,7 @@ import its_meow.claimit.Ref;
 import its_meow.claimit.api.claim.ClaimArea;
 import its_meow.claimit.api.claim.ClaimManager;
 import its_meow.claimit.api.claim.ClaimPermissions;
-import its_meow.claimit.api.group.GroupManager;
-import its_meow.claimit.api.userconfig.UserConfigManager;
 import its_meow.claimit.config.ClaimConfig;
-import its_meow.claimit.userconfig.UserConfigs;
 import net.minecraft.block.BlockGrass;
 import net.minecraft.block.BlockTallGrass;
 import net.minecraft.block.state.IBlockState;
@@ -35,7 +31,6 @@ import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
-import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.BlockSnapshot;
 import net.minecraftforge.event.entity.EntityMountEvent;
@@ -52,24 +47,13 @@ import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.entity.player.PlayerPickupXpEvent;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.event.world.ExplosionEvent;
-import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.Event.Result;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.gameevent.TickEvent.PlayerTickEvent;
 
 @Mod.EventBusSubscriber(modid = Ref.MOD_ID)
-public class ClaimEventHandler {
-
-	@SubscribeEvent
-	public static void onWorldSave(WorldEvent.Save e) {
-		if(!e.getWorld().isRemote) {
-			ClaimManager.getManager().serialize();
-			UserConfigManager.getManager().serialize();
-			GroupManager.serialize();
-		}
-	}
+public class ProtectionEventHandler {
 
 	@SubscribeEvent(priority = EventPriority.HIGHEST)
 	public static void onBlockRightClicked(PlayerInteractEvent.RightClickBlock e) {
@@ -499,36 +483,6 @@ public class ClaimEventHandler {
 			if(!claim.isPermissionToggled(ClaimPermissions.ENTITY_SPAWN)) {
 				e.setResult(Result.DENY);
 			}
-		}
-	}
-	
-	private static HashMap<EntityPlayer, BlockPos> lastMsPos = new HashMap<EntityPlayer, BlockPos>();
-
-	@SubscribeEvent
-	public static void onPlayerTick(PlayerTickEvent e) {
-		ClaimManager mgr = ClaimManager.getManager();
-		if(!e.player.world.isRemote && e.player.ticksExisted % 5 == 0) {
-			if(e.player.ticksExisted % 2500 == 0) {
-				lastMsPos.clear();
-			}
-			if(lastMsPos.get(e.player) == null) {
-				lastMsPos.put(e.player, e.player.getPosition());
-			}
-			BlockPos pos = e.player.getPosition();
-			if(mgr.isBlockInAnyClaim(e.player.world, lastMsPos.get(e.player))) {
-				if(!mgr.isBlockInAnyClaim(e.player.world, pos)) {
-					if(UserConfigManager.getManager().get(e.player.getGameProfile().getId(), UserConfigs.EXIT_MESSAGE)) {
-						e.player.sendStatusMessage(new TextComponentString(TextFormatting.GOLD + "You are no longer in a claimed area."), true);
-					}
-				}
-			} else {
-				if(mgr.isBlockInAnyClaim(e.player.world, pos)) {
-					if(UserConfigManager.getManager().get(e.player.getGameProfile().getId(), UserConfigs.ENTRY_MESSAGE)) {
-						e.player.sendStatusMessage(new TextComponentString(TextFormatting.LIGHT_PURPLE + "You are now in a claimed area."), true);
-					}
-				}
-			}
-			lastMsPos.put(e.player, pos);
 		}
 	}
 
