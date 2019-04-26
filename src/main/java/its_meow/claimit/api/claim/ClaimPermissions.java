@@ -24,7 +24,7 @@ public class ClaimPermissions {
 	public static final ClaimPermissionToggle ENTITY_TOGGLE = new ClaimPermissionToggle("entity", false, "Allows damaging entities and interactions with entities (shearing sheep, need use as well!) for all users if enabled.", false, false);
 	public static final ClaimPermissionToggle PVP_TOGGLE = new ClaimPermissionToggle("pvp", false, "Allows damaging other players in the claim for all users if enabled.", false, false);
 
-	public static void register() {
+	static {
 		// Members
 		ClaimPermissionRegistry.addPermission(MODIFY, MODIFY_TOGGLE);
 		ClaimPermissionRegistry.addPermission(USE, USE_TOGGLE);
