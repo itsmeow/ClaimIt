@@ -53,7 +53,7 @@ public class CommandSubGroupClaim extends CommandBase {
         String groupName = args[1];
         String claimName = null;
         if(args.length == 3) {
-            claimName = args[1];
+            claimName = args[2];
         }
         if(!action.equalsIgnoreCase("add") && !action.equalsIgnoreCase("remove")) {
             throw new WrongUsageException("Invalid action! Specify add or remove. Usage: " + this.getUsage(sender));
@@ -93,7 +93,7 @@ public class CommandSubGroupClaim extends CommandBase {
                         throw new WrongUsageException("Invalid action! Specify add or remove. Usage: " + this.getUsage(sender));
                     }
                 } else {
-                    sendMessage(sender, RED + "No claim " + (args.length == 3 ? "with this name found!" : "at your location!"));
+                    sendMessage(sender, RED + "No claim " + (args.length == 3 ? "with this name that you own found!" : "at your location!"));
                 }
             } else {
                 sendMessage(sender, RED + "No such group: " + groupName);
