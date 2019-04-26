@@ -18,6 +18,7 @@ import its_meow.claimit.api.group.GroupManager;
 import its_meow.claimit.api.permission.ClaimPermissionMember;
 import its_meow.claimit.api.permission.ClaimPermissionRegistry;
 import its_meow.claimit.api.permission.ClaimPermissionToggle;
+import its_meow.claimit.api.permission.ClaimPermissions;
 import its_meow.claimit.api.util.ClaimNBTUtil;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;

@@ -15,7 +15,6 @@ public class ClaimPermissionRegistry {
 	/** Add a member permission to the registry to be used in claims 
 	 * @param permission - The member permission to add **/
 	public static void addPermission(ClaimPermissionMember permission) {
-		
 		if(memberPermissions.containsKey(permission.parsedName)) {
 			throw new RuntimeException("Identical member permission ID registered: " + permission.parsedName);
 		}
