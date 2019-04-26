@@ -7,6 +7,7 @@ import static net.minecraft.util.text.TextFormatting.YELLOW;
 import its_meow.claimit.command.claimit.group.CommandSubGroupClaim;
 import its_meow.claimit.command.claimit.group.CommandSubGroupCreate;
 import its_meow.claimit.command.claimit.group.CommandSubGroupDelete;
+import its_meow.claimit.command.claimit.group.CommandSubGroupInfo;
 import its_meow.claimit.command.claimit.group.CommandSubGroupPermission;
 import its_meow.claimit.command.claimit.group.CommandSubGroupSetName;
 import net.minecraft.command.CommandException;
@@ -23,6 +24,7 @@ public class CommandSubGroup extends CommandTreeBase {
         this.addSubcommand(new CommandSubGroupDelete());
         this.addSubcommand(new CommandSubGroupPermission());
         this.addSubcommand(new CommandSubGroupClaim());
+        this.addSubcommand(new CommandSubGroupInfo());
     }
     
     @Override

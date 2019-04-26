@@ -13,6 +13,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.UUID;
 
+import its_meow.claimit.api.claim.ClaimArea;
 import its_meow.claimit.api.claim.ClaimManager;
 import its_meow.claimit.api.group.Group;
 import its_meow.claimit.api.group.GroupManager;
@@ -78,17 +79,27 @@ public class CommandSubGroupInfo extends CommandBase {
             }
         }
         if(permMap == null || permMap.isEmpty()) {
-            throw new CommandException("This claim has no members.");
-        }
-        for(UUID member : permMap.keySet()) {
-            String permString = "";
-            HashSet<ClaimPermissionMember> permSet = permMap.get(member);
-            for(ClaimPermissionMember p : permSet) {
-                permString += p.parsedName + ", ";
+            sendMessage(player, YELLOW + "No members.");
+        } else {
+            sendMessage(player, YELLOW + "" + BOLD + "Members:");
+            for(UUID member : permMap.keySet()) {
+                String permString = "";
+                HashSet<ClaimPermissionMember> permSet = permMap.get(member);
+                for(ClaimPermissionMember p : permSet) {
+                    permString += p.parsedName + ", ";
+                }
+                int end = permString.lastIndexOf(',');
+                permString = permString.substring(0, end);
+                sendMessage(player, YELLOW + ClaimManager.getPlayerName(member, player.getEntityWorld()) + BLUE + ":" + GREEN + permString);
             }
-            int end = permString.lastIndexOf(',');
-            permString = permString.substring(0, end);
-            sendMessage(player, YELLOW + ClaimManager.getPlayerName(member, player.getEntityWorld()) + BLUE + ":" + GREEN + permString);
+        }
+        if(group.getClaims().size() == 0 || group.getClaims().isEmpty()) {
+            sendMessage(player, YELLOW + "No claims.");
+        } else {
+            sendMessage(player, YELLOW + "" + BOLD + "Claims:");
+            for(ClaimArea claim : group.getClaims()) {
+                sendMessage(player, BLUE + " + " + YELLOW + claim.getDisplayedViewName() + BLUE + " of " + GREEN + ClaimManager.getPlayerName(claim.getOwner(), world));
+            }
         }
     }
     
