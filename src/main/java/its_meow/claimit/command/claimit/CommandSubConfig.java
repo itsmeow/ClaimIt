@@ -40,7 +40,7 @@ public class CommandSubConfig extends CommandBase {
 			}
 			EntityPlayer player = (EntityPlayer) sender;
 			if(args.length == 0) {
-				for(String name : UserConfigRegistry.configs.keySet()) {
+				for(String name : UserConfigRegistry.getConfigs().keySet()) {
 					UserConfig<?> config = UserConfigRegistry.getConfig(name);
 					if(config.defaultValue instanceof Boolean) {
 						Boolean value = UserConfigManager.getManager().get(player.getGameProfile().getId(), (UserConfigBoolean) config);

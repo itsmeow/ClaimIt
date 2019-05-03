@@ -1,73 +1,36 @@
 package its_meow.claimit;
 
-import java.io.File;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
-import its_meow.claimit.api.claim.ClaimManager;
-import its_meow.claimit.api.group.GroupManager;
-import its_meow.claimit.api.permission.ClaimPermissions;
-import its_meow.claimit.api.userconfig.UserConfigManager;
+import its_meow.claimit.api.ClaimItAPI;
 import its_meow.claimit.command.CommandClaimIt;
-import its_meow.claimit.config.ClaimConfig;
 import its_meow.claimit.userconfig.UserConfigs;
 import its_meow.claimit.util.ConfirmationManager;
-import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.Mod.Instance;
-import net.minecraftforge.fml.common.event.FMLInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
-import net.minecraftforge.fml.common.event.FMLServerStoppingEvent;
 
-@Mod(modid = Ref.MOD_ID, name = Ref.NAME, version = Ref.VERSION, acceptedMinecraftVersions = Ref.acceptedMCV, updateJSON = Ref.updateJSON, acceptableRemoteVersions = "*")
+@Mod(modid = ClaimIt.MOD_ID, name = ClaimIt.NAME, version = ClaimIt.VERSION, acceptedMinecraftVersions = ClaimIt.acceptedMCV, updateJSON = ClaimIt.updateJSON, acceptableRemoteVersions = "*")
 public class ClaimIt {
-
-	@Instance(Ref.MOD_ID) 
+    
+    public static final String MOD_ID = "claimit";
+    public static final String VERSION = "1.0.0";
+    public static final String NAME = "ClaimIt";
+    public static final String acceptedMCV = ClaimItAPI.acceptedMCV;
+    public static final String updateJSON = ClaimItAPI.updateJSON;
+    
+	@Instance(ClaimIt.MOD_ID)
 	public static ClaimIt mod;
 
-	public static Logger logger;
-	public static Configuration config;
-
-	@EventHandler
-	public void serverLoad(FMLServerStartingEvent event) {
-		ClaimManager.getManager().clearAdmins();
-		ClaimManager.getManager().deserialize(); // Clears claims list as well
-		UserConfigManager.getManager().deserialize();
-		ConfirmationManager.getManager().removeAllConfirms();
-		GroupManager.deserialize();
-		event.registerServerCommand(new CommandClaimIt());
-	}
-	
-	@EventHandler
-	public void serverStop(FMLServerStoppingEvent event) {
-		ClaimManager.getManager().serialize();
-		UserConfigManager.getManager().serialize();
-		GroupManager.serialize();
-	}
-	
-	@EventHandler
-	public void preInit(FMLPreInitializationEvent event) {
-		logger = LogManager.getLogger("claimit");
-		File directory = event.getModConfigurationDirectory();
-		config = new Configuration(new File(directory.getPath(), "claimit.cfg")); 
-		ClaimConfig.readConfig();
-		ClaimPermissions.register();
-		UserConfigs.register();
-	}
-
-	@EventHandler
-	public void init(FMLInitializationEvent e) {
-	}
-
-	@EventHandler
-	public void postInit(FMLPostInitializationEvent e) {
-		if(config.hasChanged()){
-			config.save();
-		}
-	}
+    @EventHandler
+    public void serverLoad(FMLServerStartingEvent event) {
+        ConfirmationManager.getManager().removeAllConfirms();
+        event.registerServerCommand(new CommandClaimIt());
+    }
+    
+    @EventHandler
+    public void preInit(FMLPreInitializationEvent event) {
+        UserConfigs.register();
+    }
 
 }

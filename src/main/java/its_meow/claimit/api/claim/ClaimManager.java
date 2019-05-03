@@ -11,7 +11,7 @@ import org.apache.logging.log4j.Level;
 
 import com.mojang.authlib.GameProfile;
 
-import its_meow.claimit.ClaimIt;
+import its_meow.claimit.api.ClaimItAPI;
 import its_meow.claimit.api.event.EventClaimDeserialization;
 import its_meow.claimit.api.event.EventClaimSerialization;
 import its_meow.claimit.api.serialization.ClaimSerializer;
@@ -190,7 +190,7 @@ public class ClaimManager {
 
 	/** Forces a world to save claim data. Removes all claim data that is stored and adds current data. **/
 	public void serialize() {
-		ClaimIt.logger.info("Saving claims data.");
+		ClaimItAPI.logger.info("Saving claims data.");
 		ClaimSerializer store = ClaimSerializer.get();
 		if(store != null && store.data != null && store.data.getSize() > 0) {
 			Set<String> toRemove = new HashSet<String>();
@@ -234,7 +234,7 @@ public class ClaimManager {
 	            if(!event.isCanceled()) {
 	                this.addClaim(event.getClaim());
 	            } else {
-	                ClaimIt.logger.log(Level.INFO, "Event cancelled loading of this claim. ");
+	                ClaimItAPI.logger.log(Level.INFO, "Event cancelled loading of this claim. ");
 	            }
 			}
 		}

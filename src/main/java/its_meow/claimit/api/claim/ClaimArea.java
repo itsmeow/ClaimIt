@@ -12,7 +12,7 @@ import org.apache.logging.log4j.Level;
 
 import com.google.common.collect.ImmutableMap;
 
-import its_meow.claimit.ClaimIt;
+import its_meow.claimit.api.ClaimItAPI;
 import its_meow.claimit.api.group.Group;
 import its_meow.claimit.api.group.GroupManager;
 import its_meow.claimit.api.permission.ClaimPermissionMember;
@@ -485,7 +485,7 @@ public class ClaimArea {
             claim.setToggles(ClaimNBTUtil.readToggles(tag));
             return claim;
         } else {
-            ClaimIt.logger.log(Level.FATAL, "Detected version that doesn't exist yet! Mod was downgraded? Claim cannot be loaded.");
+            ClaimItAPI.logger.log(Level.FATAL, "Detected version that doesn't exist yet! Mod was downgraded? Claim cannot be loaded.");
             throw new RuntimeException("Canceled loading to prevent loss of claim data. If you recently downgraded versions, please upgrade or contact author.");
         }
 	}

@@ -1,6 +1,6 @@
-package its_meow.claimit.config;
+package its_meow.claimit.api.config;
 
-import its_meow.claimit.ClaimIt;
+import its_meow.claimit.api.ClaimItAPI;
 import net.minecraftforge.common.config.Configuration;
 
 public class ClaimConfig extends Configuration {
@@ -11,12 +11,12 @@ public class ClaimConfig extends Configuration {
 	public static boolean forceNoPVPInClaim = false;
 	
 	public static void readConfig() {
-		Configuration cfg = ClaimIt.config;
+		Configuration cfg = ClaimItAPI.config;
 		try {
 			cfg.load();
 			loadFields(cfg);
 		} catch (Exception e1) {
-			ClaimIt.logger.error("Failed loading ClaimIt configuration!", e1);
+			ClaimItAPI.logger.error("Failed loading ClaimIt configuration!", e1);
 		} finally {
 			if(cfg.hasChanged()) {
 				cfg.save();
