@@ -10,6 +10,10 @@ public class ClaimSerializer extends BaseSaveData {
 		super(DATA_NAME);
 	}
 	
+	public ClaimSerializer(String s) {
+	    super(s);
+	}
+	
 	public static ClaimSerializer get() {
 		return BaseSaveData.get(ClaimSerializer.class, DATA_NAME);
 	}
