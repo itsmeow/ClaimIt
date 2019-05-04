@@ -23,7 +23,7 @@ public class CommandSubConfig extends CommandBase {
 
 	@Override
 	public String getUsage(ICommandSender sender) {
-		return "/claimit config [config] [value]";
+		return "/claimit config <config> <value>";
 	}
 
 	@Override

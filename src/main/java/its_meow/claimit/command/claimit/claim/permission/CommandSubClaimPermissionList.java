@@ -28,7 +28,7 @@ public class CommandSubClaimPermissionList extends CommandBase {
 
 	@Override
 	public String getUsage(ICommandSender sender) {
-		return "claimit claim permission list (optional:claimname) (and/or) (optional:permission)";
+		return "claimit claim permission list [claimname] [permission]";
 	}
 
 	@Override

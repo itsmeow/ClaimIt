@@ -23,7 +23,7 @@ public class CommandSubGroupSetName extends CommandBase {
 
     @Override
     public String getUsage(ICommandSender sender) {
-        return "/claimit group setname <groupname> <name>";
+        return "/claimit group setname <groupname> <newname>";
     }
 
     @Override

@@ -17,7 +17,7 @@ import net.minecraft.command.PlayerNotFoundException;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.text.TextComponentString;
-import net.minecraft.util.text.TextFormatting;
+import static net.minecraft.util.text.TextFormatting.*;
 
 public class CommandUtils {
 	
@@ -29,7 +29,7 @@ public class CommandUtils {
 			EntityPlayer player = ((EntityPlayer) sender);
 			claim = mgr.getClaimByNameAndOwner(claimName, player.getUniqueID());
 			if(claim == null && mgr.isAdmin(player)) {
-				sendMessage(sender, TextFormatting.AQUA + "Using true name.");
+				sendMessage(sender, AQUA + "Using true name.");
 				claim = mgr.getClaimByTrueName(claimName);
 			}
 		} else { // sender is console/commandblock
@@ -63,10 +63,10 @@ public class CommandUtils {
 		try {
 			permission = ClaimPermissionRegistry.getPermissionMember(permName);
 		} catch (IllegalArgumentException e) {
-			throw new CommandException("Invalid permission. Valid Permissions: " + validPerms + "\nUsage: " + usage);
+			throw new CommandException("Invalid permission." + GREEN +" Valid Permissions: " + YELLOW + validPerms + RED + "\nUsage: " + YELLOW + usage);
 		}
 		if(permission == null) {
-			throw new CommandException("Invalid permission. Valid Permissions: " + validPerms + "\nUsage: " + usage);
+		    throw new CommandException("Invalid permission." + GREEN +" Valid Permissions: " + YELLOW + validPerms + RED + "\nUsage: " + YELLOW + usage);
 		}
 		return permission;
 	}
