@@ -8,7 +8,7 @@ import javax.annotation.Nullable;
 
 import its_meow.claimit.api.claim.ClaimArea;
 import its_meow.claimit.api.permission.ClaimPermissionMember;
-import its_meow.claimit.command.claimit.claim.member.CommandSubClaimPermissionList;
+import its_meow.claimit.command.claimit.claim.permission.CommandSubClaimPermissionList;
 import its_meow.claimit.util.CommandUtils;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommand;

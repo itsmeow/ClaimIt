@@ -1,4 +1,4 @@
-package its_meow.claimit.command.claimit.claim.member;
+package its_meow.claimit.command.claimit.claim.permission;
 
 import java.util.ArrayList;
 import java.util.HashSet;

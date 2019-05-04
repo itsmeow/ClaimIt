@@ -13,6 +13,7 @@ import net.minecraft.command.ICommandSender;
 import net.minecraft.command.PlayerNotFoundException;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextComponentString;
 import static net.minecraft.util.text.TextFormatting.*;
 
@@ -27,10 +28,10 @@ public class CommandSubClaimList extends CommandBase {
 	public String getUsage(ICommandSender sender) {
 		if(sender instanceof EntityPlayer) {
 			if(ClaimManager.getManager().isAdmin((EntityPlayer) sender)) {
-				return "/claimit claim list [username]";
+				return "/claimit claim list [username] [page]";
 			}
 		}
-		return "/claimit claim list";
+		return "/claimit claim list [page]";
 	}
 
 	@Override
@@ -80,11 +81,14 @@ public class CommandSubClaimList extends CommandBase {
 				for(ClaimArea claim : claims) {
 					if(filter == null || claim.isTrueOwner(filter)) {
 						i++;
-						sendMessage(sender, "##### Claim " + i + " #####");
-						sendMessage(sender, "Owner: " + ClaimManager.getPlayerName(claim.getOwner(), sender.getEntityWorld()));
-						sendMessage(sender, "Claim True Name: " + claim.getTrueViewName());
-						sendMessage(sender, "Dimension: " + claim.getDimensionID());
-						sendMessage(sender, "Location: " + (claim.getMainPosition().getX()) + ", " + (claim.getMainPosition().getZ()));
+						sender.sendMessage(new TextComponentString("Page").setStyle(new Style() {
+						    
+						}));
+						sendMessage(sender, DARK_RED + "" + BOLD + "##### Claim " + i + " #####");
+						sendMessage(sender, BLUE + "Owner: " + GREEN + ClaimManager.getPlayerName(claim.getOwner(), sender.getEntityWorld()));
+						sendMessage(sender, BLUE + "Claim True Name: " + YELLOW + claim.getTrueViewName());
+						sendMessage(sender, BLUE + "Dimension: " + DARK_PURPLE + claim.getDimensionID());
+						sendMessage(sender, BLUE + "Location: " + DARK_PURPLE + (claim.getMainPosition().getX()) + BLUE + ", " + DARK_PURPLE + (claim.getMainPosition().getZ()));
 					}
 				}
 				if(i == 0) {

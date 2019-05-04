@@ -1,6 +1,7 @@
 package its_meow.claimit.api.claim;
 
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.UUID;
 
@@ -24,7 +25,7 @@ import net.minecraftforge.common.MinecraftForge;
 public class ClaimManager {
 
 	private static ClaimManager instance = null;
-	private Set<ClaimArea> claims = new HashSet<ClaimArea>();
+	private Set<ClaimArea> claims = new LinkedHashSet<ClaimArea>();
 	private Set<EntityPlayer> admins = new HashSet<EntityPlayer>();
 
 	private ClaimManager() {}
