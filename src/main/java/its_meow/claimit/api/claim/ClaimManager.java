@@ -1,7 +1,7 @@
 package its_meow.claimit.api.claim;
 
+import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.UUID;
 
@@ -10,9 +10,11 @@ import javax.annotation.Nullable;
 
 import org.apache.logging.log4j.Level;
 
+import com.google.common.collect.ImmutableList;
 import com.mojang.authlib.GameProfile;
 
 import its_meow.claimit.api.ClaimItAPI;
+import its_meow.claimit.api.event.EventClaimAdded;
 import its_meow.claimit.api.event.EventClaimDeserialization;
 import its_meow.claimit.api.event.EventClaimSerialization;
 import its_meow.claimit.api.serialization.ClaimSerializer;
@@ -25,7 +27,7 @@ import net.minecraftforge.common.MinecraftForge;
 public class ClaimManager {
 
 	private static ClaimManager instance = null;
-	private Set<ClaimArea> claims = new LinkedHashSet<ClaimArea>();
+	private ArrayList<ClaimArea> claims = new ArrayList<ClaimArea>();
 	private Set<EntityPlayer> admins = new HashSet<EntityPlayer>();
 
 	private ClaimManager() {}
@@ -60,12 +62,8 @@ public class ClaimManager {
 	}
 
 	/** @return A copy of the claims list. Final. **/
-	public final Set<ClaimArea> getClaimsList() {
-		Set<ClaimArea> claimsList = new HashSet<ClaimArea>();
-		for(ClaimArea claim : claims) {
-			claimsList.add(claim);
-		}
-		return claimsList;
+	public final ImmutableList<ClaimArea> getClaimsList() {
+		return ImmutableList.copyOf(claims);
 	}
 
 	@Nullable
@@ -129,12 +127,26 @@ public class ClaimManager {
 		}
 		return false;
 	}
-
+	
+	/** Check claim is not overlapping/illegal and add to list. Fires ClaimAddedEvent
+     * @param claim - The claim to be added 
+     * @returns true if claim was added, false if not. **/
+	public boolean addClaim(ClaimArea claim) {
+	    return addClaim(claim, true);
+	}
+	
+	/** Check claim is not overlapping/illegal and add to list. Does not fire a ClaimAddedEvent
+     * @param claim - The claim to be added 
+     * @returns true if claim was added, false if not. **/
+	public boolean addClaimNoEvent(ClaimArea claim) {
+	    return addClaim(claim, false);
+	}
 
 	/** Check claim is not overlapping/illegal and add to list 
 	 * @param claim - The claim to be added 
+	 * @param fireEvent - If true, will fire a Claim Added event
 	 * @returns true if claim was added, false if not. **/
-	public boolean addClaim(ClaimArea claim) {
+	private boolean addClaim(ClaimArea claim, boolean fireEvent) {
 		if(claims.size() != 0) {
 			for(ClaimArea claimI : claims) {
 				if(claimI.getDimensionID() == claim.getDimensionID()) {
@@ -158,9 +170,19 @@ public class ClaimManager {
 				}
 			}
 		}
-
-		addClaimToListInsecurely(claim);
-		return true;
+		
+		boolean doAdd = true;
+		if(fireEvent) {
+		    EventClaimAdded event = new EventClaimAdded(claim);
+		    MinecraftForge.EVENT_BUS.post(event);
+		    if(event.isCanceled()) {
+		        doAdd = false;
+		    }
+		}
+		if(doAdd) {
+		    addClaimToListInsecurely(claim);
+		}
+		return doAdd;
 	}
 
 	/** Clears the list of players with admin enabled. **/
@@ -233,7 +255,7 @@ public class ClaimManager {
 	            MinecraftForge.EVENT_BUS.post(event);
 
 	            if(!event.isCanceled()) {
-	                this.addClaim(event.getClaim());
+	                this.addClaimNoEvent(event.getClaim());
 	            } else {
 	                ClaimItAPI.logger.log(Level.INFO, "Event cancelled loading of this claim. ");
 	            }
