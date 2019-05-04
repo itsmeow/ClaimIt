@@ -14,9 +14,10 @@ import com.google.common.collect.ImmutableList;
 import com.mojang.authlib.GameProfile;
 
 import its_meow.claimit.api.ClaimItAPI;
-import its_meow.claimit.api.event.EventClaimAdded;
-import its_meow.claimit.api.event.EventClaimDeserialization;
-import its_meow.claimit.api.event.EventClaimSerialization;
+import its_meow.claimit.api.event.ClaimAddedEvent;
+import its_meow.claimit.api.event.ClaimCreatedEvent;
+import its_meow.claimit.api.event.ClaimDeserializationEvent;
+import its_meow.claimit.api.event.ClaimSerializationEvent;
 import its_meow.claimit.api.serialization.ClaimSerializer;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
@@ -173,7 +174,7 @@ public class ClaimManager {
 		
 		boolean doAdd = true;
 		if(fireEvent) {
-		    EventClaimAdded event = new EventClaimAdded(claim);
+		    ClaimCreatedEvent event = new ClaimCreatedEvent(claim);
 		    MinecraftForge.EVENT_BUS.post(event);
 		    if(event.isCanceled()) {
 		        doAdd = false;
@@ -192,6 +193,8 @@ public class ClaimManager {
 
 	/** Adds a claim to the claim list without checking for overlaps. Don't use! **/
 	private void addClaimToListInsecurely(ClaimArea claim) {
+        ClaimAddedEvent event = new ClaimAddedEvent(claim);
+        MinecraftForge.EVENT_BUS.post(event);
 		claims.add(claim);
 		//this.serialize(claim.getWorld());
 	}
@@ -230,7 +233,7 @@ public class ClaimManager {
 	        String serialName = claim.getSerialName();
 	        NBTTagCompound data = claim.serialize();
 	        
-			EventClaimSerialization event = new EventClaimSerialization(data);
+			ClaimSerializationEvent event = new ClaimSerializationEvent(data);
 			MinecraftForge.EVENT_BUS.post(event);
 
 			if(!event.isCanceled()) {
@@ -251,7 +254,7 @@ public class ClaimManager {
 				System.out.println("Loading " + key);
 	            ClaimArea claim = ClaimArea.deserialize(comp.getCompoundTag(key), key);
 
-	            EventClaimDeserialization event = new EventClaimDeserialization(claim);
+	            ClaimDeserializationEvent event = new ClaimDeserializationEvent(claim);
 	            MinecraftForge.EVENT_BUS.post(event);
 
 	            if(!event.isCanceled()) {
