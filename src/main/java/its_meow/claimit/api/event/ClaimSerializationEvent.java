@@ -6,14 +6,14 @@ import net.minecraftforge.fml.common.eventhandler.Event;
 
 /** Called right before a claim tag is written to disk. You can modify and attach data here. 
  * Canceling will result in the data not being written to disk - and loss of the claim data.
- * If you wish to read data or modify data, subscribe to {@link EventClaimDeserialization}
+ * If you wish to read data or modify data, subscribe to {@link ClaimDeserializationEvent}
  * **/
 @Cancelable
-public class EventClaimSerialization extends Event {
+public class ClaimSerializationEvent extends Event {
 	
 	private final NBTTagCompound data;
 	
-	public EventClaimSerialization(NBTTagCompound data) {
+	public ClaimSerializationEvent(NBTTagCompound data) {
 		this.data = data;
 	}
 	

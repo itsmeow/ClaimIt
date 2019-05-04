@@ -9,9 +9,9 @@ import net.minecraftforge.fml.common.eventhandler.Cancelable;
  * @author its_meow
  */
 @Cancelable
-public class EventClaimAdded extends ClaimEvent {
+public class ClaimAddedEvent extends ClaimEvent {
 
-    public EventClaimAdded(ClaimArea claim) {
+    public ClaimAddedEvent(ClaimArea claim) {
         super(claim);
     }
 
