@@ -1,4 +1,4 @@
-package its_meow.claimit.util;
+package its_meow.claimit.util.text;
 
 import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextComponentString;

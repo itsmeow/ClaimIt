@@ -8,16 +8,15 @@ import static net.minecraft.util.text.TextFormatting.YELLOW;
 import its_meow.claimit.api.claim.ClaimArea;
 import its_meow.claimit.api.group.Group;
 import its_meow.claimit.api.group.GroupManager;
+import its_meow.claimit.command.CommandCIBase;
 import its_meow.claimit.util.CommandUtils;
-import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.command.WrongUsageException;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.text.TextComponentString;
 
-public class CommandSubGroupClaim extends CommandBase {
+public class CommandSubGroupClaim extends CommandCIBase {
 
     public CommandSubGroupClaim() {
 
@@ -31,6 +30,11 @@ public class CommandSubGroupClaim extends CommandBase {
     @Override
     public String getUsage(ICommandSender sender) {
         return "/claimit group claim <add/remove> <groupname> [claimname]";
+    }
+    
+    @Override
+    public String getHelp(ICommandSender sender) {
+        return "Adds a claim to a group. You must own the claim. First argument is add or remove, second is groupname. Third, optional, claim name. Otherwise uses location. Adding a claim gives members their group permissions in that claim.";
     }
 
     @Override
@@ -101,10 +105,6 @@ public class CommandSubGroupClaim extends CommandBase {
         } else {
             sendMessage(sender, "You must be a player to use this command!");
         }
-    }
-
-    private static void sendMessage(ICommandSender sender, String message) {
-        sender.sendMessage(new TextComponentString(message));
     }
 
 }

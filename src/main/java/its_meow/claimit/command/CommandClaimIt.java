@@ -46,6 +46,11 @@ public class CommandClaimIt extends CommandCITreeBase {
 	public String getUsage(ICommandSender sender) {
 		return "/claimit [subcommand]";
 	}
+	
+    @Override
+    public String getHelp(ICommandSender sender) {
+        return "Base command for all of ClaimIt. Click on subcommands/run them to do stuff. Provides version of mod as well.";
+    }
 
 	private String aliasList = "";
 

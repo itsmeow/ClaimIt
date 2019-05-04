@@ -18,15 +18,14 @@ import its_meow.claimit.api.claim.ClaimManager;
 import its_meow.claimit.api.group.Group;
 import its_meow.claimit.api.group.GroupManager;
 import its_meow.claimit.api.permission.ClaimPermissionMember;
-import net.minecraft.command.CommandBase;
+import its_meow.claimit.command.CommandCIBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
 
-public class CommandSubGroupInfo extends CommandBase {
+public class CommandSubGroupInfo extends CommandCIBase {
 
     @Override
     public String getName() {
@@ -37,7 +36,12 @@ public class CommandSubGroupInfo extends CommandBase {
     public String getUsage(ICommandSender sender) {
         return "/claimit group info <groupname>";
     }
-    
+
+    @Override
+    public String getHelp(ICommandSender sender) {
+        return "Provides information on a group. First argument is group name.";
+    }
+
     @Override
     public boolean checkPermission(MinecraftServer server, ICommandSender sender) {
         return true;
@@ -60,10 +64,10 @@ public class CommandSubGroupInfo extends CommandBase {
                 }
             }
         }
-        
+
 
     }
-    
+
     private static void outputGroupInfo(Group group, EntityPlayer player) throws CommandException {
         World world = player.getEntityWorld();
         String ownerName = ClaimManager.getPlayerName(group.getOwner(), world);
@@ -101,10 +105,6 @@ public class CommandSubGroupInfo extends CommandBase {
                 sendMessage(player, BLUE + " + " + YELLOW + claim.getDisplayedViewName() + BLUE + " of " + GREEN + ClaimManager.getPlayerName(claim.getOwner(), world));
             }
         }
-    }
-    
-    private static void sendMessage(ICommandSender sender, String message) {
-        sender.sendMessage(new TextComponentString(message));
     }
 
 }

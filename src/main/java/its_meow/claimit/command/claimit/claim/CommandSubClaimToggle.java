@@ -1,18 +1,21 @@
 package its_meow.claimit.command.claimit.claim;
 
+import static net.minecraft.util.text.TextFormatting.BLUE;
+import static net.minecraft.util.text.TextFormatting.GREEN;
+import static net.minecraft.util.text.TextFormatting.RED;
+import static net.minecraft.util.text.TextFormatting.YELLOW;
+
 import its_meow.claimit.api.claim.ClaimArea;
 import its_meow.claimit.api.permission.ClaimPermissionRegistry;
 import its_meow.claimit.api.permission.ClaimPermissionToggle;
+import its_meow.claimit.command.CommandCIBase;
 import its_meow.claimit.util.CommandUtils;
-import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.command.WrongUsageException;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.text.TextComponentString;
-import static net.minecraft.util.text.TextFormatting.*;
 
-public class CommandSubClaimToggle extends CommandBase {
+public class CommandSubClaimToggle extends CommandCIBase {
 
 	@Override
 	public String getName() {
@@ -23,7 +26,12 @@ public class CommandSubClaimToggle extends CommandBase {
 	public String getUsage(ICommandSender sender) {
 		return "/claimit claim toggle [toggle name] [claim name]";
 	}
-
+	
+    @Override
+    public String getHelp(ICommandSender sender) {
+        return "Controls toggle permissions. Given no arguments, will display all toggles and values. Given only a toggle as an argument, it will switch it on or off. Optional second claim name argument, defaults to location.";
+    }
+	
 	@Override
 	public boolean checkPermission(MinecraftServer server, ICommandSender sender) {
 		return true;
@@ -70,10 +78,6 @@ public class CommandSubClaimToggle extends CommandBase {
 			sendMessage(sender, RED + "You cannot modify toggles of this claim!");
 		}
 
-	}
-	
-	private static void sendMessage(ICommandSender sender, String message) {
-		sender.sendMessage(new TextComponentString(message));
 	}
 
 }

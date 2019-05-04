@@ -38,6 +38,11 @@ public class CommandSubClaimPermission extends CommandCITreeBase {
         list.add("perm");
         return list;
     }
+    
+    @Override
+    public String getHelp(ICommandSender sender) {
+        return "Both a tree command and a command. Add or remove members from a claim. Subcommand 'list' exists. First required argument is add or remove. Second is a member permission. Third is a username. Fourth, optional argument is a claim name. Otherwise, your current location is used.";
+    }
 
     @Override
     public String getUsage(ICommandSender sender) {

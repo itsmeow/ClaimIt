@@ -1,4 +1,4 @@
-package its_meow.claimit.util;
+package its_meow.claimit.util.text;
 
 import javax.annotation.Nullable;
 

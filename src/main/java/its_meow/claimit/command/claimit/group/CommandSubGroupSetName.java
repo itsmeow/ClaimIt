@@ -6,15 +6,14 @@ import static net.minecraft.util.text.TextFormatting.RED;
 
 import its_meow.claimit.api.group.Group;
 import its_meow.claimit.api.group.GroupManager;
-import net.minecraft.command.CommandBase;
+import its_meow.claimit.command.CommandCIBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.command.SyntaxErrorException;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.text.TextComponentString;
 
-public class CommandSubGroupSetName extends CommandBase {
+public class CommandSubGroupSetName extends CommandCIBase {
 
     @Override
     public String getName() {
@@ -24,6 +23,11 @@ public class CommandSubGroupSetName extends CommandBase {
     @Override
     public String getUsage(ICommandSender sender) {
         return "/claimit group setname <groupname> <newname>";
+    }
+    
+    @Override
+    public String getHelp(ICommandSender sender) {
+        return "Renames or sets the name of a group from its old name. Only group owner may rename. First argument is the group's current name. Second argument is the new name.";
     }
 
     @Override
@@ -59,10 +63,6 @@ public class CommandSubGroupSetName extends CommandBase {
         } else {
             throw new SyntaxErrorException("Invalid syntax. Usage: " + this.getUsage(sender));
         }
-    }
-
-    private static void sendMessage(ICommandSender sender, String message) {
-        sender.sendMessage(new TextComponentString(message));
     }
 
 }

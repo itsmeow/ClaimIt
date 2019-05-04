@@ -4,16 +4,15 @@ import java.util.Set;
 
 import its_meow.claimit.api.claim.ClaimArea;
 import its_meow.claimit.api.claim.ClaimManager;
+import its_meow.claimit.command.CommandCIBase;
 import its_meow.claimit.util.ConfirmationManager;
 import its_meow.claimit.util.ConfirmationManager.EnumConfirmableAction;
-import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.text.TextComponentString;
 
-public class CommandSubConfirm extends CommandBase {
+public class CommandSubConfirm extends CommandCIBase {
 
 	@Override
 	public String getName() {
@@ -24,6 +23,11 @@ public class CommandSubConfirm extends CommandBase {
 	public String getUsage(ICommandSender sender) {
 		return "/claimit confirm";
 	}
+	
+    @Override
+    public String getHelp(ICommandSender sender) {
+        return "Confirms a confirmable action, and runs its result (such as deleting all claims)";
+    }
 	
 	@Override
 	public boolean checkPermission(MinecraftServer server, ICommandSender sender) {
@@ -56,10 +60,6 @@ public class CommandSubConfirm extends CommandBase {
 		} else {
 			sendMessage(sender, "You have no actions to confirm!");
 		}
-	}
-	
-	private static void sendMessage(ICommandSender sender, String message) {
-		sender.sendMessage(new TextComponentString(message));
 	}
 
 }

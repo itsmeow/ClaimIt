@@ -25,6 +25,11 @@ public class CommandSubClaim extends CommandCITreeBase {
 		);
 	}
 	
+    @Override
+    public String getHelp(ICommandSender sender) {
+        return "Base claim management command for ClaimIt. Use subcommands to do stuff.";
+    }
+	
 	@Override
 	public String getName() {
 		return "claim";

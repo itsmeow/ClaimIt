@@ -1,17 +1,19 @@
 package its_meow.claimit.command.claimit.claim;
 
+import static net.minecraft.util.text.TextFormatting.AQUA;
+import static net.minecraft.util.text.TextFormatting.GREEN;
+import static net.minecraft.util.text.TextFormatting.RED;
+
 import its_meow.claimit.api.claim.ClaimArea;
 import its_meow.claimit.api.claim.ClaimManager;
-import net.minecraft.command.CommandBase;
+import its_meow.claimit.command.CommandCIBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.command.SyntaxErrorException;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.text.TextComponentString;
-import static net.minecraft.util.text.TextFormatting.*;
 
-public class CommandSubClaimSetName extends CommandBase {
+public class CommandSubClaimSetName extends CommandCIBase {
 
 	@Override
 	public String getName() {
@@ -22,6 +24,11 @@ public class CommandSubClaimSetName extends CommandBase {
 	public String getUsage(ICommandSender sender) {
 		return "/claimit claim setname <name>";
 	}
+	
+    @Override
+    public String getHelp(ICommandSender sender) {
+        return "Sets the name of the claim you are currently located in to the first argument (required).";
+    }
 
 	@Override
 	public boolean checkPermission(MinecraftServer server, ICommandSender sender) {
@@ -57,10 +64,6 @@ public class CommandSubClaimSetName extends CommandBase {
 		} else {
 			throw new SyntaxErrorException("Specify a name with no spaces. Usage: " + this.getUsage(sender));
 		}
-	}
-
-	private static void sendMessage(ICommandSender sender, String message) {
-		sender.sendMessage(new TextComponentString(message));
 	}
 
 }

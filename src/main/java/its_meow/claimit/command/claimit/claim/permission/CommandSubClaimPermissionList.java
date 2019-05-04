@@ -1,5 +1,11 @@
 package its_meow.claimit.command.claimit.claim.permission;
 
+import static net.minecraft.util.text.TextFormatting.AQUA;
+import static net.minecraft.util.text.TextFormatting.BLUE;
+import static net.minecraft.util.text.TextFormatting.GREEN;
+import static net.minecraft.util.text.TextFormatting.RED;
+import static net.minecraft.util.text.TextFormatting.YELLOW;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Map;
@@ -9,17 +15,15 @@ import its_meow.claimit.api.claim.ClaimArea;
 import its_meow.claimit.api.claim.ClaimManager;
 import its_meow.claimit.api.permission.ClaimPermissionMember;
 import its_meow.claimit.api.permission.ClaimPermissionRegistry;
+import its_meow.claimit.command.CommandCIBase;
 import its_meow.claimit.util.CommandUtils;
-import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.command.WrongUsageException;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.text.TextComponentString;
-import static net.minecraft.util.text.TextFormatting.*;
 
-public class CommandSubClaimPermissionList extends CommandBase {
+public class CommandSubClaimPermissionList extends CommandCIBase {
 
 	@Override
 	public String getName() {
@@ -30,6 +34,11 @@ public class CommandSubClaimPermissionList extends CommandBase {
 	public String getUsage(ICommandSender sender) {
 		return "claimit claim permission list [claimname] [permission]";
 	}
+	
+    @Override
+    public String getHelp(ICommandSender sender) {
+        return "Lists member permissions within a claim. Optional (no specific order!) arguments of claim name and member permission name. Interchangeable and optional. Defaults to location and showing a list of members. Specifying a permission shows members with that permission.";
+    }
 
 	@Override
 	public boolean checkPermission(MinecraftServer server, ICommandSender sender) {
@@ -77,14 +86,16 @@ public class CommandSubClaimPermissionList extends CommandBase {
 				ClaimArea claim = CommandUtils.getClaimWithName(claimName, sender);
 				if(claim != null) {
 					outputFiltered(claim, sender, filter);
+				} else {
+				    throw new CommandException("No claim with name \"" + claimName + "\"!");
 				}
 				
 				
 			} catch(IllegalArgumentException e) {
-				throw new WrongUsageException(RED + "No such permission: " + GREEN + permStr + "\n" + RED + "Valid Permissions: " + GREEN + ClaimPermissionRegistry.getValidPermissionListMember());
+				throw new CommandException(RED + "No such permission: " + GREEN + permStr + "\n" + RED + "Valid Permissions: " + GREEN + ClaimPermissionRegistry.getValidPermissionListMember());
 			}
 		} else {
-			throw new WrongUsageException(RED + "Too many arguments! Usage: " + this.getUsage(sender));
+			throw new CommandException(RED + "Too many arguments! Usage: " + this.getUsage(sender));
 		}
 	}
 	
@@ -135,8 +146,4 @@ public class CommandSubClaimPermissionList extends CommandBase {
 		}
 	}
 
-
-	private static void sendMessage(ICommandSender sender, String message) {
-		sender.sendMessage(new TextComponentString(message));
-	}
 }

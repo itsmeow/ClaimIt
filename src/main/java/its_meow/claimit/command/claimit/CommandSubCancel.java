@@ -1,14 +1,13 @@
 package its_meow.claimit.command.claimit;
 
+import its_meow.claimit.command.CommandCIBase;
 import its_meow.claimit.util.ConfirmationManager;
 import its_meow.claimit.util.ConfirmationManager.EnumConfirmableAction;
-import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.text.TextComponentString;
 
-public class CommandSubCancel extends CommandBase {
+public class CommandSubCancel extends CommandCIBase {
 
 	@Override
 	public String getName() {
@@ -19,6 +18,11 @@ public class CommandSubCancel extends CommandBase {
 	public String getUsage(ICommandSender sender) {
 		return "/claimit cancel";
 	}
+	
+    @Override
+    public String getHelp(ICommandSender sender) {
+        return "Cancels a confirmable action. (Deleting all claims, etc)";
+    }
 	
 	@Override
 	public boolean checkPermission(MinecraftServer server, ICommandSender sender) {
@@ -35,10 +39,6 @@ public class CommandSubCancel extends CommandBase {
 		} else {
 			sendMessage(sender, "You have no action to cancel!");
 		}
-	}
-	
-	private static void sendMessage(ICommandSender sender, String message) {
-		sender.sendMessage(new TextComponentString(message));
 	}
 
 }

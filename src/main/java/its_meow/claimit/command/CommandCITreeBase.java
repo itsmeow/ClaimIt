@@ -9,7 +9,7 @@ import java.util.List;
 
 import javax.annotation.Nullable;
 
-import its_meow.claimit.util.TextComponentCommand;
+import its_meow.claimit.util.text.TextComponentCommand;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommand;
@@ -20,8 +20,8 @@ import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.server.command.CommandTreeBase;
 
-public abstract class CommandCITreeBase extends CommandTreeBase {
-
+public abstract class CommandCITreeBase extends CommandTreeBase implements ICommandHelp {
+    
     public CommandCITreeBase(CommandBase... subcommands) {
         for(CommandBase cmd : subcommands) {
             this.addSubcommand(cmd);

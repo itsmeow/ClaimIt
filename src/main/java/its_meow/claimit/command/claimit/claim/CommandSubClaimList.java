@@ -19,20 +19,20 @@ import com.mojang.authlib.GameProfile;
 
 import its_meow.claimit.api.claim.ClaimArea;
 import its_meow.claimit.api.claim.ClaimManager;
-import its_meow.claimit.util.ClaimInfoChatStyle;
+import its_meow.claimit.command.CommandCIBase;
 import its_meow.claimit.util.ClaimPage;
 import its_meow.claimit.util.ClaimPageTracker;
-import its_meow.claimit.util.PageChatStyle;
-import its_meow.claimit.util.TextComponentStyled;
-import net.minecraft.command.CommandBase;
+import its_meow.claimit.util.CommandUtils;
+import its_meow.claimit.util.text.ClaimInfoChatStyle;
+import its_meow.claimit.util.text.PageChatStyle;
+import its_meow.claimit.util.text.TextComponentStyled;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.command.PlayerNotFoundException;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.text.TextComponentString;
 
-public class CommandSubClaimList extends CommandBase {
+public class CommandSubClaimList extends CommandCIBase {
 
     @Override
     public String getName() {
@@ -47,6 +47,11 @@ public class CommandSubClaimList extends CommandBase {
             }
         }
         return "/claimit claim list";
+    }
+
+    @Override
+    public String getHelp(ICommandSender sender) {
+        return CommandUtils.isAdmin(sender) ? "Lists all claims on the server, takes a page number (or no page for 1) as an argument, can filter to a player (first argument). Next Page is clickable." : "Lists all claims you own. Click names to view info on them.";
     }
 
     @Override
@@ -65,7 +70,7 @@ public class CommandSubClaimList extends CommandBase {
         String page = null;
         int pg = 0;
         boolean error = false;
-        boolean admin = (((!(sender instanceof EntityPlayer) && sender.canUseCommand(2, "")) || ((sender instanceof EntityPlayer) && ClaimManager.getManager().isAdmin((EntityPlayer) sender))));
+        boolean admin = CommandUtils.isAdmin(sender);
         if(args.length >= 1 && admin) {
             try {
                 Integer.parseInt(args[0]);
@@ -101,7 +106,7 @@ public class CommandSubClaimList extends CommandBase {
                 throw new CommandException("Invalid page number \"" + page + "\"");
             }
 
-            int maxPg = ClaimPageTracker.getMaxPage();
+            int maxPg = ClaimPageTracker.getMaxPage(null);
             if(maxPg < 1) {
                 throw new CommandException("No claims exist.");
             }
@@ -131,23 +136,21 @@ public class CommandSubClaimList extends CommandBase {
                     throw new CommandException("No claims found."); 
                 }
 
-                ClaimPage cPage = ClaimPageTracker.getPage(pg - 1);
+                ClaimPage cPage = ClaimPageTracker.getPage(filter, pg - 1);
                 if(cPage == null || cPage.getPageSize() == 0) {
                     throw new CommandException("Empty page: " + pg);
                 }
-                sendMessage(sender, DARK_PURPLE + "" + BOLD + "-----Page " + pg + "-----");
+                sendMessage(sender, DARK_PURPLE + "" + BOLD + "-----Page " + pg + " of " + ClaimPageTracker.getMaxPage(filter) +"-----");
                 int i = (pg - 1) * 3;
                 for(ClaimArea claim : cPage.getClaimsInPage()) {
-                    if(filter == null || claim.isTrueOwner(filter)) {
-                        sendMessage(sender, DARK_RED  + "" + UNDERLINE + "Claim " + (i + 1));
-                        sendMessage(sender, BLUE + "Owner: " + GREEN + ClaimManager.getPlayerName(claim.getOwner(), sender.getEntityWorld()));
-                        sendMessage(sender, BLUE + "Claim True Name: " + YELLOW + claim.getTrueViewName());
-                        sendMessage(sender, BLUE + "Dimension: " + DARK_PURPLE + claim.getDimensionID());
-                        sendMessage(sender, BLUE + "Location: " + DARK_PURPLE + (claim.getMainPosition().getX()) + BLUE + ", " + DARK_PURPLE + (claim.getMainPosition().getZ()));
-                    }
+                    sendMessage(sender, DARK_RED  + "" + UNDERLINE + "Claim " + (i + 1));
+                    sendMessage(sender, BLUE + "Owner: " + GREEN + ClaimManager.getPlayerName(claim.getOwner(), sender.getEntityWorld()));
+                    sendMessage(sender, BLUE + "Claim True Name: " + YELLOW + claim.getTrueViewName());
+                    sendMessage(sender, BLUE + "Dimension: " + DARK_PURPLE + claim.getDimensionID());
+                    sendMessage(sender, BLUE + "Location: " + DARK_PURPLE + (claim.getMainPosition().getX()) + BLUE + ", " + DARK_PURPLE + (claim.getMainPosition().getZ()));
                     i++;
                 }
-                if(ClaimPageTracker.getPage(pg) != null) {
+                if(ClaimPageTracker.getPage(filter, pg) != null) {
                     sender.sendMessage(new TextComponentStyled(GREEN + "" + ITALIC + "" + UNDERLINE + "Next Page", new PageChatStyle("claimit claim list", ClaimManager.getManager().isAdmin(player), String.valueOf(pg + 1), pName)));
                 }
             }
@@ -172,10 +175,6 @@ public class CommandSubClaimList extends CommandBase {
         if(args.length > 2) {
             sendMessage(sender, "Invalid amount of arguments. Usage: " + this.getUsage(sender));
         }
-    }
-
-    private static void sendMessage(ICommandSender sender, String message) {
-        sender.sendMessage(new TextComponentString(message));
     }
 
 }

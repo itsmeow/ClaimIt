@@ -6,15 +6,14 @@ import its_meow.claimit.api.userconfig.UserConfigFloat;
 import its_meow.claimit.api.userconfig.UserConfigManager;
 import its_meow.claimit.api.userconfig.UserConfigRegistry;
 import its_meow.claimit.api.userconfig.UserConfigString;
-import net.minecraft.command.CommandBase;
+import its_meow.claimit.command.CommandCIBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.command.WrongUsageException;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.text.TextComponentString;
 
-public class CommandSubConfig extends CommandBase {
+public class CommandSubConfig extends CommandCIBase {
 
 	@Override
 	public String getName() {
@@ -25,6 +24,11 @@ public class CommandSubConfig extends CommandBase {
 	public String getUsage(ICommandSender sender) {
 		return "/claimit config <config> <value>";
 	}
+	
+    @Override
+    public String getHelp(ICommandSender sender) {
+        return "User configuration command. With no arguments, lists your configurations. Specify a configuration to view its value. Specify a configuration and a value as arguments to set the value.";
+    }
 
 	@Override
 	public boolean checkPermission(MinecraftServer server, ICommandSender sender) {
@@ -113,10 +117,6 @@ public class CommandSubConfig extends CommandBase {
 		} else {
 			throw new CommandException("You must be a player to use this command!");
 		}
-	}
-
-	private static void sendMessage(ICommandSender sender, String message) {
-		sender.sendMessage(new TextComponentString(message));
 	}
 
 }

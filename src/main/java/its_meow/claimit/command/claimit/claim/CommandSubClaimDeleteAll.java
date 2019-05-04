@@ -11,18 +11,18 @@ import com.mojang.authlib.GameProfile;
 
 import its_meow.claimit.api.claim.ClaimArea;
 import its_meow.claimit.api.claim.ClaimManager;
+import its_meow.claimit.command.CommandCIBase;
+import its_meow.claimit.util.CommandUtils;
 import its_meow.claimit.util.ConfirmationManager;
 import its_meow.claimit.util.ConfirmationManager.EnumConfirmableAction;
-import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.command.PlayerNotFoundException;
 import net.minecraft.command.WrongUsageException;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.text.TextComponentString;
 
-public class CommandSubClaimDeleteAll extends CommandBase {
+public class CommandSubClaimDeleteAll extends CommandCIBase {
 
 	@Override
 	public String getName() {
@@ -38,6 +38,11 @@ public class CommandSubClaimDeleteAll extends CommandBase {
 		}
 		return "/claimit claim deleteall";
 	}
+	
+    @Override
+    public String getHelp(ICommandSender sender) {
+        return CommandUtils.isAdmin(sender) ? "Deletes all claims YOU personally (yes, you, admin user) own, or if a username is specified, all of their claims." : "Deletes all claims you own. Must be confirmed via '/claimit confirm'. Can be canceled via '/claimit cancel'";
+    }
 
 	@Override
 	public boolean checkPermission(MinecraftServer server, ICommandSender sender) {
@@ -100,10 +105,6 @@ public class CommandSubClaimDeleteAll extends CommandBase {
 		} else {
 			throw new WrongUsageException("Invalid arugment count! Usage: " + this.getUsage(sender));
 		}
-	}
-
-	private static void sendMessage(ICommandSender sender, String message) {
-		sender.sendMessage(new TextComponentString(message));
 	}
 
 }

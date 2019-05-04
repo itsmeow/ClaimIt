@@ -13,16 +13,15 @@ import java.util.UUID;
 import its_meow.claimit.api.group.Group;
 import its_meow.claimit.api.group.GroupManager;
 import its_meow.claimit.api.permission.ClaimPermissionMember;
+import its_meow.claimit.command.CommandCIBase;
 import its_meow.claimit.util.CommandUtils;
-import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.command.WrongUsageException;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.text.TextComponentString;
 
-public class CommandSubGroupPermission extends CommandBase {
+public class CommandSubGroupPermission extends CommandCIBase {
 
     public CommandSubGroupPermission() {
 
@@ -45,15 +44,15 @@ public class CommandSubGroupPermission extends CommandBase {
     public String getUsage(ICommandSender sender) {
         return "/claimit group permission <add/remove> <permission> <username> <groupname>";
     }
+    
+    @Override
+    public String getHelp(ICommandSender sender) {
+        return "Adds or removes a permission from a member within the group, and by extension their permissions in the group's claims. First argument is add or remove. Second argument is a member permission. Third argument is username. Fourth argument is group name.";
+    }
 
     @Override
     public boolean checkPermission(MinecraftServer server, ICommandSender sender) {
         return true;
-    }
-
-    @Override
-    public boolean isUsernameIndex(String[] args, int index) {
-        return args.length == 3;
     }
 
     @Override
@@ -113,10 +112,6 @@ public class CommandSubGroupPermission extends CommandBase {
         } else {
             sendMessage(sender, "You must be a player to use this command!");
         }
-    }
-
-    private static void sendMessage(ICommandSender sender, String message) {
-        sender.sendMessage(new TextComponentString(message));
     }
 
 }

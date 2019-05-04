@@ -14,13 +14,18 @@ public class CommandSubGroup extends CommandCITreeBase {
 
     public CommandSubGroup() {
         super(
-                new CommandSubGroupCreate(),
-                new CommandSubGroupSetName(),
-                new CommandSubGroupDelete(),
-                new CommandSubGroupPermission(),
-                new CommandSubGroupClaim(),
-                new CommandSubGroupInfo()
-                );
+            new CommandSubGroupCreate(),
+            new CommandSubGroupSetName(),
+            new CommandSubGroupDelete(),
+            new CommandSubGroupPermission(),
+            new CommandSubGroupClaim(),
+            new CommandSubGroupInfo()
+       );
+    }
+    
+    @Override
+    public String getHelp(ICommandSender sender) {
+        return "Base group command for ClaimIt. Allows management of groups. Click on or run a subcommand to do stuff.";
     }
 
     @Override

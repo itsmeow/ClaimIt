@@ -109,4 +109,8 @@ public class CommandUtils {
 		}
 	}
 	
+	public static boolean isAdmin(ICommandSender sender) {
+	    return (((!(sender instanceof EntityPlayer) && sender.canUseCommand(2, "")) || ((sender instanceof EntityPlayer) && ClaimManager.getManager().isAdmin((EntityPlayer) sender))));
+	}
+	
 }

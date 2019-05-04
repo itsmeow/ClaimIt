@@ -1,15 +1,16 @@
 package its_meow.claimit.command.claimit;
 
+import static net.minecraft.util.text.TextFormatting.GREEN;
+import static net.minecraft.util.text.TextFormatting.RED;
+
 import its_meow.claimit.api.claim.ClaimManager;
-import net.minecraft.command.CommandBase;
+import its_meow.claimit.command.CommandCIBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.text.TextComponentString;
-import static net.minecraft.util.text.TextFormatting.*;
 
-public class CommandSubAdmin extends CommandBase {
+public class CommandSubAdmin extends CommandCIBase {
 
 	@Override
 	public String getName() {
@@ -44,9 +45,10 @@ public class CommandSubAdmin extends CommandBase {
 			sendMessage(sender, "You must be a player to use this command!");
 		}
 	}
-	
-	private static void sendMessage(ICommandSender sender, String message) {
-		sender.sendMessage(new TextComponentString(message));
-	}
+
+    @Override
+    public String getHelp(ICommandSender sender) {
+        return "Toggles admin mode on or off (if you have permission to do so), which allows server level management of ClaimIt.";
+    }
 
 }
