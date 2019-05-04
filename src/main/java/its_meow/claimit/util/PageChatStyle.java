@@ -1,13 +1,11 @@
 package its_meow.claimit.util;
 
-import net.minecraft.util.text.Style;
-import net.minecraft.util.text.event.ClickEvent;
-import net.minecraft.util.text.event.ClickEvent.Action;
+import javax.annotation.Nullable;
 
-public class PageChatStyle extends Style {
+public class PageChatStyle extends CommandChatStyle {
     
-    public PageChatStyle() {
-        this.setClickEvent(new ClickEvent(Action.CHANGE_PAGE, "next") {});
+    public PageChatStyle(String commandBase, boolean admin, String nextPage, @Nullable String playerFilter) {
+        super("/" + commandBase + " " + (admin ? (playerFilter == null ? nextPage : playerFilter + " " + nextPage) : nextPage), true, "Next Page: " + nextPage);
     }
     
 }
