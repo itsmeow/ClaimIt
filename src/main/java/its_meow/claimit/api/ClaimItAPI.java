@@ -26,10 +26,9 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 public class ClaimItAPI {
     
     public static final String MOD_ID = "claimitapi";
-    public static final String VERSION = "1.0.0";
+    public static final String VERSION = "@APIVERSION@";
     public static final String NAME = "ClaimIt API";
     public static final String acceptedMCV = "[1.12,1.12.2]";
-    public static final String updateJSON = "http://modmanagement.net16.net/updateJSON6.json";
     
     @Instance(ClaimItAPI.MOD_ID) 
     public static ClaimItAPI mod;

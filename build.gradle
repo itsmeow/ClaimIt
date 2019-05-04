@@ -25,6 +25,7 @@ minecraft {
     mappings = project.mcp_mappings
     replace "@VERSION@", "${project.mod_version}"
     replace "@APIVERSION@", "${project.api_version}"
+    makeObfSourceJar = false
 }
 
 dependencies {
@@ -36,6 +37,7 @@ task apiJar(type: Jar) {
     onlyIf {
         project.hasProperty("api_package")
     }
+    version = "${project.mc_version}-${project.api_version}"
     from sourceSets.main.allJava
     include String.valueOf(findProperty("api_package")).replace(".", "/") + "/**"
     from "LICENSE"
@@ -53,15 +55,17 @@ jar {
     from "LICENSE"
     manifest.mainAttributes(
             "Implementation-Title": project.name,
-            "Implementation-Version": "${project.mc_version}-${project.mod_version}",
+            "Implementation-Version": "${project.version}",
             "Built-On": "${project.mc_version}-${project.forge_version}",
-            "Maven-Artifact": "${project.group}:${project.archivesBaseName}:${project.mc_version}-${project.version}",
+            "Maven-Artifact": "${project.group}:${project.archivesBaseName}:${project.version}",
     )
-    exclude String.valueOf(findProperty('core_package')).replace(".", "/") + "/**"
+    if (project.hasProperty('api_package')) {
+        exclude String.valueOf(findProperty('api_package')).replace(".", "/") + "/**"
+    }
     classifier ''
 }
 
-
+tasks.build.dependsOn apiJar
 
 processResources {
     inputs.property "version", project.version

@@ -10,14 +10,13 @@ import net.minecraftforge.fml.common.Mod.Instance;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 
-@Mod(modid = ClaimIt.MOD_ID, name = ClaimIt.NAME, version = ClaimIt.VERSION, acceptedMinecraftVersions = ClaimIt.acceptedMCV, updateJSON = ClaimIt.updateJSON, acceptableRemoteVersions = "*")
+@Mod(modid = ClaimIt.MOD_ID, name = ClaimIt.NAME, version = ClaimIt.VERSION, acceptedMinecraftVersions = ClaimIt.acceptedMCV, acceptableRemoteVersions = "*", dependencies = "after-required:claimitapi")
 public class ClaimIt {
     
     public static final String MOD_ID = "claimit";
     public static final String VERSION = "@VERSION@";
     public static final String NAME = "ClaimIt";
     public static final String acceptedMCV = ClaimItAPI.acceptedMCV;
-    public static final String updateJSON = ClaimItAPI.updateJSON;
     
 	@Instance(ClaimIt.MOD_ID)
 	public static ClaimIt mod;
