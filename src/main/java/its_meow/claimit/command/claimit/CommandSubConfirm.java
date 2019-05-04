@@ -5,7 +5,7 @@ import java.util.Set;
 import its_meow.claimit.api.claim.ClaimArea;
 import its_meow.claimit.api.claim.ClaimManager;
 import its_meow.claimit.util.ConfirmationManager;
-import its_meow.claimit.util.EnumConfirmableAction;
+import its_meow.claimit.util.ConfirmationManager.EnumConfirmableAction;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;

@@ -3,9 +3,11 @@ package its_meow.claimit.api.userconfig;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.google.common.collect.ImmutableMap;
+
 public class UserConfigRegistry {
 	
-	public static Map<String, UserConfig<?>> configs = new HashMap<String, UserConfig<?>>();
+	private static Map<String, UserConfig<?>> configs = new HashMap<String, UserConfig<?>>();
 	
 	/** Add a member permission to the registry to be used in claims 
 	 * @param config - The config to add
@@ -34,5 +36,9 @@ public class UserConfigRegistry {
 		}
 		return validNames;
 	}
+
+    public static ImmutableMap<String, UserConfig<?>> getConfigs() {
+        return ImmutableMap.copyOf(configs);
+    }
 	
 }

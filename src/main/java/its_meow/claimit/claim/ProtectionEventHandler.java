@@ -9,11 +9,11 @@ import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
 
-import its_meow.claimit.Ref;
+import its_meow.claimit.ClaimIt;
 import its_meow.claimit.api.claim.ClaimArea;
 import its_meow.claimit.api.claim.ClaimManager;
+import its_meow.claimit.api.config.ClaimConfig;
 import its_meow.claimit.api.permission.ClaimPermissions;
-import its_meow.claimit.config.ClaimConfig;
 import net.minecraft.block.BlockGrass;
 import net.minecraft.block.BlockTallGrass;
 import net.minecraft.block.state.IBlockState;
@@ -52,7 +52,7 @@ import net.minecraftforge.fml.common.eventhandler.Event.Result;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
-@Mod.EventBusSubscriber(modid = Ref.MOD_ID)
+@Mod.EventBusSubscriber(modid = ClaimIt.MOD_ID)
 public class ProtectionEventHandler {
 
 	@SubscribeEvent(priority = EventPriority.HIGHEST)

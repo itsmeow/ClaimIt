@@ -1,6 +1,6 @@
 package its_meow.claimit.api.permission;
 
-import its_meow.claimit.config.ClaimConfig;
+import its_meow.claimit.api.config.ClaimConfig;
 
 public class ClaimPermissions {
 

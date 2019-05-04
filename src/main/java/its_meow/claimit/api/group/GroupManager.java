@@ -6,7 +6,7 @@ import javax.annotation.Nullable;
 
 import com.google.common.collect.ImmutableSet;
 
-import its_meow.claimit.ClaimIt;
+import its_meow.claimit.api.ClaimItAPI;
 import its_meow.claimit.api.serialization.GlobalDataSerializer;
 import net.minecraft.nbt.NBTTagCompound;
 
@@ -68,7 +68,7 @@ public class GroupManager {
                 System.out.println("Loading " + key);
                 Group group = Group.deserialize(groupsTag.getCompoundTag(key));
                 if(!addGroup(group)) {
-                    ClaimIt.logger.error("Duplicate group name of " + group.name + " failed to load! Was the data edited?");
+                    ClaimItAPI.logger.error("Duplicate group name of " + group.name + " failed to load! Was the data edited?");
                 }
             }
         }

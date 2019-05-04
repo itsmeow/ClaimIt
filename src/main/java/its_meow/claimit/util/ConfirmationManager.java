@@ -51,4 +51,9 @@ public class ConfirmationManager {
 		this.confirmActions.clear();
 	}
 	
+	public static enum EnumConfirmableAction {
+	    DELETEALL,
+	    CLEARMEMBERS;
+	}
+	
 }

@@ -13,7 +13,8 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-import its_meow.claimit.Ref;
+import its_meow.claimit.ClaimIt;
+import its_meow.claimit.api.ClaimItAPI;
 import its_meow.claimit.api.permission.ClaimPermission;
 import its_meow.claimit.api.permission.ClaimPermissionRegistry;
 import its_meow.claimit.command.claimit.CommandSubAdmin;
@@ -68,7 +69,8 @@ public class CommandClaimIt extends CommandTreeBase {
 	public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
 		super.execute(server, sender, args);
 		if(args.length == 0) {
-			sendMessage(sender, GRAY + "" + BOLD + "ClaimIt" + RESET + "" + DARK_PURPLE + " Version " + YELLOW + Ref.VERSION + DARK_PURPLE + " by " + DARK_RED + "" + BOLD + "its_meow");
+			sendMessage(sender, GRAY + "" + BOLD + ClaimIt.NAME + RESET + "" + DARK_PURPLE + " Version " + YELLOW + ClaimIt.VERSION + DARK_PURPLE + " by " + DARK_RED + "" + BOLD + "its_meow");
+			sendMessage(sender, GRAY + "" + BOLD + ClaimItAPI.NAME + RESET + "" + DARK_PURPLE + " Version " + YELLOW + ClaimItAPI.VERSION);
 			sendMessage(sender, AQUA + "" + BOLD + "Subcommands: ");
 			sendMessage(sender, YELLOW + "/claimit claim");
 			sendMessage(sender, YELLOW + "/claimit group");

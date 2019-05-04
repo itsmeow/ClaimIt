@@ -3,31 +3,20 @@ package its_meow.claimit;
 import java.util.HashMap;
 
 import its_meow.claimit.api.claim.ClaimManager;
-import its_meow.claimit.api.group.GroupManager;
 import its_meow.claimit.api.userconfig.UserConfigManager;
 import its_meow.claimit.userconfig.UserConfigs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextFormatting;
-import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.PlayerTickEvent;
 
-@Mod.EventBusSubscriber(modid = Ref.MOD_ID)
+@Mod.EventBusSubscriber(modid = ClaimIt.MOD_ID)
 public class ClaimItEventHandler {
     
     private static HashMap<EntityPlayer, BlockPos> lastMsPos = new HashMap<EntityPlayer, BlockPos>();
-    
-    @SubscribeEvent
-    public static void onWorldSave(WorldEvent.Save e) {
-        if(!e.getWorld().isRemote) {
-            ClaimManager.getManager().serialize();
-            UserConfigManager.getManager().serialize();
-            GroupManager.serialize();
-        }
-    }
 
     @SubscribeEvent
     public static void onPlayerTick(PlayerTickEvent e) {
