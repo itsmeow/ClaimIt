@@ -12,8 +12,8 @@ import java.util.Set;
 import its_meow.claimit.ClaimIt;
 import its_meow.claimit.api.claim.ClaimArea;
 import its_meow.claimit.api.claim.ClaimManager;
-import its_meow.claimit.api.config.ClaimConfig;
 import its_meow.claimit.api.permission.ClaimPermissions;
+import its_meow.claimit.config.ClaimItConfig;
 import net.minecraft.block.BlockGrass;
 import net.minecraft.block.BlockTallGrass;
 import net.minecraft.block.state.IBlockState;
@@ -160,7 +160,7 @@ public class ProtectionEventHandler {
 		if(claim != null) {
 			EntityPlayer player = e.getEntityPlayer();
 			if(e.getTarget() instanceof EntityPlayer) {
-				e.setCanceled(!claim.canPVP(player)  || ClaimConfig.forceNoPVPInClaim);
+				e.setCanceled(!claim.canPVP(player)  || ClaimItConfig.forceNoPVPInClaim);
 			} else {
 				e.setCanceled(!claim.canEntity(player));
 			}
@@ -168,7 +168,7 @@ public class ProtectionEventHandler {
 		ClaimArea claim2 = cm.getClaimAtLocation(world, e.getTarget().getPosition());
 		if(claim2 != null) {
 			if(e.getTarget() instanceof EntityPlayer) {
-				e.setCanceled(!claim2.canPVP(e.getEntityPlayer()) || e.isCanceled()  || ClaimConfig.forceNoPVPInClaim);
+				e.setCanceled(!claim2.canPVP(e.getEntityPlayer()) || e.isCanceled()  || ClaimItConfig.forceNoPVPInClaim);
 			} else {
 				e.setCanceled(!claim2.canEntity(e.getEntityPlayer()) || e.isCanceled());
 			}
@@ -250,7 +250,7 @@ public class ProtectionEventHandler {
 		if(claim != null || cm.getClaimAtLocation(world, e.getEntityPlayer().getPosition()) != null) {
 			EntityPlayer player = e.getEntityPlayer();
 			if(e.getTarget() instanceof EntityPlayer) {
-				e.setCanceled(!claim.canPVP(player)  || ClaimConfig.forceNoPVPInClaim);
+				e.setCanceled(!claim.canPVP(player)  || ClaimItConfig.forceNoPVPInClaim);
 			} else {
 				e.setCanceled(!claim.canEntity(player));
 			}
@@ -267,7 +267,7 @@ public class ProtectionEventHandler {
 				ClaimArea claim = ClaimManager.getManager().getClaimAtLocation(entity.getEntityWorld(), player.getPosition()); // Claim the damage-doer is in
 				ClaimArea claim2 = ClaimManager.getManager().getClaimAtLocation(entity.getEntityWorld(), entity.getPosition()); // Claim the damaged is in
 				if(entity instanceof EntityPlayer) { // whether the damaged is a player or not
-					e.setCanceled((claim != null && !claim.canPVP(player)) || (claim2 != null && !claim2.canPVP(player))  || ClaimConfig.forceNoPVPInClaim); // if either one disallows PVP block it
+					e.setCanceled((claim != null && !claim.canPVP(player)) || (claim2 != null && !claim2.canPVP(player))  || ClaimItConfig.forceNoPVPInClaim); // if either one disallows PVP block it
 				} else {
 					e.setCanceled((claim != null && !claim.canEntity(player)) || (claim2 != null && !claim2.canEntity(player))); // if either one disallows entity block it
 				}
@@ -456,7 +456,7 @@ public class ProtectionEventHandler {
 		BlockPos pos = player.getPosition();
 		ClaimArea claim = ClaimManager.getManager().getClaimAtLocation(world, pos);
 		if(claim != null) {
-			if(!claim.canUse(player) || ClaimConfig.forceNoPVPInClaim) { 
+			if(!claim.canUse(player) || ClaimItConfig.forceNoPVPInClaim) { 
 				e.setAction(new ActionResult<ItemStack>(EnumActionResult.FAIL, e.getBow()));
 			}
 		}

@@ -6,7 +6,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import its_meow.claimit.api.claim.ClaimManager;
-import its_meow.claimit.api.config.ClaimConfig;
+import its_meow.claimit.api.config.ClaimItAPIConfig;
 import its_meow.claimit.api.group.GroupManager;
 import its_meow.claimit.api.permission.ClaimPermissions;
 import its_meow.claimit.api.userconfig.UserConfigManager;
@@ -57,7 +57,7 @@ public class ClaimItAPI {
         
         File directory = event.getModConfigurationDirectory();
         config = new Configuration(new File(directory.getPath(), "claimit_api.cfg")); 
-        ClaimConfig.readConfig();
+        ClaimItAPIConfig.readConfig(config);
     }
 
     @EventHandler
