@@ -5,46 +5,68 @@ import static net.minecraft.util.text.TextFormatting.RED;
 
 import its_meow.claimit.api.claim.ClaimManager;
 import its_meow.claimit.command.CommandCIBase;
+import its_meow.claimit.util.TeleportUtils;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
+import net.minecraftforge.common.DimensionManager;
 
 public class CommandSubAdmin extends CommandCIBase {
 
-	@Override
-	public String getName() {
-		return "admin";
-	}
+    @Override
+    public String getName() {
+        return "admin";
+    }
 
-	@Override
-	public String getUsage(ICommandSender sender) {
-		return "/claimit admin";
-	}
-	
-	@Override
-	public boolean checkPermission(MinecraftServer server, ICommandSender sender) {
-		return sender.canUseCommand(2, "claimit admin");
-	}
+    @Override
+    public String getUsage(ICommandSender sender) {
+        return "/claimit admin";
+    }
 
-	@Override
-	public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
-		if(sender instanceof EntityPlayer) {
-			if(this.checkPermission(server, sender)) {
-				if(ClaimManager.getManager().isAdmin((EntityPlayer) sender)) {
-					ClaimManager.getManager().removeAdmin((EntityPlayer) sender);
-					sendMessage(sender, GREEN + "Admin bypass disabled.");
-				} else {
-					ClaimManager.getManager().addAdmin((EntityPlayer) sender);
-					sendMessage(sender, GREEN + "Admin bypass enabled. You may now manage all claims.");
-				}
-			} else {
-				sendMessage(sender, RED + "You do not have permission to use this command!");
-			}
-		} else {
-			sendMessage(sender, "You must be a player to use this command!");
-		}
-	}
+    @Override
+    public boolean checkPermission(MinecraftServer server, ICommandSender sender) {
+        return sender.canUseCommand(2, "claimit admin");
+    }
+
+    @Override
+    public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
+        if(args.length != 4 || !args[0].equals("tpdimxz")) {
+            if(sender instanceof EntityPlayer) {
+                if(this.checkPermission(server, sender)) {
+                    if(ClaimManager.getManager().isAdmin((EntityPlayer) sender)) {
+                        ClaimManager.getManager().removeAdmin((EntityPlayer) sender);
+                        sendMessage(sender, GREEN + "Admin bypass disabled.");
+                    } else {
+                        ClaimManager.getManager().addAdmin((EntityPlayer) sender);
+                        sendMessage(sender, GREEN + "Admin bypass enabled. You may now manage all claims.");
+                    }
+                } else {
+                    sendMessage(sender, RED + "You do not have permission to use this command!");
+                }
+            } else {
+                sendMessage(sender, "You must be a player to use this command!");
+            }
+        } else if(args.length == 4 && args[0].equals("tpdimxz") && sender instanceof EntityPlayerMP) {
+            try {
+                EntityPlayerMP p = (EntityPlayerMP) sender;
+                int dim = Integer.valueOf(args[1]);
+                int x = Integer.valueOf(args[2]);
+                int z = Integer.valueOf(args[3]);
+                int y = TeleportUtils.findNearestYLiquidOrSolid(DimensionManager.getWorld(dim), x, z).getY();
+                TeleportUtils.moveIfDifferentID(server, p, dim);
+                p.setLocationAndAngles(x, y, z, p.rotationYaw, p.rotationPitch);
+                p.setPositionAndUpdate(x, y, z);
+                p.setRotationYawHead(p.rotationYawHead);
+                p.motionX = 0.0D;
+                p.motionY = 0.0D;
+                p.motionZ = 0.0D;
+            } catch(NullPointerException | NumberFormatException e) {
+                sendMessage(sender, "Invalid coordinates.");
+            }
+        }
+    }
 
     @Override
     public String getHelp(ICommandSender sender) {
