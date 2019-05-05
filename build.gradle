@@ -38,9 +38,9 @@ task apiJar(type: Jar) {
         project.hasProperty("api_package")
     }
     version = "${project.mc_version}-${project.api_version}"
-    from (sourceSets.main.allJava) {
-        include String.valueOf(findProperty("api_package")).replace(".", "/") + "/**"
-    }
+    from sourceSets.main.allJava
+    include String.valueOf(findProperty("api_package")).replace(".", "/") + "/**"
+    println(String.valueOf(findProperty("api_package")).replace(".", "/") + "/**")
     from "LICENSE"
     manifest.mainAttributes(
             "Built-On-Java": "${System.getProperty('java.vm.version')} + (${System.getProperty('java.vm.vendor')})",
