@@ -66,9 +66,9 @@ public class CommandSubClaimToggle extends CommandCIBase {
 		ClaimPermissionToggle perm = CommandUtils.getPermissionToggle(args[0], this.getUsage(sender));
 
 		if(CommandUtils.canManagePerms(sender, claim)) {
-			if(perm.force) {
-				claim.setPermissionToggle(perm, perm.toForce);
-				throw new CommandException("This toggle cannot be modified. It has been forced by the server.");
+			if(perm.getForceEnabled()) {
+				claim.setPermissionToggle(perm, perm.getForceValue());
+				throw new CommandException("This toggle cannot be modified. It has been forced to a value by the server.");
 			}
 			claim.flipPermissionToggle(perm);
 			boolean toggled = claim.isPermissionToggled(perm);

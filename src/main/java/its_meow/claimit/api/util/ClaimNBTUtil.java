@@ -108,8 +108,8 @@ public class ClaimNBTUtil {
         for(String permString : toggles.getKeySet()) {
             ClaimPermissionToggle perm = ClaimPermissionRegistry.getPermissionToggle(permString);
             if(perm != null) {
-                if(perm.force) {
-                    map.put(perm, perm.toForce);
+                if(perm.getForceEnabled()) {
+                    map.put(perm, perm.getForceValue());
                 } else {
                     map.put(perm, toggles.getBoolean(permString));
                 }

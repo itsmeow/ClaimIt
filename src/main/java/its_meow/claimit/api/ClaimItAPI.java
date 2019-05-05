@@ -53,10 +53,11 @@ public class ClaimItAPI {
     
     @EventHandler
     public void preInit(FMLPreInitializationEvent event) {
+        ClaimPermissions.register();
+        
         File directory = event.getModConfigurationDirectory();
         config = new Configuration(new File(directory.getPath(), "claimit_api.cfg")); 
         ClaimConfig.readConfig();
-        ClaimPermissions.register();
     }
 
     @EventHandler

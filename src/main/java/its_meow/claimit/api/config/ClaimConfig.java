@@ -1,13 +1,12 @@
 package its_meow.claimit.api.config;
 
 import its_meow.claimit.api.ClaimItAPI;
+import its_meow.claimit.api.permission.ClaimPermissionRegistry;
+import its_meow.claimit.api.permission.ClaimPermissionToggle;
 import net.minecraftforge.common.config.Configuration;
 
 public class ClaimConfig extends Configuration {
 	
-	public static boolean allowDisableSpawns = true;
-	public static boolean allowDisablePickup = true;
-	public static boolean allowDisableDrop = true;
 	public static boolean forceNoPVPInClaim = false;
 	
 	public static void readConfig() {
@@ -27,9 +26,12 @@ public class ClaimConfig extends Configuration {
 	public static void loadFields(Configuration cfg) {
 		String claimPermissions = "claim_permissions";
 		cfg.addCustomCategoryComment(claimPermissions, "Force specific permissions to not work");
-		allowDisableSpawns = cfg.getBoolean("allow_disable_spawns", claimPermissions, true, "Set to false to prevent users from disabling spawns");
-		allowDisablePickup = cfg.getBoolean("allow_disable_pickup", claimPermissions, true, "Set to false to prevent users from disabling item pickup");
-		allowDisableDrop = cfg.getBoolean("allow_disable_drop", claimPermissions, true, "Set to false to prevent users from disabling item drop");
+		for(ClaimPermissionToggle toggle : ClaimPermissionRegistry.getTogglePermissions()) {
+		    boolean doForce = cfg.getBoolean("do_force_" + toggle.parsedName + "_value", claimPermissions, false, "Set true to force " + toggle.parsedName + " in claims to the value of 'force_" + toggle.parsedName + "_value'");
+		    boolean forceValue = cfg.getBoolean("force_" + toggle.parsedName + "_value", claimPermissions, true, "Set to whatever value you want this to be if 'do_force_" + toggle.parsedName + "_value' is true");
+		    toggle.setForceEnabled(doForce);
+		    toggle.setForceValue(forceValue);
+		}
 		forceNoPVPInClaim = cfg.getBoolean("force_no_pvp", claimPermissions, false, "Disallows any PVP in any claim - even if users have permissions");
 	}
 	
