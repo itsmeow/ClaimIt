@@ -101,6 +101,9 @@ public class CommandUtils {
 	}
 
 	public static UUID getUUIDForName(String username, MinecraftServer server) throws PlayerNotFoundException {
+	    if(username == null) {
+	        return null;
+	    }
 		GameProfile profile = server.getPlayerProfileCache().getGameProfileForUsername(username);
 		if(profile != null && profile.getName().equals(username)) { // Found the profile!
 			return profile.getId();

@@ -5,6 +5,7 @@ import its_meow.claimit.command.claimit.group.CommandSubGroupClaim;
 import its_meow.claimit.command.claimit.group.CommandSubGroupCreate;
 import its_meow.claimit.command.claimit.group.CommandSubGroupDelete;
 import its_meow.claimit.command.claimit.group.CommandSubGroupInfo;
+import its_meow.claimit.command.claimit.group.CommandSubGroupList;
 import its_meow.claimit.command.claimit.group.CommandSubGroupPermission;
 import its_meow.claimit.command.claimit.group.CommandSubGroupSetName;
 import net.minecraft.command.ICommandSender;
@@ -19,7 +20,8 @@ public class CommandSubGroup extends CommandCITreeBase {
             new CommandSubGroupDelete(),
             new CommandSubGroupPermission(),
             new CommandSubGroupClaim(),
-            new CommandSubGroupInfo()
+            new CommandSubGroupInfo(),
+            new CommandSubGroupList()
        );
     }
     

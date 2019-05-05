@@ -7,6 +7,7 @@ import static net.minecraft.util.text.TextFormatting.RED;
 import its_meow.claimit.api.group.Group;
 import its_meow.claimit.api.group.GroupManager;
 import its_meow.claimit.command.CommandCIBase;
+import its_meow.claimit.util.CommandUtils;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.command.SyntaxErrorException;
@@ -24,7 +25,7 @@ public class CommandSubGroupDelete extends CommandCIBase {
     public String getUsage(ICommandSender sender) {
         return "/claimit group delete <groupname>";
     }
-    
+
     @Override
     public String getHelp(ICommandSender sender) {
         return "Deletes a group. Removes all member's permissions within claims in the group.";
@@ -39,21 +40,16 @@ public class CommandSubGroupDelete extends CommandCIBase {
     public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
         if(args.length == 1) {
             String groupname = args[0];
-            if(sender instanceof EntityPlayer) {
-                EntityPlayer player = (EntityPlayer) sender;
-                Group group = GroupManager.getGroup(groupname);
-                if(group != null) {
-                    if(group.isOwner(player)) {
-                        GroupManager.removeGroup(group);
-                        sendMessage(sender, AQUA + "Deleted group: " + GREEN + groupname);
-                    } else {
-                        sendMessage(sender, RED + "You do not own this group!");
-                    }
+            Group group = GroupManager.getGroup(groupname);
+            if(group != null) {
+                if(CommandUtils.isAdmin(sender) || (sender instanceof EntityPlayer && group.isOwner((EntityPlayer)sender))) {
+                    GroupManager.removeGroup(group);
+                    sendMessage(sender, AQUA + "Deleted group: " + GREEN + groupname);
                 } else {
-                    sendMessage(sender, RED + "No such group: " + groupname);
+                    sendMessage(sender, RED + "You do not own this group!");
                 }
             } else {
-                sendMessage(sender, "You must be a player to use this command!");
+                sendMessage(sender, RED + "No such group: " + groupname);
             }
         } else {
             throw new SyntaxErrorException("Invalid syntax. Usage: " + this.getUsage(sender));

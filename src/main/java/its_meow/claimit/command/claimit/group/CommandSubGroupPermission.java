@@ -44,7 +44,7 @@ public class CommandSubGroupPermission extends CommandCIBase {
     public String getUsage(ICommandSender sender) {
         return "/claimit group permission <add/remove> <permission> <username> <groupname>";
     }
-    
+
     @Override
     public String getHelp(ICommandSender sender) {
         return "Adds or removes a permission from a member within the group, and by extension their permissions in the group's claims. First argument is add or remove. Second argument is a member permission. Third argument is username. Fourth argument is group name.";
@@ -71,46 +71,41 @@ public class CommandSubGroupPermission extends CommandCIBase {
         ClaimPermissionMember permission = CommandUtils.getPermissionMember(permissionStr, this.getUsage(sender));
         UUID id = CommandUtils.getUUIDForName(username, server);
 
-        if(sender instanceof EntityPlayer) {
-            EntityPlayer player = (EntityPlayer) sender;
-            Group group = GroupManager.getGroup(groupname);
-            if(group != null) {
-                if(group.isOwner(player)) {
-                    if(action.equals("add"))  {
-                        // Add user
-                        if(!group.inPermissionList(permission, id) || group.isOwner(id)) {
-                            if(!(sender instanceof EntityPlayer) && sender.canUseCommand(2, "") || (sender instanceof EntityPlayer && group.isOwner((EntityPlayer) sender))) {
-                                group.addMemberPermission(id, permission);
-                                sendMessage(sender, GREEN + "Successfully added " + YELLOW + username + GREEN + " to group " + DARK_GREEN + groupname + GREEN + " with permission " + AQUA + permission.parsedName);
-                            } else {
-                                sendMessage(sender, RED + "You do not own this group!");
-                            }
+        Group group = GroupManager.getGroup(groupname);
+        if(group != null) {
+            if(CommandUtils.isAdmin(sender) || (sender instanceof EntityPlayer && group.isOwner((EntityPlayer)sender))) {
+                if(action.equals("add"))  {
+                    // Add user
+                    if(!group.inPermissionList(permission, id) || group.isOwner(id)) {
+                        if(!(sender instanceof EntityPlayer) && sender.canUseCommand(2, "") || (sender instanceof EntityPlayer && group.isOwner((EntityPlayer) sender))) {
+                            group.addMemberPermission(id, permission);
+                            sendMessage(sender, GREEN + "Successfully added " + YELLOW + username + GREEN + " to group " + DARK_GREEN + groupname + GREEN + " with permission " + AQUA + permission.parsedName);
                         } else {
-                            sendMessage(sender, YELLOW + "This player already has that permission!");
-                        }
-                    } else if(action.equals("remove")) {
-                        // Remove user
-                        if(group.inPermissionList(permission, id)) {
-                            if(!(sender instanceof EntityPlayer) && sender.canUseCommand(2, "") || (sender instanceof EntityPlayer && group.isOwner((EntityPlayer) sender))) {
-                                group.removeMemberPermission(id, permission);
-                                sendMessage(sender, GREEN + "Successfully removed permission " + AQUA + permission.parsedName + GREEN + " from user " + YELLOW + username + GREEN + " in group " + DARK_GREEN + groupname);
-                            } else {
-                                sendMessage(sender, RED + "You do not own this group!");
-                            }
-                        } else {
-                            sendMessage(sender, YELLOW + "This player does not have that permission!");
+                            sendMessage(sender, RED + "You do not own this group!");
                         }
                     } else {
-                        throw new WrongUsageException("Invalid action! Specify add or remove. Usage: " + this.getUsage(sender));
+                        sendMessage(sender, YELLOW + "This player already has that permission!");
+                    }
+                } else if(action.equals("remove")) {
+                    // Remove user
+                    if(group.inPermissionList(permission, id)) {
+                        if(!(sender instanceof EntityPlayer) && sender.canUseCommand(2, "") || (sender instanceof EntityPlayer && group.isOwner((EntityPlayer) sender))) {
+                            group.removeMemberPermission(id, permission);
+                            sendMessage(sender, GREEN + "Successfully removed permission " + AQUA + permission.parsedName + GREEN + " from user " + YELLOW + username + GREEN + " in group " + DARK_GREEN + groupname);
+                        } else {
+                            sendMessage(sender, RED + "You do not own this group!");
+                        }
+                    } else {
+                        sendMessage(sender, YELLOW + "This player does not have that permission!");
                     }
                 } else {
-                    sendMessage(sender, RED + "You do not own this group!");
+                    throw new WrongUsageException("Invalid action! Specify add or remove. Usage: " + this.getUsage(sender));
                 }
             } else {
-                sendMessage(sender, RED + "No such group: " + groupname);
+                sendMessage(sender, RED + "You do not own this group!");
             }
         } else {
-            sendMessage(sender, "You must be a player to use this command!");
+            sendMessage(sender, RED + "No such group: " + groupname);
         }
     }
 
