@@ -3,10 +3,12 @@ package its_meow.claimit.command.claimit.claim;
 import static net.minecraft.util.text.TextFormatting.AQUA;
 import static net.minecraft.util.text.TextFormatting.BLUE;
 import static net.minecraft.util.text.TextFormatting.BOLD;
-import static net.minecraft.util.text.TextFormatting.DARK_GREEN;
 import static net.minecraft.util.text.TextFormatting.DARK_PURPLE;
 import static net.minecraft.util.text.TextFormatting.GREEN;
+import static net.minecraft.util.text.TextFormatting.ITALIC;
 import static net.minecraft.util.text.TextFormatting.RED;
+import static net.minecraft.util.text.TextFormatting.UNDERLINE;
+import static net.minecraft.util.text.TextFormatting.YELLOW;
 
 import java.util.UUID;
 
@@ -14,6 +16,8 @@ import its_meow.claimit.api.claim.ClaimArea;
 import its_meow.claimit.api.claim.ClaimManager;
 import its_meow.claimit.command.CommandCIBase;
 import its_meow.claimit.util.CommandUtils;
+import its_meow.claimit.util.text.CommandChatStyle;
+import its_meow.claimit.util.text.TeleportXYChatStyle;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
@@ -103,14 +107,13 @@ public class CommandSubClaimInfo extends CommandCIBase {
         int dim = claim.getDimensionID();
 
         sendMessage(sender, BLUE + "" + BOLD + "Information for claim owned by " + GREEN + "" + BOLD + ownerName + BLUE + "" + BOLD + ":");
-        sendMessage(sender, BLUE + "Claim Name: " + DARK_GREEN + claim.getDisplayedViewName());
-        if(CommandUtils.isAdmin(sender)) {
-            sendMessage(sender, BLUE + "Claim True Name: " + DARK_GREEN + claim.getTrueViewName());
-        }
+        sendMessage(sender, BLUE + "Claim Name: " + YELLOW + claim.getDisplayedViewName());
+        sendMessageIfAdmin(sender, BLUE + "Claim True Name: " + YELLOW + claim.getTrueViewName());
         sendMessage(sender, BLUE + "Dimension: " + DARK_PURPLE + dim);
         sendMessage(sender, BLUE + "Area: " + AQUA + (claim.getSideLengthX() + 1) + BLUE + "x" + AQUA + (claim.getSideLengthZ() + 1) + BLUE + " (" + AQUA + claim.getArea() + BLUE + ")");
-        sendMessage(sender, BLUE + "Corner 1: " + DARK_GREEN + (corners[0].getX()) + ", " + (corners[0].getZ()));
-        sendMessage(sender, BLUE + "Corner 2: " + DARK_GREEN + (corners[1].getX()) + ", " + (corners[1].getZ()));
+        sendAdminStyleMessage(sender, BLUE + "Corner 1: " + DARK_PURPLE + (corners[0].getX()) + BLUE + ", " + DARK_PURPLE + (corners[0].getZ()), new TeleportXYChatStyle(claim.getDimensionID(), corners[0].getX(), corners[0].getZ()));
+        sendAdminStyleMessage(sender, BLUE + "Corner 2: " + DARK_PURPLE + (corners[1].getX()) + BLUE + ", " + DARK_PURPLE + (corners[1].getZ()), new TeleportXYChatStyle(claim.getDimensionID(), corners[1].getX(), corners[1].getZ()));
+        sendSMessage(sender, GREEN + "" + UNDERLINE + "" + ITALIC + "View Members", new CommandChatStyle("/ci claim permission list " + (CommandUtils.isAdmin(sender) ? claim.getTrueViewName() : claim.getDisplayedViewName()), true, "Click to view claim members"));
     }
 
 }
