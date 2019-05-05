@@ -5,27 +5,58 @@ import static net.minecraft.util.text.TextFormatting.BOLD;
 import static net.minecraft.util.text.TextFormatting.YELLOW;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Nullable;
 
-import its_meow.claimit.util.text.TextComponentCommand;
-import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
-import net.minecraft.command.ICommand;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TextComponentString;
-import net.minecraft.util.text.TextFormatting;
-import net.minecraftforge.server.command.CommandTreeBase;
 
-public abstract class CommandCITreeBase extends CommandTreeBase implements ICommandHelp {
-    
-    public CommandCITreeBase(CommandBase... subcommands) {
-        for(CommandBase cmd : subcommands) {
+public abstract class CommandCITreeBase extends CommandCIBase {
+
+    private final Map<String, CommandCIBase> commandMap = new HashMap<>();
+    private final Map<String, CommandCIBase> commandAliasMap = new HashMap<>();
+
+    public CommandCITreeBase(CommandCIBase... subcommands) {
+        for(CommandCIBase cmd : subcommands) {
             this.addSubcommand(cmd);
         }
+    }
+
+    public void addSubcommand(CommandCIBase command) {
+        commandMap.put(command.getName(), command);
+        for(String alias : command.getAliases()) {
+            commandAliasMap.put(alias, command);
+        }
+    }
+
+    public Collection<CommandCIBase> getSubCommands() {
+        return commandMap.values();
+    }
+
+    @Nullable
+    public CommandCIBase getSubCommand(String command) {
+        CommandCIBase cmd = commandMap.get(command);
+        if(cmd != null) {
+            return cmd;
+        }
+        return commandAliasMap.get(command);
+    }
+
+    public Map<String, CommandCIBase> getCommandMap() {
+        return Collections.unmodifiableMap(commandMap);
+    }
+
+    public List<CommandCIBase> getSortedCommandList() {
+        List<CommandCIBase> list = new ArrayList<>(getSubCommands());
+        Collections.sort(list);
+        return list;
     }
 
     /**
@@ -36,7 +67,7 @@ public abstract class CommandCITreeBase extends CommandTreeBase implements IComm
         if(args.length < 1) {
             this.displaySubCommands(server, sender);
         } else {
-            ICommand cmd = getSubCommand(args[0]);
+            CommandCIBase cmd = getSubCommand(args[0]);
 
             if(cmd == null) {
                 this.executeBaseCommand(server, sender, args);
@@ -50,8 +81,9 @@ public abstract class CommandCITreeBase extends CommandTreeBase implements IComm
 
     protected void displaySubCommands(MinecraftServer server, ICommandSender sender) throws CommandException {
         sendMessage(sender, AQUA + "" + BOLD + "Subcommands: ");
-        for(ICommand subCmd : this.getSubCommands()) {
-            sendCMessage(sender, YELLOW, this.getUsage(sender).substring(0, this.getUsage(sender).lastIndexOf(this.getName()) + this.getName().length()) + " " + subCmd.getName());
+        for(CommandCIBase subCmd : this.getSubCommands()) {
+            sendCMessage(sender, YELLOW,
+                    this.getUsage(sender).substring(0, this.getUsage(sender).lastIndexOf(this.getName()) + this.getName().length()) + " " + subCmd.getName());
         }
     }
 
@@ -71,18 +103,18 @@ public abstract class CommandCITreeBase extends CommandTreeBase implements IComm
 
     @Override
     public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args, BlockPos pos) {
-        ICommand command = this.getLowestCommandInTree(args);
+        CommandCIBase command = this.getLowestCommandInTree(args);
         if(command == this) {
             List<String> list = new ArrayList<String>();
             if(args.length == 1) {
-                for(ICommand subCommand : this.getSubCommands()) {
+                for(CommandCIBase subCommand : this.getSubCommands()) {
                     if(subCommand.getName().startsWith(args[0])) {
                         list.add(subCommand.getName());
                     }
                 }
             }
             if(list.isEmpty()) {
-                for(ICommand subCommand : this.getSubCommands()) {
+                for(CommandCIBase subCommand : this.getSubCommands()) {
                     list.add(subCommand.getName());
                 }
             }
@@ -92,14 +124,14 @@ public abstract class CommandCITreeBase extends CommandTreeBase implements IComm
         }
     }
 
-    protected ICommand getLowestCommandInTree(String[] args) {
-        ICommand cmd = this;
+    protected CommandCIBase getLowestCommandInTree(String[] args) {
+        CommandCIBase cmd = this;
         boolean endTree = false;
         while(!endTree) {
             // This command has subcommands
             if(cmd instanceof CommandCITreeBase) {
                 if(args.length > 0) {
-                    ICommand newCmd = ((CommandCITreeBase) cmd).getSubCommand(args[0]);
+                    CommandCIBase newCmd = ((CommandCITreeBase) cmd).getSubCommand(args[0]);
                     if(newCmd != null) {
                         // This has subcommands with this name, continue and get completions for subcommand
                         cmd = newCmd;
@@ -120,16 +152,19 @@ public abstract class CommandCITreeBase extends CommandTreeBase implements IComm
         return cmd;
     }
 
-    protected static void sendMessage(ICommandSender sender, String message) {
-        sender.sendMessage(new TextComponentString(message));
-    }
+    /**
+     * Return whether the specified command parameter index is a username parameter.
+     */
+    @Override
+    public boolean isUsernameIndex(String[] args, int index) {
+        if(index > 0 && args.length > 1) {
+            CommandCIBase cmd = getSubCommand(args[0]);
+            if(cmd != null) {
+                return cmd.isUsernameIndex(shiftArgs(args), index - 1);
+            }
+        }
 
-    protected static void sendCMessage(ICommandSender sender, TextFormatting formatting, String message) {
-        sendCMessage(sender, formatting.toString(), message);
-    }
-
-    protected static void sendCMessage(ICommandSender sender, String formatting, String message) {
-        sender.sendMessage(new TextComponentCommand(formatting, message));
+        return false;
     }
 
 }
