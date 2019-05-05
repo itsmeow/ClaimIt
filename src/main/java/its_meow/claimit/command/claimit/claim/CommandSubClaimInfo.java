@@ -71,7 +71,11 @@ public class CommandSubClaimInfo extends CommandCIBase {
                 if(claim != null) {
                     outputClaimInfo(claim, player);
                 } else {
-                    sendMessage(sender, RED + "No claim with this name that you own!");
+                    if(CommandUtils.isAdmin(sender) && (claim = ClaimManager.getManager().getClaimByTrueName(args[0])) != null) {
+                        outputClaimInfo(claim, player);
+                    } else {
+                        sendMessage(sender, RED + "No claim with this name that you own!");
+                    }
                 }
             }
         }

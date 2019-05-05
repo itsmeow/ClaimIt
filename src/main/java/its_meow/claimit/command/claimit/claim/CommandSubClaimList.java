@@ -32,7 +32,6 @@ import net.minecraft.command.ICommandSender;
 import net.minecraft.command.PlayerNotFoundException;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.text.TextComponentString;
 
 public class CommandSubClaimList extends CommandCIBase {
 
@@ -147,9 +146,9 @@ public class CommandSubClaimList extends CommandCIBase {
                 for(ClaimArea claim : cPage.getClaimsInPage()) {
                     sendMessage(sender, DARK_RED  + "" + UNDERLINE + "Claim " + (i + 1));
                     sendMessage(sender, BLUE + "Owner: " + GREEN + ClaimManager.getPlayerName(claim.getOwner(), sender.getEntityWorld()));
-                    sendMessage(sender, BLUE + "Claim True Name: " + YELLOW + claim.getTrueViewName());
+                    sender.sendMessage(new TextComponentStyled(BLUE + "Claim True Name: " + YELLOW + claim.getTrueViewName(), new ClaimInfoChatStyle(claim.getTrueViewName())));
                     sendMessage(sender, BLUE + "Dimension: " + DARK_PURPLE + claim.getDimensionID());
-                    sender.sendMessage(new TextComponentString(BLUE + "Location: " + DARK_PURPLE + (claim.getMainPosition().getX()) + BLUE + ", " + DARK_PURPLE + (claim.getMainPosition().getZ())).setStyle(new TeleportXYChatStyle(claim.getDimensionID(), claim.getMainPosition().getX(), claim.getMainPosition().getZ())));
+                    sender.sendMessage(new TextComponentStyled(BLUE + "Location: " + DARK_PURPLE + (claim.getMainPosition().getX()) + BLUE + ", " + DARK_PURPLE + (claim.getMainPosition().getZ()), new TeleportXYChatStyle(claim.getDimensionID(), claim.getMainPosition().getX(), claim.getMainPosition().getZ())));
                     i++;
                 }
                 if(ClaimPageTracker.getPage(filter, pg) != null) {
