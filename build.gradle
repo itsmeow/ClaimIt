@@ -23,8 +23,8 @@ minecraft {
     version = "${project.mc_version}-${project.forge_version}"
     runDir = "run"
     mappings = project.mcp_mappings
-    replace "@VERSION@", "${project.mod_version}"
-    replace "@APIVERSION@", "${project.api_version}"
+    replace "@VERSION@", "${project.mc_version}-${project.mod_version}"
+    replace "@APIVERSION@", "${project.mc_version}-${project.api_version}"
     makeObfSourceJar = false
 }
 
@@ -38,8 +38,9 @@ task apiJar(type: Jar) {
         project.hasProperty("api_package")
     }
     version = "${project.mc_version}-${project.api_version}"
-    from sourceSets.main.allJava
-    include String.valueOf(findProperty("api_package")).replace(".", "/") + "/**"
+    from (sourceSets.main.allJava) {
+        include String.valueOf(findProperty("api_package")).replace(".", "/") + "/**"
+    }
     from "LICENSE"
     manifest.mainAttributes(
             "Built-On-Java": "${System.getProperty('java.vm.version')} + (${System.getProperty('java.vm.vendor')})",
@@ -50,6 +51,9 @@ task apiJar(type: Jar) {
     )
     classifier = 'api'
 }
+
+tasks.build.dependsOn apiJar
+tasks.apiJar.shouldRunAfter jar
 
 jar {
     from "LICENSE"
@@ -65,7 +69,6 @@ jar {
     classifier ''
 }
 
-tasks.build.dependsOn apiJar
 
 processResources {
     inputs.property "version", project.version
