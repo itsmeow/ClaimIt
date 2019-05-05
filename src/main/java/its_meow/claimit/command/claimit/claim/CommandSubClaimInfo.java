@@ -74,8 +74,15 @@ public class CommandSubClaimInfo extends CommandCIBase {
                     if(CommandUtils.isAdmin(sender) && (claim = ClaimManager.getManager().getClaimByTrueName(args[0])) != null) {
                         outputClaimInfo(claim, player);
                     } else {
-                        sendMessage(sender, RED + "No claim with this name that you own!");
+                        sendMessage(sender, RED + "No claim with this name" + (CommandUtils.isAdmin(sender) ? "!" : " that you own!"));
                     }
+                }
+            } else if(CommandUtils.isAdmin(sender)) {
+                ClaimArea claim = ClaimManager.getManager().getClaimByTrueName(args[0]);
+                if(CommandUtils.isAdmin(sender) && claim != null) {
+                    outputClaimInfo(claim, sender);
+                } else {
+                    sendMessage(sender, "No claim with this true name found!");
                 }
             }
         }
@@ -85,8 +92,8 @@ public class CommandSubClaimInfo extends CommandCIBase {
         }
     }
 
-    private static void outputClaimInfo(ClaimArea claim, EntityPlayer player) {
-        World worldIn = player.getEntityWorld();
+    private static void outputClaimInfo(ClaimArea claim, ICommandSender sender) {
+        World worldIn = sender.getEntityWorld();
         BlockPos[] corners = claim.getTwoMainClaimCorners();
         UUID owner = claim.getOwner();
         String ownerName = ClaimManager.getPlayerName(owner, worldIn);
@@ -95,15 +102,15 @@ public class CommandSubClaimInfo extends CommandCIBase {
         }
         int dim = claim.getDimensionID();
 
-        sendMessage(player, BLUE + "" + BOLD + "Information for claim owned by " + GREEN + "" + BOLD + ownerName + BLUE + "" + BOLD + ":");
-        sendMessage(player, BLUE + "Claim Name: " + DARK_GREEN + claim.getDisplayedViewName());
-        if(ClaimManager.getManager().isAdmin(player)) {
-            sendMessage(player, BLUE + "Claim True Name: " + DARK_GREEN + claim.getTrueViewName());
+        sendMessage(sender, BLUE + "" + BOLD + "Information for claim owned by " + GREEN + "" + BOLD + ownerName + BLUE + "" + BOLD + ":");
+        sendMessage(sender, BLUE + "Claim Name: " + DARK_GREEN + claim.getDisplayedViewName());
+        if(CommandUtils.isAdmin(sender)) {
+            sendMessage(sender, BLUE + "Claim True Name: " + DARK_GREEN + claim.getTrueViewName());
         }
-        sendMessage(player, BLUE + "Dimension: " + DARK_PURPLE + dim);
-        sendMessage(player, BLUE + "Area: " + AQUA + (claim.getSideLengthX() + 1) + BLUE + "x" + AQUA + (claim.getSideLengthZ() + 1) + BLUE + " (" + AQUA + claim.getArea() + BLUE + ")");
-        sendMessage(player, BLUE + "Corner 1: " + DARK_GREEN + (corners[0].getX()) + ", " + (corners[0].getZ()));
-        sendMessage(player, BLUE + "Corner 2: " + DARK_GREEN + (corners[1].getX()) + ", " + (corners[1].getZ()));
+        sendMessage(sender, BLUE + "Dimension: " + DARK_PURPLE + dim);
+        sendMessage(sender, BLUE + "Area: " + AQUA + (claim.getSideLengthX() + 1) + BLUE + "x" + AQUA + (claim.getSideLengthZ() + 1) + BLUE + " (" + AQUA + claim.getArea() + BLUE + ")");
+        sendMessage(sender, BLUE + "Corner 1: " + DARK_GREEN + (corners[0].getX()) + ", " + (corners[0].getZ()));
+        sendMessage(sender, BLUE + "Corner 2: " + DARK_GREEN + (corners[1].getX()) + ", " + (corners[1].getZ()));
     }
 
 }
