@@ -50,8 +50,7 @@ public class CommandSubHelp extends CommandCIBase {
 			// Basic tree
 			if(choice.equalsIgnoreCase("command")) {
 				sendMessage(sender, GOLD + "" + UNDERLINE + "Available choices:"  + YELLOW + " /claimit help <choice>");
-				sendMessage(sender, GREEN + "claimcommands");
-				sendMessage(sender, GREEN + "misccommands");
+				
 			}
 			if(choice.equalsIgnoreCase("permission")) {
 				sendMessage(sender, GOLD + "" + UNDERLINE + "Available choices:" + YELLOW + " /claimit help <choice>");
@@ -64,26 +63,6 @@ public class CommandSubHelp extends CommandCIBase {
 				sendMessage(sender, GREEN + "members");
 				sendMessage(sender, GREEN + "toggles");
 				sendMessage(sender, GREEN + "management");
-			}
-			
-			// Second tree - commands
-			if(choice.equalsIgnoreCase("claimcommands")) {
-				sendMessage(sender, GOLD + "" + UNDERLINE + "Available choices:" + YELLOW + " /claimit help <choice>");
-				sendMessage(sender, GREEN + "claim delete");
-				sendMessage(sender, GREEN + "claim info");
-				sendMessage(sender, GREEN + "claim permission");
-				sendMessage(sender, GREEN + "claim permission list");
-				sendMessage(sender, GREEN + "claim list");
-				sendMessage(sender, GREEN + "claim deleteall");
-				sendMessage(sender, GREEN + "claim setname");
-				sendMessage(sender, GREEN + "claim toggle");
-			}
-			if(choice.equalsIgnoreCase("misccommands")) {
-				sendMessage(sender, GOLD + "" + UNDERLINE + "Available choices:" + YELLOW + " /claimit help <choice>");
-				sendMessage(sender, GREEN + "admin");
-				sendMessage(sender, GREEN + "cancel");
-				sendMessage(sender, GREEN + "confirm");
-				sendMessage(sender, GREEN + "help");
 			}
 			
 			// Second tree - permissions
