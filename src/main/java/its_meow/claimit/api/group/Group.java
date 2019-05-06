@@ -9,11 +9,14 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
 import its_meow.claimit.api.claim.ClaimArea;
+import its_meow.claimit.api.event.GroupClaimAddedEvent;
+import its_meow.claimit.api.event.GroupClaimRemovedEvent;
 import its_meow.claimit.api.permission.ClaimPermissionMember;
 import its_meow.claimit.api.permission.ClaimPermissionRegistry;
 import its_meow.claimit.api.util.ClaimNBTUtil;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraftforge.common.MinecraftForge;
 
 public class Group {
 
@@ -160,19 +163,19 @@ public class Group {
     /**
      * Adds a claim to the list
      * @param claim - The claim
-     * @return true
+     * @return true if the claim was added
      */
     public boolean addClaim(ClaimArea claim) {
-        return claims.add(claim);
+        return !MinecraftForge.EVENT_BUS.post(new GroupClaimAddedEvent(this, claim)) && claims.add(claim);
     }
     
     /**
      * Removes a claim from the list
      * @param claim - The claim
-     * @return true if the claim was present
+     * @return true if the claim was present, and removed
      */
     public boolean removeClaim(ClaimArea claim) {
-        return claims.remove(claim);
+        return !MinecraftForge.EVENT_BUS.post(new GroupClaimRemovedEvent(this, claim)) && claims.remove(claim);
     }
     
     /**
@@ -223,16 +226,12 @@ public class Group {
         return this.owner.equals(uuid);
     }
     
-    protected void addMembers(ArrayList<UUID> members) {
-        this.members.addAll(members);
-    }
-    
     protected void addMemberPerms(Map<ClaimPermissionMember, ArrayList<UUID>> memberLists) {
-        this.memberLists = ClaimNBTUtil.mergeMembers(this.memberLists, memberLists);
+        memberLists.forEach((permission, uuids) -> uuids.forEach(uuid -> this.addMemberPermission(uuid, permission)));
     }
     
     protected void addClaims(ArrayList<ClaimArea> claims) {
-        this.claims.addAll(claims);
+        claims.forEach(claim -> this.addClaim(claim));
     }
     
     /**
@@ -243,7 +242,6 @@ public class Group {
         NBTTagCompound compound = new NBTTagCompound();
         compound.setUniqueId("owner", this.owner);
         compound.setString("name", name);
-        compound = ClaimNBTUtil.writeUUIDs(compound, "MEMBERSLIST", this.members);
         compound = ClaimNBTUtil.writeMembers(compound, this.memberLists);
         compound = ClaimNBTUtil.writeClaimNames(compound, this.claims);
         return compound;
@@ -258,7 +256,6 @@ public class Group {
         UUID owner = compound.getUniqueId("owner");
         String name = compound.getString("name");
         Group group = new Group(name, owner);
-        group.addMembers(ClaimNBTUtil.readUUIDs(compound, "MEMBERSLIST"));
         group.addMemberPerms(ClaimNBTUtil.readMembers(compound));
         group.addClaims(ClaimNBTUtil.readClaimNames(compound));
         return group;
