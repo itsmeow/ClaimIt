@@ -46,7 +46,7 @@ public class CommandSubClaimPermission extends CommandCITreeBase {
 
     @Override
     public String getUsage(ICommandSender sender) {
-        return "/claimit claim permission <add/remove> <permission> <username> [claimname]" + "\n" + "/claimit claim permission list [permission] [claimname]";
+        return "/claimit claim permission <add/remove> <permission> <username> [claimname]";
     }
 
     @Override

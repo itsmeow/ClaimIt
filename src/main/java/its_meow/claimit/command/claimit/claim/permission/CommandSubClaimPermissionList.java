@@ -59,7 +59,7 @@ public class CommandSubClaimPermissionList extends CommandCIBase {
             if(claim != null) {
                 outputMembers(claim, sender);
             } else {
-                throw new CommandException("There is no claim with this name!");
+                throw new CommandException("There is no claim with this name" + (CommandUtils.isAdmin(sender) ? "!" : " that you own!"));
             }
         } else {
             throw new CommandException("Too many arguments! Usage: " + this.getUsage(sender));
@@ -80,11 +80,11 @@ public class CommandSubClaimPermissionList extends CommandCIBase {
             String permString = "";
             HashSet<ClaimPermissionMember> permSet = permMap.get(member);
             for(ClaimPermissionMember p : permSet) {
-                permString += p.parsedName + ", ";
+                permString += p.parsedName + BLUE + ", " + GREEN;
             }
             int end = permString.lastIndexOf(',');
             permString = permString.substring(0, end);
-            sendMessage(sender, YELLOW + ClaimManager.getPlayerName(member, sender.getEntityWorld()) + BLUE + ":" + GREEN + permString);
+            sendMessage(sender, YELLOW + ClaimManager.getPlayerName(member, sender.getEntityWorld()) + BLUE + " - " + GREEN + permString);
         }
     }
 

@@ -113,7 +113,8 @@ public class CommandSubClaimInfo extends CommandCIBase {
         sendMessage(sender, BLUE + "Area: " + AQUA + (claim.getSideLengthX() + 1) + BLUE + "x" + AQUA + (claim.getSideLengthZ() + 1) + BLUE + " (" + AQUA + claim.getArea() + BLUE + ")");
         sendAdminStyleMessage(sender, BLUE + "Corner 1: " + DARK_PURPLE + (corners[0].getX()) + BLUE + ", " + DARK_PURPLE + (corners[0].getZ()), new TeleportXYChatStyle(claim.getDimensionID(), corners[0].getX(), corners[0].getZ()));
         sendAdminStyleMessage(sender, BLUE + "Corner 2: " + DARK_PURPLE + (corners[1].getX()) + BLUE + ", " + DARK_PURPLE + (corners[1].getZ()), new TeleportXYChatStyle(claim.getDimensionID(), corners[1].getX(), corners[1].getZ()));
-        sendSMessage(sender, GREEN + "" + UNDERLINE + "" + ITALIC + "View Members", new CommandChatStyle("/ci claim permission list " + (CommandUtils.isAdmin(sender) ? claim.getTrueViewName() : claim.getDisplayedViewName()), true, "Click to view claim members"));
+        if((sender instanceof EntityPlayer && claim.canManage((EntityPlayer) sender)) || CommandUtils.isAdmin(sender))
+            sendSMessage(sender, GREEN + "" + UNDERLINE + "" + ITALIC + "View Members", new CommandChatStyle("/ci claim permission list " + (CommandUtils.isAdmin(sender) ? claim.getTrueViewName() : claim.getDisplayedViewName()), true, "Click to view claim members"));
     }
 
 }
