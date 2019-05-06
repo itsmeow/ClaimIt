@@ -51,8 +51,7 @@ task apiJar(type: Jar) {
     classifier = 'api'
 }
 
-tasks.build.dependsOn apiJar
-tasks.apiJar.shouldRunAfter jar
+tasks.jar.dependsOn apiJar
 
 jar {
     from "LICENSE"
