@@ -1,16 +1,18 @@
 package its_meow.claimit.command.claimit.claim.permission;
 
-import static net.minecraft.util.text.TextFormatting.BLUE;
-import static net.minecraft.util.text.TextFormatting.GREEN;
-import static net.minecraft.util.text.TextFormatting.YELLOW;
+import static net.minecraft.util.text.TextFormatting.*;
 
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 import its_meow.claimit.api.claim.ClaimArea;
 import its_meow.claimit.api.claim.ClaimManager;
+import its_meow.claimit.api.group.Group;
+import its_meow.claimit.api.group.GroupManager;
 import its_meow.claimit.api.permission.ClaimPermissionMember;
+import its_meow.claimit.api.permission.ClaimPermissionRegistry;
 import its_meow.claimit.command.CommandCIBase;
 import its_meow.claimit.util.CommandUtils;
 import net.minecraft.command.CommandException;
@@ -68,24 +70,44 @@ public class CommandSubClaimPermissionList extends CommandCIBase {
 
     private static void outputMembers(ClaimArea claim, ICommandSender sender) throws CommandException {
         Map<UUID, HashSet<ClaimPermissionMember>> permMap = claim.getMembers();
+        Set<Group> groups = GroupManager.getGroupsForClaim(claim);
         if(sender instanceof EntityPlayer) {
             if(!claim.canManage((EntityPlayer) sender)) {
                 throw new CommandException("You cannot view the members of this claim!");
             }
         }
-        if(permMap == null || permMap.isEmpty()) {
-            throw new CommandException("This claim has no members.");
-        }
-        for(UUID member : permMap.keySet()) {
-            String permString = "";
-            HashSet<ClaimPermissionMember> permSet = permMap.get(member);
-            for(ClaimPermissionMember p : permSet) {
-                permString += p.parsedName + BLUE + ", " + GREEN;
+        if((permMap == null || permMap.isEmpty())) {
+            sendMessage(sender, RED + "This claim has no members.");
+        } else {
+            for(UUID uuid : permMap.keySet()) {
+                sendMessage(sender, YELLOW + CommandUtils.getNameForUUID(uuid, sender.getEntityWorld().getMinecraftServer()) + BLUE + " - " + GREEN + getMemberLine(uuid, permMap.get(uuid)));
             }
-            int end = permString.lastIndexOf(',');
-            permString = permString.substring(0, end);
-            sendMessage(sender, YELLOW + CommandUtils.getNameForUUID(member, sender.getEntityWorld().getMinecraftServer()) + BLUE + " - " + GREEN + permString);
         }
+        if(groups.size() > 0) {
+            for(Group group : groups) {
+                Map<UUID, Set<ClaimPermissionMember>> groupPermMap = group.getMembers();
+                groupPermMap.put(group.getOwner(), ClaimPermissionRegistry.getMemberPermissions());
+                if(groupPermMap.size() > 0) {
+                    sendMessage(sender, YELLOW + "" + BOLD + "Members from: " + GREEN + group.getName());
+                    groupPermMap.forEach((uuid, permSet) -> {
+                        sendMessage(sender, YELLOW + " -- " + CommandUtils.getNameForUUID(uuid, sender.getEntityWorld().getMinecraftServer()) + BLUE + " - " + GREEN + getMemberLine(uuid, permSet));
+                    });
+                } else {
+                    sendMessage(sender, "This is a bad, bad bug. Report this. A group is marked for this claim, but it does contain any members");
+                }
+            }
+        } else {
+            sendMessage(sender, RED + "This claim has no group members.");
+        }
+    }
+    
+    private static String getMemberLine(UUID member, Set<ClaimPermissionMember> permSet) {
+        String permString = "";
+        for(ClaimPermissionMember p : permSet) {
+            permString += p.parsedName + BLUE + ", " + GREEN;
+        }
+        int end = permString.lastIndexOf(',');
+        return permString.substring(0, end);
     }
 
 }

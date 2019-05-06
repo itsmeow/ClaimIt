@@ -2,15 +2,19 @@ package its_meow.claimit.api.group;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 
 import javax.annotation.Nullable;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 
 import its_meow.claimit.api.ClaimItAPI;
 import its_meow.claimit.api.claim.ClaimArea;
 import its_meow.claimit.api.event.GroupClaimAddedEvent;
+import its_meow.claimit.api.permission.ClaimPermissionMember;
 import its_meow.claimit.api.serialization.GlobalDataSerializer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fml.common.Mod;
@@ -18,7 +22,7 @@ import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 public class GroupManager {
-    
+
     private static HashMap<String, Group> groups = new HashMap<String, Group>();
     private static HashMap<ClaimArea, Set<Group>> claimToGroup = new HashMap<ClaimArea, Set<Group>>();
 
@@ -38,13 +42,27 @@ public class GroupManager {
     public static Group getGroup(String name) {
         return groups.get(name);
     }
-    
+
     @Nullable
     public static ImmutableSet<Group> getGroupsForClaim(ClaimArea claim) {
         if(!claimToGroup.containsKey(claim)) {
             return null;
         }
         return ImmutableSet.copyOf(claimToGroup.get(claim));
+    }
+    
+    @Nullable
+    public static ImmutableMap<UUID, Set<ClaimPermissionMember>> getAllGroupPermissionsForClaim(ClaimArea claim) {
+        Map<UUID, Set<ClaimPermissionMember>> map = new HashMap<UUID, Set<ClaimPermissionMember>>();
+        getGroupsForClaim(claim).forEach(group -> {
+            Map<UUID, Set<ClaimPermissionMember>> groupMap = group.getMembers();
+            groupMap.forEach((uuid, permSet) -> {
+                map.putIfAbsent(uuid, new HashSet<ClaimPermissionMember>());
+                map.get(uuid).addAll(permSet);
+            });
+        });
+        if(map.isEmpty()) return null;
+        return ImmutableMap.copyOf(map);
     }
 
     public static boolean renameGroup(String name, String newName) {
@@ -61,7 +79,7 @@ public class GroupManager {
     public static ImmutableSet<Group> getGroups() {
         return ImmutableSet.copyOf(groups.values());
     }
-    
+
     public static void serialize() {
         GlobalDataSerializer store = GlobalDataSerializer.get();
         NBTTagCompound comp = store.data;
@@ -73,7 +91,7 @@ public class GroupManager {
         comp.setTag("GROUPS", groupsTag);
         store.markDirty();
     }
-    
+
     public static void deserialize() {
         groups.clear();
         GlobalDataSerializer store = GlobalDataSerializer.get();
@@ -89,7 +107,7 @@ public class GroupManager {
             }
         }
     }
-    
+
     @Mod.EventBusSubscriber(modid = ClaimItAPI.MOD_ID)
     private static class InternalGroupEventHandler {
 

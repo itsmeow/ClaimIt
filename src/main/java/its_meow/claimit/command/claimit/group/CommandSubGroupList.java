@@ -47,7 +47,7 @@ public class CommandSubGroupList extends CommandCIBase {
         }
 
         UUID uuid = CommandUtils.getUUIDForName(name, server);
-        Group[] groups = (Group[]) GroupManager.getGroups().stream().filter(g -> (admin && uuid == null) || (uuid != null && (g.getMembers().contains(uuid) || g.isOwner(uuid)))).toArray(Group[]::new);
+        Group[] groups = (Group[]) GroupManager.getGroups().stream().filter(g -> (admin && uuid == null) || (uuid != null && (g.getMembers().keySet().contains(uuid) || g.isOwner(uuid)))).toArray(Group[]::new);
         if(groups.length > 0) {
             sendMessage(sender, DARK_BLUE + "" + BOLD + "Group List:");
             for(Group group : groups) {

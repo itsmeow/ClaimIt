@@ -2,7 +2,9 @@ package its_meow.claimit.api.group;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 import com.google.common.collect.ImmutableList;
@@ -22,7 +24,7 @@ public class Group {
 
     protected String name;
     protected Map<ClaimPermissionMember, ArrayList<UUID>> memberLists;
-    protected ArrayList<UUID> members = new ArrayList<UUID>();
+    protected Map<UUID, Set<ClaimPermissionMember>> members = new HashMap<UUID, Set<ClaimPermissionMember>>();
     protected ArrayList<ClaimArea> claims = new ArrayList<ClaimArea>();
     protected UUID owner;
 
@@ -38,44 +40,10 @@ public class Group {
     }
     
     /**
-     * Used internally to add a member to the list
-     * @param uuid - UUID of member
-     * @return true if the member is not the owner
-     */
-    protected boolean addMember(UUID uuid) {
-        if(uuid.equals(owner)) {
-            return false;
-        }
-        return members.add(uuid);
-    }
-    
-    /**
-     * Used internally to add a member to the list
-     * @param player - The member
-     * @return true if the member is not the owner
-     */
-    protected boolean addMember(EntityPlayer player) {
-        return addMember(player.getGameProfile().getId());
-    }
-    
-    /**
-     * Removes a member internally and removes their owned claims from the claims list if they are not the owner
-     * @param player - The member
-     */
-    protected void removeMember(EntityPlayer player) {
-        removeMember(player.getGameProfile().getId());
-    }
-    
-    /**
-     * Removes a member internally and removes their owned claims from the claims list if they are not the owner
+     * Removes a member's owned claims from the claims list
      * @param uuid - The member's UUID
      */
-    protected void removeMember(UUID uuid) {
-        if(uuid.equals(owner)) {
-            return;
-        }
-        this.members.remove(uuid);
-        memberLists.keySet().forEach(p -> memberLists.get(p).remove(uuid));
+    protected void removeMemberClaims(UUID uuid) {
         ArrayList<ClaimArea> toRemove = new ArrayList<ClaimArea>();
         claims.forEach(c -> {if(c.isTrueOwner(uuid)) toRemove.add(c);});
         toRemove.forEach(c -> claims.remove(c));
@@ -91,9 +59,8 @@ public class Group {
         if(uuid.equals(owner)) {
             return false;
         }
-        if(!this.members.contains(uuid)) {
-            this.addMember(uuid);
-        }
+        this.members.putIfAbsent(uuid, new HashSet<ClaimPermissionMember>());
+        this.members.get(uuid).add(permission);
         return this.memberLists.get(permission).add(uuid);
     }
 
@@ -118,14 +85,10 @@ public class Group {
             return false;
         }
         boolean result = this.memberLists.get(permission).remove(uuid);
-        boolean inLists = false;
-        for(ArrayList<UUID> array : this.memberLists.values()) {
-            if(array.contains(uuid)) {
-                inLists = true;
-            }
-        }
-        if(!inLists) {
-            this.removeMember(uuid);
+        this.members.putIfAbsent(uuid, new HashSet<ClaimPermissionMember>());
+        this.members.get(uuid).remove(permission);
+        if(this.members.get(uuid).size() == 0) {
+            this.removeMemberClaims(uuid);
         }
         return result;
     }
@@ -275,8 +238,8 @@ public class Group {
         return this.owner;
     }
     
-    public ImmutableList<UUID> getMembers() {
-        return ImmutableList.copyOf(this.members);
+    public ImmutableMap<UUID, Set<ClaimPermissionMember>> getMembers() {
+        return ImmutableMap.copyOf(this.members);
     }
     
     public ImmutableMap<ClaimPermissionMember, ArrayList<UUID>> getMemberPermissions() {
