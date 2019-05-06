@@ -163,7 +163,7 @@ public class ClaimArea {
 	
 	private boolean hasPermissionFromGroup(ClaimPermissionMember permission, EntityPlayer player) {
 	    for(Group group : GroupManager.getGroups()) {
-            if(group.hasPermissionInClaim(player, permission, this)) {
+            if(permission != ClaimPermissions.MANAGE_PERMS && group.hasPermissionInClaim(player, permission, this)) {
                 return true;
             }
         }
