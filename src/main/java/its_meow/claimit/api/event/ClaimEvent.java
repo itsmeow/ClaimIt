@@ -5,7 +5,7 @@ import net.minecraftforge.fml.common.eventhandler.Event;
 
 public abstract class ClaimEvent extends Event {
     
-    private final ClaimArea claim;
+    protected final ClaimArea claim;
     
     public ClaimEvent(ClaimArea claim) {
         this.claim = claim;
