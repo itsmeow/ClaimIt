@@ -1,6 +1,7 @@
 package its_meow.claimit.api.group;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Set;
 
 import javax.annotation.Nullable;
@@ -9,8 +10,12 @@ import com.google.common.collect.ImmutableSet;
 
 import its_meow.claimit.api.ClaimItAPI;
 import its_meow.claimit.api.claim.ClaimArea;
+import its_meow.claimit.api.event.GroupClaimAddedEvent;
 import its_meow.claimit.api.serialization.GlobalDataSerializer;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.eventhandler.EventPriority;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 public class GroupManager {
     
@@ -32,6 +37,14 @@ public class GroupManager {
     @Nullable
     public static Group getGroup(String name) {
         return groups.get(name);
+    }
+    
+    @Nullable
+    public static ImmutableSet<Group> getGroupsForClaim(ClaimArea claim) {
+        if(!claimToGroup.containsKey(claim)) {
+            return null;
+        }
+        return ImmutableSet.copyOf(claimToGroup.get(claim));
     }
 
     public static boolean renameGroup(String name, String newName) {
@@ -75,6 +88,23 @@ public class GroupManager {
                 }
             }
         }
+    }
+    
+    @Mod.EventBusSubscriber(modid = ClaimItAPI.MOD_ID)
+    private static class InternalGroupEventHandler {
+
+        @SubscribeEvent(priority = EventPriority.LOW)
+        public static void onGroupClaimAdded(GroupClaimAddedEvent e) {
+            claimToGroup.putIfAbsent(e.getClaim(), new HashSet<Group>());
+            claimToGroup.get(e.getClaim()).add(e.getGroup());
+        }
+
+        @SubscribeEvent(priority = EventPriority.LOW)
+        public static void onGroupClaimRemoved(GroupClaimAddedEvent e) {
+            if(claimToGroup.putIfAbsent(e.getClaim(), new HashSet<Group>()) != null)
+                claimToGroup.get(e.getClaim()).remove(e.getGroup());
+        }
+
     }
 
 }
