@@ -1,15 +1,18 @@
 package its_meow.claimit.api.permission;
 
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
 import javax.annotation.Nullable;
 
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
+import com.google.common.collect.ImmutableSet;
+
 public class ClaimPermissionRegistry {
 
-	private static Map<String, ClaimPermissionMember> memberPermissions = new HashMap<String, ClaimPermissionMember>();
-	private static Map<String, ClaimPermissionToggle> togglePermissions = new HashMap<String, ClaimPermissionToggle>();
+	private static BiMap<String, ClaimPermissionMember> memberPermissions = HashBiMap.create();
+	private static BiMap<String, ClaimPermissionToggle> togglePermissions = HashBiMap.create();
 	private static Map<ClaimPermissionMember, ClaimPermissionToggle> memberToggleMap = new HashMap<ClaimPermissionMember, ClaimPermissionToggle>();
 	
 	/** Add a member permission to the registry to be used in claims 
@@ -18,6 +21,9 @@ public class ClaimPermissionRegistry {
 		if(memberPermissions.containsKey(permission.parsedName)) {
 			throw new RuntimeException("Identical member permission ID registered: " + permission.parsedName);
 		}
+		if(memberPermissions.containsValue(permission)) {
+            throw new RuntimeException("Indentical member permissions registered under IDs: " + memberPermissions.inverse().get(permission) + " and " + permission.parsedName);
+        }
 		memberPermissions.put(permission.parsedName, permission);
 	}
 	
@@ -26,6 +32,9 @@ public class ClaimPermissionRegistry {
 	public static void addPermission(ClaimPermissionToggle permission) {
 		if(togglePermissions.containsKey(permission.parsedName)) {
 			throw new RuntimeException("Identical toggle permission ID registered: " + permission.parsedName);
+		}
+		if(togglePermissions.containsValue(permission)) {
+		    throw new RuntimeException("Indentical toggle permissions registered under IDs: " + togglePermissions.inverse().get(permission) + " and " + permission.parsedName);
 		}
 		togglePermissions.put(permission.parsedName, permission);
 	}
@@ -40,13 +49,13 @@ public class ClaimPermissionRegistry {
 	}
 	
 	/** @return The list of member permissions **/
-	public static final Collection<ClaimPermissionMember> getMemberPermissions() {
-		return memberPermissions.values();
+	public static final ImmutableSet<ClaimPermissionMember> getMemberPermissions() {
+		return ImmutableSet.copyOf(memberPermissions.values());
 	}
 	
 	/** @return The list of toggle permissions **/
-	public static final Collection<ClaimPermissionToggle> getTogglePermissions() {
-		return togglePermissions.values();
+	public static final ImmutableSet<ClaimPermissionToggle> getTogglePermissions() {
+		return ImmutableSet.copyOf(togglePermissions.values());
 	}
 	
 	/** @param name - The name of the permission to get
