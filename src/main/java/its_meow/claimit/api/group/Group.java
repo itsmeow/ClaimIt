@@ -1,20 +1,19 @@
 package its_meow.claimit.api.group;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSetMultimap;
+import com.google.common.collect.SetMultimap;
 
 import its_meow.claimit.api.claim.ClaimArea;
 import its_meow.claimit.api.event.GroupClaimAddedEvent;
 import its_meow.claimit.api.event.GroupClaimRemovedEvent;
 import its_meow.claimit.api.permission.ClaimPermissionMember;
-import its_meow.claimit.api.permission.ClaimPermissionRegistry;
+import its_meow.claimit.api.util.BiMultiMap;
 import its_meow.claimit.api.util.ClaimNBTUtil;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
@@ -23,20 +22,14 @@ import net.minecraftforge.common.MinecraftForge;
 public class Group {
 
     protected String name;
-    protected Map<ClaimPermissionMember, ArrayList<UUID>> memberLists;
-    protected Map<UUID, Set<ClaimPermissionMember>> members = new HashMap<UUID, Set<ClaimPermissionMember>>();
-    protected ArrayList<ClaimArea> claims = new ArrayList<ClaimArea>();
+    protected BiMultiMap<ClaimPermissionMember, UUID> memberLists;
+    protected Set<ClaimArea> claims = new HashSet<ClaimArea>();
     protected UUID owner;
 
     public Group(String name, UUID owner) {
         this.name = name;
         this.owner = owner;
-        this.memberLists = new HashMap<ClaimPermissionMember, ArrayList<UUID>>();
-        for(ClaimPermissionMember perm : ClaimPermissionRegistry.getMemberPermissions()) {
-            if(!memberLists.containsKey(perm)) {
-                this.memberLists.put(perm, new ArrayList<UUID>());
-            }
-        }
+        this.memberLists = new BiMultiMap<ClaimPermissionMember, UUID>();
     }
     
     /**
@@ -59,9 +52,7 @@ public class Group {
         if(uuid.equals(owner)) {
             return false;
         }
-        this.members.putIfAbsent(uuid, new HashSet<ClaimPermissionMember>());
-        this.members.get(uuid).add(permission);
-        return this.memberLists.get(permission).add(uuid);
+        return this.memberLists.put(permission, uuid);
     }
 
     /**
@@ -84,10 +75,8 @@ public class Group {
         if(uuid.equals(owner)) {
             return false;
         }
-        boolean result = this.memberLists.get(permission).remove(uuid);
-        this.members.putIfAbsent(uuid, new HashSet<ClaimPermissionMember>());
-        this.members.get(uuid).remove(permission);
-        if(this.members.get(uuid).size() == 0) {
+        boolean result = this.memberLists.remove(permission, uuid);
+        if(this.memberLists.getKeys(uuid).size() == 0) {
             this.removeMemberClaims(uuid);
         }
         return result;
@@ -110,7 +99,7 @@ public class Group {
      * @return true if the member has this permission or member is owner
      */
     public boolean hasMemberPermission(UUID uuid, ClaimPermissionMember permission) {
-        return this.memberLists.get(permission).contains(uuid) || uuid.equals(this.owner);
+        return this.memberLists.getKeys(uuid).contains(permission) || uuid.equals(this.owner);
     }
     
     /**
@@ -189,8 +178,10 @@ public class Group {
         return this.owner.equals(uuid);
     }
     
-    protected void addMemberPerms(Map<ClaimPermissionMember, ArrayList<UUID>> memberLists) {
-        memberLists.forEach((permission, uuids) -> uuids.forEach(uuid -> this.addMemberPermission(uuid, permission)));
+    protected void addMembers(SetMultimap<ClaimPermissionMember, UUID> memberLists) {
+        for(ClaimPermissionMember key : memberLists.keySet()) {
+            this.memberLists.putAll(key, memberLists.get(key));
+        }
     }
     
     protected void addClaims(ArrayList<ClaimArea> claims) {
@@ -205,7 +196,7 @@ public class Group {
         NBTTagCompound compound = new NBTTagCompound();
         compound.setUniqueId("owner", this.owner);
         compound.setString("name", name);
-        compound = ClaimNBTUtil.writeMembers(compound, this.memberLists);
+        compound = ClaimNBTUtil.writeMembers(compound, this.memberLists.getKeysToValues());
         compound = ClaimNBTUtil.writeClaimNames(compound, this.claims);
         return compound;
     }
@@ -219,7 +210,7 @@ public class Group {
         UUID owner = compound.getUniqueId("owner");
         String name = compound.getString("name");
         Group group = new Group(name, owner);
-        group.addMemberPerms(ClaimNBTUtil.readMembers(compound));
+        group.addMembers(ClaimNBTUtil.readMembers(compound));
         group.addClaims(ClaimNBTUtil.readClaimNames(compound));
         return group;
     }
@@ -231,18 +222,26 @@ public class Group {
      * @return true if the list contains this member
      */
     public boolean inPermissionList(ClaimPermissionMember permission, UUID id) {
-        return this.memberLists.get(permission).contains(id);
+        Set<UUID> members = this.memberLists.getValues(permission);
+        if(members != null && members.contains(id)) {
+            return true;
+        }
+        return false;
     }
 
     public UUID getOwner() {
         return this.owner;
     }
     
-    public ImmutableMap<UUID, Set<ClaimPermissionMember>> getMembers() {
-        return ImmutableMap.copyOf(this.members);
+    public ImmutableSetMultimap<UUID, ClaimPermissionMember> getMembers() {
+        return this.memberLists.getValuesToKeys();
+    }
+
+    public void removeAllClaims() {
+        this.claims.forEach(claim -> this.removeClaim(claim));
     }
     
-    public ImmutableMap<ClaimPermissionMember, ArrayList<UUID>> getMemberPermissions() {
-        return ImmutableMap.copyOf(this.memberLists);
+    public void removeAllMembers() {
+        this.memberLists.getKeysToValues().forEach((key, value) -> this.memberLists.remove(key, value));
     }
 }

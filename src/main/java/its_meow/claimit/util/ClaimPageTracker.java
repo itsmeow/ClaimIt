@@ -11,6 +11,8 @@ import com.google.common.collect.ImmutableList;
 import its_meow.claimit.ClaimIt;
 import its_meow.claimit.api.claim.ClaimArea;
 import its_meow.claimit.api.event.ClaimAddedEvent;
+import its_meow.claimit.api.event.ClaimRemovedEvent;
+import its_meow.claimit.api.event.ClaimsClearedEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
@@ -41,6 +43,40 @@ public class ClaimPageTracker {
         if(!addedAny2) {
             playerPages.get(owner).add(new ClaimPage(claim, null, null));
         }
+    }
+    
+    @SubscribeEvent
+    public static void claimRemoved(ClaimRemovedEvent e) {
+        ArrayList<ClaimPage> playerPageList = playerPages.get(e.getClaim().getOwner());
+        if(playerPageList != null && !playerPageList.isEmpty()) {
+            playerPages.put(e.getClaim().getOwner(), removeAndRebuild(playerPageList, e.getClaim()));
+        }
+        if(!pages.isEmpty()) {
+            pages = removeAndRebuild(pages, e.getClaim());
+        }
+    }
+        
+    private static ArrayList<ClaimPage> removeAndRebuild(ArrayList<ClaimPage> list, ClaimArea toRemove) {
+        ArrayList<ClaimArea> claimList = new ArrayList<ClaimArea>();
+        ArrayList<ClaimPage> newList = new ArrayList<ClaimPage>();
+        list.forEach(page -> page.getClaimsInPage().forEach(claim -> claimList.add(claim)));
+        claimList.remove(toRemove);
+        for(ClaimArea claim : claimList) {
+            boolean addedAny = false;
+            for(ClaimPage page : newList) {
+                if(page.addToPageIfNotFull(claim)) { addedAny = true; break; }
+            }
+            if(!addedAny) {
+                newList.add(new ClaimPage(claim, null, null));
+            }
+        }
+        return newList;
+    }
+    
+    @SubscribeEvent
+    public static void claimsCleared(ClaimsClearedEvent.Pre e) {
+        pages.clear();
+        playerPages.clear();
     }
     
     @Nullable

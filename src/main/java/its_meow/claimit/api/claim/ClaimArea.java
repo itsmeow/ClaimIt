@@ -1,9 +1,8 @@
 package its_meow.claimit.api.claim;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 import javax.annotation.Nullable;
@@ -11,6 +10,8 @@ import javax.annotation.Nullable;
 import org.apache.logging.log4j.Level;
 
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSetMultimap;
+import com.google.common.collect.SetMultimap;
 
 import its_meow.claimit.api.ClaimItAPI;
 import its_meow.claimit.api.group.Group;
@@ -19,6 +20,7 @@ import its_meow.claimit.api.permission.ClaimPermissionMember;
 import its_meow.claimit.api.permission.ClaimPermissionRegistry;
 import its_meow.claimit.api.permission.ClaimPermissionToggle;
 import its_meow.claimit.api.permission.ClaimPermissions;
+import its_meow.claimit.api.util.BiMultiMap;
 import its_meow.claimit.api.util.ClaimNBTUtil;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
@@ -48,7 +50,7 @@ public class ClaimArea {
 	 * defaults to {@link name}**/
 	private String viewName;
 	/* Private field for storing member UUIDs */
-	private Map<ClaimPermissionMember, ArrayList<UUID>> memberLists;
+	private BiMultiMap<ClaimPermissionMember, UUID> memberLists;
 	private Map<ClaimPermissionToggle, Boolean> toggles;
 
 	public ClaimArea(int dimID, int posX, int posZ, int sideLengthX, int sideLengthZ, EntityPlayer player) {
@@ -63,17 +65,10 @@ public class ClaimArea {
 		this.sideLengthZ = sideLengthZ;
 		this.ownerUUID = ownerUUID;
 		this.ownerUUIDOffline = ownerUUIDOffline;
-		this.memberLists = new HashMap<ClaimPermissionMember, ArrayList<UUID>>();
-		for(ClaimPermissionMember perm : ClaimPermissionRegistry.getMemberPermissions()) {
-			if(!memberLists.containsKey(perm)) {
-				this.memberLists.put(perm, new ArrayList<UUID>());
-			}
-		}
+		this.memberLists = new BiMultiMap<ClaimPermissionMember, UUID>();
 		this.toggles = new HashMap<ClaimPermissionToggle, Boolean>();
 		for(ClaimPermissionToggle perm : ClaimPermissionRegistry.getTogglePermissions()) {
-			if(!toggles.containsKey(perm)) {
-				this.toggles.put(perm, perm.defaultValue);
-			}
+		    this.toggles.putIfAbsent(perm, perm.defaultValue);
 		}
 
 		// Simplify main corner to the lowest x and y value
@@ -162,24 +157,22 @@ public class ClaimArea {
 	}
 
 
-	public boolean hasPermission(ClaimPermissionMember permission, EntityPlayer player) {
-		if(this.isOwner(player)) {
-			return true;
-		}
-		ClaimPermissionToggle toggle = ClaimPermissionRegistry.getToggleFor(permission);
-		if(toggle != null && isPermissionToggled(toggle)) {
-			return true;
-		}
-		ArrayList<UUID> array = getArrayForPermission(permission);
-		if(array != null && array.contains(player.getGameProfile().getId())) {
-			return true;
-		}
-		for(Group group : GroupManager.getGroups()) {
-		    if(group.hasPermissionInClaim(player, permission, this)) {
-		        return true;
-		    }
-		}
-		return false;
+	public boolean hasPermission(ClaimPermissionMember permission, EntityPlayer player) {		
+		return this.isOwner(player) || isMemberPermissionToggled(permission) || this.memberLists.getValues(permission).contains(player.getGameProfile().getId()) || hasPermissionFromGroup(permission, player);
+	}
+	
+	private boolean hasPermissionFromGroup(ClaimPermissionMember permission, EntityPlayer player) {
+	    for(Group group : GroupManager.getGroups()) {
+            if(group.hasPermissionInClaim(player, permission, this)) {
+                return true;
+            }
+        }
+	    return false;
+	}
+	
+	private boolean isMemberPermissionToggled(ClaimPermissionMember permission) {
+	    ClaimPermissionToggle toggle = ClaimPermissionRegistry.getToggleFor(permission);
+	    return toggle != null && isPermissionToggled(toggle);
 	}
 
 	/** Tells whether a permission is enabled in a claim or not 
@@ -214,8 +207,8 @@ public class ClaimArea {
 	/** Do NOT use this for permission checking. Only for use in removing members. 
 	 * Why: doesn't account for admins or the owner of the claim. It purely returns if a member is in the list.**/
 	public boolean inPermissionList(ClaimPermissionMember permission, UUID id) {
-		ArrayList<UUID> array = getArrayForPermission(permission);
-		if(array != null && array.contains(id)) {
+		Set<UUID> members = this.memberLists.getValues(permission);
+		if(members != null && members.contains(id)) {
 			return true;
 		}
 		return false;
@@ -223,23 +216,6 @@ public class ClaimArea {
 	
 	protected void setToggles(Map<ClaimPermissionToggle, Boolean> toggles) {
 	    toggles.forEach((p, b) -> this.toggles.put(p, b));
-	}
-
-	/** Get the member arrays for a permission 
-	 * @param permission - The permission to get the array for. 
-	 * @return The array used to store members of permission
-	 * **/
-	@Nullable
-	public ArrayList<UUID> getArrayForPermission(ClaimPermissionMember permission) {
-		return memberLists.get(permission);
-	}
-	
-	/**
-	 * Get the members arrays for all permissions
-	 * @return A map of member permissions to UUID lists (members)
-	 */
-	public ImmutableMap<ClaimPermissionMember, ArrayList<UUID>> getPermissionArrays() {
-	    return ImmutableMap.copyOf(this.memberLists);
 	}
 
 	/** Adds a member to the member list with a given permission and player object 
@@ -257,12 +233,7 @@ public class ClaimArea {
 	 * @param uuid - The player UUID that will be added
 	 * @return Whether the adding was successful or not (if the player is already in the list)**/
 	public boolean addMember(ClaimPermissionMember permission, UUID uuid) {
-		ArrayList<UUID> array = getArrayForPermission(permission);
-		if(!array.contains(uuid)) {
-			array.add(uuid);
-			return true;
-		}
-		return false;
+		return this.memberLists.put(permission, uuid);
 	}
 
 	/** Removes a member from the member list with a given permission and player object
@@ -280,42 +251,18 @@ public class ClaimArea {
 	 * @param uuid - The player UUID that will be removed
 	 * @return Whether the removal was successful or not (false: if the player never had the permission) **/
 	public boolean removeMember(ClaimPermissionMember permission, UUID uuid) {
-		ArrayList<UUID> array = getArrayForPermission(permission);
-		if(array.contains(uuid)) {
-			array.remove(uuid);
-			return true;
-		}
-		return false;
+		return this.memberLists.remove(permission, uuid);
 	}
 	
-	protected void addMembers(Map<ClaimPermissionMember, ArrayList<UUID>> memberLists) {
-	    this.memberLists = ClaimNBTUtil.mergeMembers(this.memberLists, memberLists);
+	protected void addMembers(SetMultimap<ClaimPermissionMember, UUID> memberLists) {
+	    for(ClaimPermissionMember key : memberLists.keySet()) {
+	        this.memberLists.putAll(key, memberLists.get(key));
+	    }
 	}
 
 	/** Returns a list of member UUIDs along with a set of their permissions. Used for easier displaying of member data. **/
-	public Map<UUID, HashSet<ClaimPermissionMember>> getMembers() {
-		HashMap<UUID, HashSet<ClaimPermissionMember>> map = new HashMap<UUID, HashSet<ClaimPermissionMember>>();
-		for(ClaimPermissionMember perm : ClaimPermissionRegistry.getMemberPermissions()) {
-			ArrayList<UUID> members = this.getArrayForPermission(perm);
-			for(UUID member : members) {
-				if(map.get(member) == null) {
-					HashSet<ClaimPermissionMember> set = new HashSet<ClaimPermissionMember>();
-					set.add(perm);
-					if(map.containsKey(member)) {
-						map.remove(member);
-					}
-					map.put(member, set);
-				} else {
-					HashSet<ClaimPermissionMember> set = map.get(member);
-					set.add(perm);
-					if(map.containsKey(member)) {
-						map.remove(member);
-					}
-					map.put(member, set);
-				}
-			}
-		}
-		return map;
+	public ImmutableSetMultimap<UUID,ClaimPermissionMember> getMembers() {
+		return this.memberLists.getValuesToKeys();
 	}
 
 	/** (Please account for world differences if using this!)
@@ -464,7 +411,7 @@ public class ClaimArea {
         data.setString("OWNERUIDOFF", ownerOffline.toString());
         data.setString("TRUEVIEWNAME", this.getTrueViewName());
         
-        data = ClaimNBTUtil.writeMembers(data, this.getPermissionArrays());
+        data = ClaimNBTUtil.writeMembers(data, this.memberLists.getKeysToValues());
         data = ClaimNBTUtil.writeToggles(data, this.getToggles());
         return data;
 	}

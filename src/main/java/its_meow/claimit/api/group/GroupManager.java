@@ -1,21 +1,17 @@
 package its_meow.claimit.api.group;
 
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
 
 import javax.annotation.Nullable;
 
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 
 import its_meow.claimit.api.ClaimItAPI;
 import its_meow.claimit.api.claim.ClaimArea;
 import its_meow.claimit.api.event.GroupClaimAddedEvent;
-import its_meow.claimit.api.permission.ClaimPermissionMember;
+import its_meow.claimit.api.event.GroupClaimRemovedEvent;
 import its_meow.claimit.api.serialization.GlobalDataSerializer;
+import its_meow.claimit.api.util.BiMultiMap;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
@@ -24,7 +20,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 public class GroupManager {
 
     private static HashMap<String, Group> groups = new HashMap<String, Group>();
-    private static HashMap<ClaimArea, Set<Group>> claimToGroup = new HashMap<ClaimArea, Set<Group>>();
+    private static BiMultiMap<ClaimArea, Group> claimToGroup = new BiMultiMap<ClaimArea, Group>();
 
     public static boolean addGroup(Group group) {
         if(groups.containsKey(group.getName())) {
@@ -35,6 +31,8 @@ public class GroupManager {
     }
 
     public static void removeGroup(Group group) {
+        group.removeAllClaims();
+        group.removeAllMembers();
         groups.remove(group.getName());
     }
 
@@ -45,24 +43,7 @@ public class GroupManager {
 
     @Nullable
     public static ImmutableSet<Group> getGroupsForClaim(ClaimArea claim) {
-        if(!claimToGroup.containsKey(claim)) {
-            return null;
-        }
-        return ImmutableSet.copyOf(claimToGroup.get(claim));
-    }
-    
-    @Nullable
-    public static ImmutableMap<UUID, Set<ClaimPermissionMember>> getAllGroupPermissionsForClaim(ClaimArea claim) {
-        Map<UUID, Set<ClaimPermissionMember>> map = new HashMap<UUID, Set<ClaimPermissionMember>>();
-        getGroupsForClaim(claim).forEach(group -> {
-            Map<UUID, Set<ClaimPermissionMember>> groupMap = group.getMembers();
-            groupMap.forEach((uuid, permSet) -> {
-                map.putIfAbsent(uuid, new HashSet<ClaimPermissionMember>());
-                map.get(uuid).addAll(permSet);
-            });
-        });
-        if(map.isEmpty()) return null;
-        return ImmutableMap.copyOf(map);
+        return ImmutableSet.copyOf(claimToGroup.getValues(claim));
     }
 
     public static boolean renameGroup(String name, String newName) {
@@ -113,14 +94,12 @@ public class GroupManager {
 
         @SubscribeEvent(priority = EventPriority.LOW)
         public static void onGroupClaimAdded(GroupClaimAddedEvent e) {
-            claimToGroup.putIfAbsent(e.getClaim(), new HashSet<Group>());
-            claimToGroup.get(e.getClaim()).add(e.getGroup());
+            claimToGroup.put(e.getClaim(), e.getGroup());
         }
 
         @SubscribeEvent(priority = EventPriority.LOW)
-        public static void onGroupClaimRemoved(GroupClaimAddedEvent e) {
-            if(claimToGroup.putIfAbsent(e.getClaim(), new HashSet<Group>()) != null)
-                claimToGroup.get(e.getClaim()).remove(e.getGroup());
+        public static void onGroupClaimRemoved(GroupClaimRemovedEvent e) {
+            claimToGroup.remove(e.getClaim(), e.getGroup());
         }
 
     }

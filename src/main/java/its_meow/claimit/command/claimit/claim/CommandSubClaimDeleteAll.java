@@ -83,10 +83,12 @@ public class CommandSubClaimDeleteAll extends CommandCIBase {
 				if(owned == null) {
 					throw new CommandException("This player owns no claims.");
 				}
-				for(ClaimArea claim : owned) {
-					ClaimManager.getManager().deleteClaim(claim);
-				}
-				sendMessage(sender, "Removed " + username + "'s claims.");
+                boolean failed = false;
+                for(ClaimArea claim : owned) {
+                    boolean s = ClaimManager.getManager().deleteClaim(claim);
+                    if(!s) failed = true;
+                }
+                sendMessage(sender, "Removed " + username + "'s claims." + (failed ? " Something prevented some claims from being removed." : ""));
 			} else if(sender instanceof EntityPlayer) {
 				EntityPlayer player = (EntityPlayer) sender;
 				if(ClaimManager.getManager().isAdmin(player)) {
@@ -94,10 +96,12 @@ public class CommandSubClaimDeleteAll extends CommandCIBase {
 					if(owned == null) {
 						throw new CommandException("This player owns no claims.");
 					}
+					boolean failed = false;
 					for(ClaimArea claim : owned) {
-						ClaimManager.getManager().deleteClaim(claim);
+						boolean s = ClaimManager.getManager().deleteClaim(claim);
+						if(!s) failed = true;
 					}
-					sendMessage(sender, "Removed " + username + "'s claims.");
+					sendMessage(sender, "Removed " + username + "'s claims." + (failed ? " Something prevented some claims from being removed." : ""));
 				} else {
 					sendMessage(sender, RED + "You must be admin to use the playername argument!");
 				}

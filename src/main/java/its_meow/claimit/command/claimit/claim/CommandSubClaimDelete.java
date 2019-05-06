@@ -49,8 +49,8 @@ public class CommandSubClaimDelete extends CommandCIBase {
 		}
 
 		if((sender instanceof EntityPlayer && (claim.isOwner((EntityPlayer) sender) || ClaimManager.getManager().isAdmin((EntityPlayer) sender))) || (!(sender instanceof EntityPlayer) && sender.canUseCommand(2, ""))) {
-			ClaimManager.getManager().deleteClaim(claim);
-			sendMessage(sender, YELLOW + "Claim deleted.");
+			boolean success = ClaimManager.getManager().deleteClaim(claim);
+			sendMessage(sender, YELLOW + (success ? "Claim deleted." : "Claim was not deleted, something canceled it."));
 		} else {
 			sendMessage(sender, RED + "You do not own this claim!");
 		}

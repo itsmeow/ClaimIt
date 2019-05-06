@@ -6,6 +6,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+import com.google.common.collect.MultimapBuilder;
+import com.google.common.collect.SetMultimap;
+
 import its_meow.claimit.api.claim.ClaimArea;
 import its_meow.claimit.api.claim.ClaimManager;
 import its_meow.claimit.api.permission.ClaimPermissionMember;
@@ -18,7 +21,7 @@ import net.minecraftforge.common.util.Constants;
 
 public class ClaimNBTUtil {
     
-    public static NBTTagCompound writeMembers(NBTTagCompound tag, Map<ClaimPermissionMember, ArrayList<UUID>> uuids) {
+    public static NBTTagCompound writeMembers(NBTTagCompound tag, SetMultimap<ClaimPermissionMember, UUID> uuids) {
         NBTTagCompound memberCompound = new NBTTagCompound();
         for(ClaimPermissionMember perm : uuids.keySet()) {
             NBTTagList members = new NBTTagList();
@@ -84,18 +87,17 @@ public class ClaimNBTUtil {
         return list;
     }
     
-    public static Map<ClaimPermissionMember, ArrayList<UUID>> readMembers(NBTTagCompound tag) {
-        HashMap<ClaimPermissionMember, ArrayList<UUID>> map = new HashMap<ClaimPermissionMember, ArrayList<UUID>>();
+    public static SetMultimap<ClaimPermissionMember, UUID> readMembers(NBTTagCompound tag) {
+        SetMultimap<ClaimPermissionMember, UUID> map = MultimapBuilder.hashKeys().hashSetValues().build();
         NBTTagCompound memberCompound = tag.getCompoundTag("MEMBERS");
         for(String permString : memberCompound.getKeySet()) {
             if(ClaimPermissionRegistry.getPermissionMember(permString) != null) {
                 NBTTagList tagList = memberCompound.getTagList(permString, Constants.NBT.TAG_STRING);
                 ClaimPermissionMember perm = ClaimPermissionRegistry.getPermissionMember(permString);
-                map.putIfAbsent(perm, new ArrayList<UUID>());
                 for(int i = 0; i < tagList.tagCount(); i++) {
                     String uuidString = tagList.getStringTagAt(i);
                     UUID member = UUID.fromString(uuidString);
-                    map.get(perm).add(member);
+                    map.put(perm, member);
                 }
             }
         }
@@ -113,20 +115,6 @@ public class ClaimNBTUtil {
                 } else {
                     map.put(perm, toggles.getBoolean(permString));
                 }
-            }
-        }
-        return map;
-    }
-    
-    public static Map<ClaimPermissionMember, ArrayList<UUID>> mergeMembers(Map<ClaimPermissionMember, ArrayList<UUID>> one, Map<ClaimPermissionMember, ArrayList<UUID>> two) {
-        HashMap<ClaimPermissionMember, ArrayList<UUID>> map = new HashMap<ClaimPermissionMember, ArrayList<UUID>>();
-        for(ClaimPermissionMember perm : ClaimPermissionRegistry.getMemberPermissions()) {
-            map.put(perm, new ArrayList<UUID>());
-            if(one.containsKey(perm)) {
-                map.get(perm).addAll(one.get(perm));
-            }
-            if(two.containsKey(perm)) {
-                map.get(perm).addAll(two.get(perm));
             }
         }
         return map;

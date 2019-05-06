@@ -1,11 +1,17 @@
 package its_meow.claimit.command.claimit.claim.permission;
 
-import static net.minecraft.util.text.TextFormatting.*;
+import static net.minecraft.util.text.TextFormatting.BLUE;
+import static net.minecraft.util.text.TextFormatting.BOLD;
+import static net.minecraft.util.text.TextFormatting.GREEN;
+import static net.minecraft.util.text.TextFormatting.RED;
+import static net.minecraft.util.text.TextFormatting.YELLOW;
 
-import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+
+import com.google.common.collect.ImmutableSetMultimap;
+import com.google.common.collect.MultimapBuilder;
+import com.google.common.collect.SetMultimap;
 
 import its_meow.claimit.api.claim.ClaimArea;
 import its_meow.claimit.api.claim.ClaimManager;
@@ -69,7 +75,7 @@ public class CommandSubClaimPermissionList extends CommandCIBase {
     }
 
     private static void outputMembers(ClaimArea claim, ICommandSender sender) throws CommandException {
-        Map<UUID, HashSet<ClaimPermissionMember>> permMap = claim.getMembers();
+        ImmutableSetMultimap<UUID,ClaimPermissionMember> permMap = claim.getMembers();
         Set<Group> groups = GroupManager.getGroupsForClaim(claim);
         if(sender instanceof EntityPlayer) {
             if(!claim.canManage((EntityPlayer) sender)) {
@@ -83,14 +89,17 @@ public class CommandSubClaimPermissionList extends CommandCIBase {
                 sendMessage(sender, YELLOW + CommandUtils.getNameForUUID(uuid, sender.getEntityWorld().getMinecraftServer()) + BLUE + " - " + GREEN + getMemberLine(uuid, permMap.get(uuid)));
             }
         }
-        if(groups.size() > 0) {
+        if(groups != null && groups.size() > 0) {
             for(Group group : groups) {
-                Map<UUID, Set<ClaimPermissionMember>> groupPermMap = group.getMembers();
-                groupPermMap.put(group.getOwner(), ClaimPermissionRegistry.getMemberPermissions());
+                SetMultimap<UUID, ClaimPermissionMember> singletonMap = MultimapBuilder.hashKeys().hashSetValues().build();
+                singletonMap.putAll(group.getOwner(), ClaimPermissionRegistry.getMemberPermissions());
+                singletonMap.putAll(group.getMembers());
+                ImmutableSetMultimap<UUID, ClaimPermissionMember> groupPermMap = ImmutableSetMultimap.copyOf(singletonMap);
+                
                 if(groupPermMap.size() > 0) {
                     sendMessage(sender, YELLOW + "" + BOLD + "Members from: " + GREEN + group.getName());
-                    groupPermMap.forEach((uuid, permSet) -> {
-                        sendMessage(sender, YELLOW + " -- " + CommandUtils.getNameForUUID(uuid, sender.getEntityWorld().getMinecraftServer()) + BLUE + " - " + GREEN + getMemberLine(uuid, permSet));
+                    groupPermMap.keySet().forEach((uuid) -> {
+                        sendMessage(sender, YELLOW + " -- " + CommandUtils.getNameForUUID(uuid, sender.getEntityWorld().getMinecraftServer()) + BLUE + " - " + GREEN + getMemberLine(uuid, groupPermMap.get(uuid)));
                     });
                 } else {
                     sendMessage(sender, "This is a bad, bad bug. Report this. A group is marked for this claim, but it does contain any members");

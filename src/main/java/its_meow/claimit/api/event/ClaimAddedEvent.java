@@ -4,7 +4,7 @@ import its_meow.claimit.api.claim.ClaimArea;
 
 /**
  * Fires when a claim is added using {@link its_meow.claimit.api.claim.ClaimManager#addClaimToListInsecurely(ClaimArea)} (or any methods that call such)
- * Canceling stops the claim from being added to the list
+ * Non-cancelable. Cancel deserialized claims using {@link ClaimDeserializationEvent} and cancel created claims using {@link ClaimCreatedEvent}
  * @author its_meow
  */
 public class ClaimAddedEvent extends ClaimEvent {

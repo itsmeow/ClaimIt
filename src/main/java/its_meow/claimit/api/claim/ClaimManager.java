@@ -15,7 +15,9 @@ import its_meow.claimit.api.ClaimItAPI;
 import its_meow.claimit.api.event.ClaimAddedEvent;
 import its_meow.claimit.api.event.ClaimCreatedEvent;
 import its_meow.claimit.api.event.ClaimDeserializationEvent;
+import its_meow.claimit.api.event.ClaimRemovedEvent;
 import its_meow.claimit.api.event.ClaimSerializationEvent;
+import its_meow.claimit.api.event.ClaimsClearedEvent;
 import its_meow.claimit.api.serialization.ClaimSerializer;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
@@ -55,9 +57,11 @@ public class ClaimManager {
 		return admins.contains(player);
 	}
 
-	/** Removes a claim. **/
-	public void deleteClaim(ClaimArea claim) {
-		claims.remove(claim);
+	/** Removes a claim. 
+	 * @return True if the {@link ClaimRemovedEvent} wasn't canceled and if the claim was present in the list
+	 **/
+	public boolean deleteClaim(ClaimArea claim) {
+		return !MinecraftForge.EVENT_BUS.post(new ClaimRemovedEvent(claim)) && claims.remove(claim);
 	}
 
 	/** @return A copy of the claims list. Final. **/
@@ -244,7 +248,9 @@ public class ClaimManager {
 	/** Forces a world to load claim data. 
 	 * Overwrites new claim data since last load (this is because it is used at world/server startup)! A "reload" should probably save before doing this. **/
 	public void deserialize() {
+	    MinecraftForge.EVENT_BUS.post(new ClaimsClearedEvent.Pre());
 		claims.clear();
+	    MinecraftForge.EVENT_BUS.post(new ClaimsClearedEvent.Post());
 		ClaimSerializer store = ClaimSerializer.get();
 		NBTTagCompound comp = store.data;
 		if(comp != null) {

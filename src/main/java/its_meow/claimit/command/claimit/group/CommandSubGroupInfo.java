@@ -7,11 +7,10 @@ import static net.minecraft.util.text.TextFormatting.GREEN;
 import static net.minecraft.util.text.TextFormatting.RED;
 import static net.minecraft.util.text.TextFormatting.YELLOW;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
 import java.util.UUID;
+
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.ImmutableSetMultimap;
 
 import its_meow.claimit.api.claim.ClaimArea;
 import its_meow.claimit.api.group.Group;
@@ -74,27 +73,21 @@ public class CommandSubGroupInfo extends CommandCIBase {
 
         sendMessage(player, BLUE + "" + BOLD + "Information for group owned by " + GREEN + "" + BOLD + ownerName + BLUE + "" + BOLD + ":");
         sendMessage(player, BLUE + "Group Name: " + DARK_GREEN + group.getName());
-        Map<ClaimPermissionMember, ArrayList<UUID>> memberMap = group.getMemberPermissions();
-        HashMap<UUID, HashSet<ClaimPermissionMember>> permMap = new HashMap<UUID, HashSet<ClaimPermissionMember>>();
-        for(ClaimPermissionMember perm : memberMap.keySet()) {
-            for(UUID uuid : memberMap.get(perm)) {
-                permMap.putIfAbsent(uuid, new HashSet<ClaimPermissionMember>());
-                permMap.get(uuid).add(perm);
-            }
-        }
+  
+        ImmutableSetMultimap<UUID, ClaimPermissionMember> permMap = group.getMembers();
         if(permMap == null || permMap.isEmpty()) {
             sendMessage(player, YELLOW + "No members.");
         } else {
             sendMessage(player, YELLOW + "" + BOLD + "Members:");
             for(UUID member : permMap.keySet()) {
                 String permString = "";
-                HashSet<ClaimPermissionMember> permSet = permMap.get(member);
+                ImmutableSet<ClaimPermissionMember> permSet = permMap.get(member);
                 for(ClaimPermissionMember p : permSet) {
                     permString += p.parsedName + ", ";
                 }
                 int end = permString.lastIndexOf(',');
                 permString = permString.substring(0, end);
-                sendMessage(player, YELLOW + CommandUtils.getNameForUUID(member, player.getEntityWorld().getMinecraftServer()) + BLUE + ":" + GREEN + permString);
+                sendMessage(player, YELLOW + CommandUtils.getNameForUUID(member, player.getEntityWorld().getMinecraftServer()) + BLUE + ": " + GREEN + permString);
             }
         }
         if(group.getClaims().size() == 0 || group.getClaims().isEmpty()) {
