@@ -1,18 +1,21 @@
 package its_meow.claimit.api.group;
 
 import java.util.HashMap;
+import java.util.Set;
 
 import javax.annotation.Nullable;
 
 import com.google.common.collect.ImmutableSet;
 
 import its_meow.claimit.api.ClaimItAPI;
+import its_meow.claimit.api.claim.ClaimArea;
 import its_meow.claimit.api.serialization.GlobalDataSerializer;
 import net.minecraft.nbt.NBTTagCompound;
 
 public class GroupManager {
     
     private static HashMap<String, Group> groups = new HashMap<String, Group>();
+    private static HashMap<ClaimArea, Set<Group>> claimToGroup = new HashMap<ClaimArea, Set<Group>>();
 
     public static boolean addGroup(Group group) {
         if(groups.containsKey(group.getName())) {
