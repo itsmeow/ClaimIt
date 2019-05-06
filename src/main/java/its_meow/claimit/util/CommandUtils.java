@@ -1,7 +1,13 @@
 package its_meow.claimit.util;
 
+import static net.minecraft.util.text.TextFormatting.AQUA;
+import static net.minecraft.util.text.TextFormatting.GREEN;
+import static net.minecraft.util.text.TextFormatting.RED;
+import static net.minecraft.util.text.TextFormatting.YELLOW;
+
 import java.util.UUID;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import com.mojang.authlib.GameProfile;
@@ -17,7 +23,6 @@ import net.minecraft.command.PlayerNotFoundException;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.text.TextComponentString;
-import static net.minecraft.util.text.TextFormatting.*;
 
 public class CommandUtils {
 	
@@ -111,6 +116,22 @@ public class CommandUtils {
 			throw new PlayerNotFoundException("Invalid player: " + username);
 		}
 	}
+	
+	/** Attempts to get name from UUID cache. Requires World to get server instance. 
+     * @param uuid - The UUID to attempt to retrieve the name for
+     * @param server - The server instance
+     * @return The name for this UUID or the UUID as a String if none was found **/
+    @Nonnull
+    public static String getNameForUUID(UUID uuid, MinecraftServer server) {
+        String name = null;
+        GameProfile profile = server.getPlayerProfileCache().getProfileByUUID(uuid);
+        if(profile != null) {
+            name = profile.getName();
+        } else {
+            name = uuid.toString();
+        }
+        return name;
+    }
 	
 	public static boolean isAdmin(ICommandSender sender) {
 	    return (((!(sender instanceof EntityPlayer) && sender.canUseCommand(2, "")) || ((sender instanceof EntityPlayer) && ClaimManager.getManager().isAdmin((EntityPlayer) sender))));

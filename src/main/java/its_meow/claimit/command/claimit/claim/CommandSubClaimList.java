@@ -145,7 +145,7 @@ public class CommandSubClaimList extends CommandCIBase {
                 int i = (pg - 1) * 3;
                 for(ClaimArea claim : cPage.getClaimsInPage()) {
                     sendMessage(sender, DARK_RED  + "" + UNDERLINE + "Claim " + (i + 1));
-                    sendMessage(sender, BLUE + "Owner: " + GREEN + ClaimManager.getPlayerName(claim.getOwner(), sender.getEntityWorld()));
+                    sendMessage(sender, BLUE + "Owner: " + GREEN + CommandUtils.getNameForUUID(claim.getOwner(), server));
                     sender.sendMessage(new TextComponentStyled(BLUE + "Claim True Name: " + YELLOW + claim.getTrueViewName(), new ClaimInfoChatStyle(claim.getTrueViewName())));
                     sendMessage(sender, BLUE + "Dimension: " + DARK_PURPLE + claim.getDimensionID());
                     sender.sendMessage(new TextComponentStyled(BLUE + "Location: " + DARK_PURPLE + (claim.getMainPosition().getX()) + BLUE + ", " + DARK_PURPLE + (claim.getMainPosition().getZ()), new TeleportXYChatStyle(claim.getDimensionID(), claim.getMainPosition().getX(), claim.getMainPosition().getZ())));
@@ -162,7 +162,7 @@ public class CommandSubClaimList extends CommandCIBase {
                 if(filter == null || claim.isTrueOwner(filter)) {
                     i++;
                     sendMessage(sender, "####CLAIM INFO####");
-                    sendMessage(sender, "Claim #" + i + ", owned by: " + ClaimManager.getPlayerName(claim.getOwner(), sender.getEntityWorld()));
+                    sendMessage(sender, "Claim #" + i + ", owned by: " + CommandUtils.getNameForUUID(claim.getOwner(), server));
                     sendMessage(sender, "Claim True Name: " + claim.getTrueViewName());
                     sendMessage(sender, "Dimension: " + claim.getDimensionID());
                     sendMessage(sender, "Location: " + (claim.getMainPosition().getX()) + ", " + (claim.getMainPosition().getZ()));

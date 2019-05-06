@@ -84,7 +84,7 @@ public class CommandSubClaimPermissionList extends CommandCIBase {
             }
             int end = permString.lastIndexOf(',');
             permString = permString.substring(0, end);
-            sendMessage(sender, YELLOW + ClaimManager.getPlayerName(member, sender.getEntityWorld()) + BLUE + " - " + GREEN + permString);
+            sendMessage(sender, YELLOW + CommandUtils.getNameForUUID(member, sender.getEntityWorld().getMinecraftServer()) + BLUE + " - " + GREEN + permString);
         }
     }
 

@@ -14,11 +14,11 @@ import java.util.Map;
 import java.util.UUID;
 
 import its_meow.claimit.api.claim.ClaimArea;
-import its_meow.claimit.api.claim.ClaimManager;
 import its_meow.claimit.api.group.Group;
 import its_meow.claimit.api.group.GroupManager;
 import its_meow.claimit.api.permission.ClaimPermissionMember;
 import its_meow.claimit.command.CommandCIBase;
+import its_meow.claimit.util.CommandUtils;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
@@ -70,7 +70,7 @@ public class CommandSubGroupInfo extends CommandCIBase {
 
     private static void outputGroupInfo(Group group, EntityPlayer player) throws CommandException {
         World world = player.getEntityWorld();
-        String ownerName = ClaimManager.getPlayerName(group.getOwner(), world);
+        String ownerName = CommandUtils.getNameForUUID(group.getOwner(), world.getMinecraftServer());
 
         sendMessage(player, BLUE + "" + BOLD + "Information for group owned by " + GREEN + "" + BOLD + ownerName + BLUE + "" + BOLD + ":");
         sendMessage(player, BLUE + "Group Name: " + DARK_GREEN + group.getName());
@@ -94,7 +94,7 @@ public class CommandSubGroupInfo extends CommandCIBase {
                 }
                 int end = permString.lastIndexOf(',');
                 permString = permString.substring(0, end);
-                sendMessage(player, YELLOW + ClaimManager.getPlayerName(member, player.getEntityWorld()) + BLUE + ":" + GREEN + permString);
+                sendMessage(player, YELLOW + CommandUtils.getNameForUUID(member, player.getEntityWorld().getMinecraftServer()) + BLUE + ":" + GREEN + permString);
             }
         }
         if(group.getClaims().size() == 0 || group.getClaims().isEmpty()) {
@@ -102,7 +102,7 @@ public class CommandSubGroupInfo extends CommandCIBase {
         } else {
             sendMessage(player, YELLOW + "" + BOLD + "Claims:");
             for(ClaimArea claim : group.getClaims()) {
-                sendMessage(player, BLUE + " + " + YELLOW + claim.getDisplayedViewName() + BLUE + " of " + GREEN + ClaimManager.getPlayerName(claim.getOwner(), world));
+                sendMessage(player, BLUE + " + " + YELLOW + claim.getDisplayedViewName() + BLUE + " of " + GREEN + CommandUtils.getNameForUUID(claim.getOwner(), world.getMinecraftServer()));
             }
         }
     }

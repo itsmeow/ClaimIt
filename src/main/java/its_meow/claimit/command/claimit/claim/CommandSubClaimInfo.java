@@ -100,7 +100,7 @@ public class CommandSubClaimInfo extends CommandCIBase {
         World worldIn = sender.getEntityWorld();
         BlockPos[] corners = claim.getTwoMainClaimCorners();
         UUID owner = claim.getOwner();
-        String ownerName = ClaimManager.getPlayerName(owner, worldIn);
+        String ownerName = CommandUtils.getNameForUUID(owner, worldIn.getMinecraftServer());
         if(ownerName == null) {
             ownerName = worldIn.getMinecraftServer().getPlayerProfileCache().getProfileByUUID(owner).getName();
         }

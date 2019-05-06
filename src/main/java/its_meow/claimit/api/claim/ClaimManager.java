@@ -5,13 +5,11 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import org.apache.logging.log4j.Level;
 
 import com.google.common.collect.ImmutableList;
-import com.mojang.authlib.GameProfile;
 
 import its_meow.claimit.api.ClaimItAPI;
 import its_meow.claimit.api.event.ClaimAddedEvent;
@@ -260,31 +258,10 @@ public class ClaimManager {
 	            if(!event.isCanceled()) {
 	                this.addClaimNoEvent(event.getClaim());
 	            } else {
-	                ClaimItAPI.logger.log(Level.INFO, "Event cancelled loading of this claim. ");
+	                ClaimItAPI.logger.log(Level.INFO, "Event cancelled loading of this claim.");
 	            }
 			}
 		}
-	}
-
-	/** Attempts to get name from UUID cache. Requires World to get server instance. 
-	 * @param uuid - The UUID to attempt to retrieve the name for
-	 * @param world - A world instance. This is used to get the server instance.
-	 * @return The name for this UUID or the UUID as a String if none was found**/
-	@Nonnull
-	public static String getPlayerName(UUID uuid, World worldIn) {
-		String name = null;
-		GameProfile profile = worldIn.getMinecraftServer().getPlayerProfileCache().getProfileByUUID(uuid);
-		if(profile != null) {
-			name = profile.getName();
-		} else {
-		    name = uuid.toString();
-		}
-		return name;
-	}
-
-	/** Clears the list of stored claims. WARNING: If data is saved after this is done (like, if the server shuts down) all the claims data will be gone permanently. This is only used before deserialization. **/
-	public void clearClaims() {
-		this.claims.clear();
 	}
 
 }
