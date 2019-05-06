@@ -2,14 +2,18 @@ package its_meow.claimit.util;
 
 import java.util.HashMap;
 
+import org.apache.commons.lang3.tuple.Pair;
+
+import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
+import net.minecraft.server.MinecraftServer;
 
 public class ConfirmationManager {
 	
 	private static ConfirmationManager instance = null;
 	
 	private ConfirmationManager() {
-		 confirmActions = new HashMap<ICommandSender, EnumConfirmableAction>();
+		 confirmActions = new HashMap<ICommandSender, Pair<Confirmable, String[]>>();
 	}
 
 	public static ConfirmationManager getManager() {
@@ -20,20 +24,21 @@ public class ConfirmationManager {
 		return instance;
 	}
 	
-	private HashMap<ICommandSender, EnumConfirmableAction> confirmActions;
+	private HashMap<ICommandSender, Pair<Confirmable, String[]>> confirmActions;
+	
 	public boolean needsConfirm(ICommandSender sender) {
 		return confirmActions.containsKey(sender);
 	}
 	
-	public EnumConfirmableAction getAction(ICommandSender sender) {
-		return confirmActions.get(sender);
+	public Confirmable getAction(ICommandSender sender) {
+		return confirmActions.get(sender).getLeft();
 	}
 	
-	public boolean addConfirm(ICommandSender sender, EnumConfirmableAction action) {
+	public boolean addConfirm(ICommandSender sender, Confirmable action, String[] args) {
 		if(needsConfirm(sender)) {
 			return false;
 		} else {
-			confirmActions.put(sender, action);
+			confirmActions.put(sender, Pair.of(action, args));
 			return true;
 		}
 	}
@@ -50,10 +55,9 @@ public class ConfirmationManager {
 	public void removeAllConfirms() {
 		this.confirmActions.clear();
 	}
-	
-	public static enum EnumConfirmableAction {
-	    DELETEALL,
-	    CLEARMEMBERS;
-	}
+
+    public void doAction(MinecraftServer server, ICommandSender sender, Confirmable action) throws CommandException {
+        action.doAction(server, sender, confirmActions.get(sender).getRight());
+    }
 	
 }
