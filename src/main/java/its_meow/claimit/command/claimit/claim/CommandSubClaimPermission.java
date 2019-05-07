@@ -34,7 +34,6 @@ public class CommandSubClaimPermission extends CommandCITreeBase {
     @Override
     public List<String> getAliases() {
         ArrayList<String> list = new ArrayList<String>();
-        list.add("permission");
         list.add("perm");
         return list;
     }
@@ -113,11 +112,6 @@ public class CommandSubClaimPermission extends CommandCITreeBase {
                 sendMessage(sender, RED + "There is no claim here! Specify a name to get a specific claim.");
             }
         }
-    }
-
-    @Override
-    protected void displaySubCommands(MinecraftServer server, ICommandSender sender) throws CommandException {
-        throw new CommandException("Improper argument count! Usage: \n" + YELLOW + this.getUsage(sender));
     }
 
 }

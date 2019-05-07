@@ -13,6 +13,8 @@ import java.util.Map;
 
 import javax.annotation.Nullable;
 
+import its_meow.claimit.util.CommandHelpRegistry;
+import its_meow.claimit.util.text.CommandChatStyle;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.server.MinecraftServer;
@@ -27,12 +29,18 @@ public abstract class CommandCITreeBase extends CommandCIBase {
         for(CommandCIBase cmd : subcommands) {
             this.addSubcommand(cmd);
         }
+        
     }
 
     public void addSubcommand(CommandCIBase command) {
         commandMap.put(command.getName(), command);
         for(String alias : command.getAliases()) {
             commandAliasMap.put(alias, command);
+        }
+
+        CommandHelpRegistry.registerHelp(this.getName() + " " + command.getName(), command::getHelp);
+        for(String alias : this.getAliases()) {
+            CommandHelpRegistry.registerHelp(alias + " " + command.getName(), command::getHelp);
         }
     }
 
@@ -65,7 +73,7 @@ public abstract class CommandCITreeBase extends CommandCIBase {
     @Override
     public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
         if(args.length < 1) {
-            this.displaySubCommands(server, sender);
+            this.executeBaseCommand(server, sender, args);
         } else {
             CommandCIBase cmd = getSubCommand(args[0]);
 
@@ -79,11 +87,11 @@ public abstract class CommandCITreeBase extends CommandCIBase {
         }
     }
 
-    protected void displaySubCommands(MinecraftServer server, ICommandSender sender) throws CommandException {
+    public void displaySubCommands(MinecraftServer server, ICommandSender sender) throws CommandException {
         sendMessage(sender, AQUA + "" + BOLD + "Subcommands: ");
         for(CommandCIBase subCmd : this.getSubCommands()) {
-            sendCMessage(sender, YELLOW,
-                    this.getUsage(sender).substring(0, this.getUsage(sender).lastIndexOf(this.getName()) + this.getName().length()) + " " + subCmd.getName());
+            String cmd = this.getUsage(sender).substring(0, this.getUsage(sender).indexOf(this.getName() + " ") + this.getName().length()) + " " + subCmd.getName();
+            sendSMessage(sender, YELLOW + cmd, new CommandChatStyle("/claimit help command " + cmd.substring(1), true, "Click for help on this command"));
         }
     }
 
@@ -103,7 +111,7 @@ public abstract class CommandCITreeBase extends CommandCIBase {
 
     @Override
     public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args, BlockPos pos) {
-        CommandCIBase command = this.getLowestCommandInTree(args);
+        CommandCIBase command = this.getLowestCommandInTree(args, false);
         if(command == this) {
             List<String> list = new ArrayList<String>();
             if(args.length == 1) {
@@ -124,7 +132,7 @@ public abstract class CommandCITreeBase extends CommandCIBase {
         }
     }
 
-    protected CommandCIBase getLowestCommandInTree(String[] args) {
+    public CommandCIBase getLowestCommandInTree(String[] args, boolean extraArgsNull) {
         CommandCIBase cmd = this;
         boolean endTree = false;
         while(!endTree) {
@@ -138,6 +146,9 @@ public abstract class CommandCITreeBase extends CommandCIBase {
                         args = shiftArgs(args);
                     } else {
                         // This has no subcommand with this name, get completions for specific command
+                        if(extraArgsNull) {
+                            cmd = null;
+                        }
                         endTree = true;
                     }
                 } else {

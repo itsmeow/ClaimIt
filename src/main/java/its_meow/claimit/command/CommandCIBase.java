@@ -11,6 +11,11 @@ import net.minecraft.util.text.TextFormatting;
 
 public abstract class CommandCIBase extends CommandBase implements ICommandHelp {
     
+    public CommandCIBase() {
+        //String i = "its_meow.";
+        //CommandHelpRegistry.registerHelp(clazz.getName().substring(clazz.getName().indexOf(i) + i.length()).replace(".command", "").replace('.', '/'), this::getHelp);
+    }
+    
     /**
      * Sends message to sender.
      */
