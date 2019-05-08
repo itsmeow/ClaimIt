@@ -10,6 +10,8 @@ import static net.minecraft.util.text.TextFormatting.RED;
 import static net.minecraft.util.text.TextFormatting.UNDERLINE;
 import static net.minecraft.util.text.TextFormatting.YELLOW;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 import its_meow.claimit.api.claim.ClaimArea;
@@ -18,6 +20,7 @@ import its_meow.claimit.command.CommandCIBase;
 import its_meow.claimit.util.CommandUtils;
 import its_meow.claimit.util.text.CommandChatStyle;
 import its_meow.claimit.util.text.TeleportXYChatStyle;
+import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
@@ -115,6 +118,15 @@ public class CommandSubClaimInfo extends CommandCIBase {
         sendAdminStyleMessage(sender, BLUE + "Corner 2: " + DARK_PURPLE + (corners[1].getX()) + BLUE + ", " + DARK_PURPLE + (corners[1].getZ()), new TeleportXYChatStyle(claim.getDimensionID(), corners[1].getX(), corners[1].getZ()));
         if((sender instanceof EntityPlayer && claim.canManage((EntityPlayer) sender)) || CommandUtils.isAdmin(sender))
             sendSMessage(sender, GREEN + "" + UNDERLINE + "" + ITALIC + "View Members", new CommandChatStyle("/ci claim permission list " + (CommandUtils.isAdmin(sender) ? claim.getTrueViewName() : claim.getDisplayedViewName()), true, "Click to view claim members"));
+    }
+
+    @Override
+    public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args, BlockPos targetPos) {
+        if(args.length == 1) {
+            return CommandBase.getListOfStringsMatchingLastWord(args, CommandUtils.getOwnedClaimNames(null, sender));
+        } else {
+            return new ArrayList<String>();
+        }
     }
 
 }

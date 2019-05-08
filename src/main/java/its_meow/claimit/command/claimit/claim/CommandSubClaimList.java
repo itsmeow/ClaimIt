@@ -12,6 +12,8 @@ import static net.minecraft.util.text.TextFormatting.RED;
 import static net.minecraft.util.text.TextFormatting.UNDERLINE;
 import static net.minecraft.util.text.TextFormatting.YELLOW;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -32,6 +34,7 @@ import net.minecraft.command.ICommandSender;
 import net.minecraft.command.PlayerNotFoundException;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.math.BlockPos;
 
 public class CommandSubClaimList extends CommandCIBase {
 
@@ -176,6 +179,14 @@ public class CommandSubClaimList extends CommandCIBase {
         if(args.length > 2) {
             sendMessage(sender, "Invalid amount of arguments. Usage: " + this.getUsage(sender));
         }
+    }
+    
+    @Override
+    public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args, BlockPos targetPos) {
+        if(CommandUtils.isAdmin(sender)) {
+            return CommandUtils.getPossiblePlayers(null, server, sender, args);
+        }
+        return new ArrayList<String>();
     }
 
 }

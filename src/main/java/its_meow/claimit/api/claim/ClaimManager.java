@@ -19,6 +19,9 @@ import its_meow.claimit.api.event.ClaimRemovedEvent;
 import its_meow.claimit.api.event.ClaimSerializationEvent;
 import its_meow.claimit.api.event.ClaimsClearedEvent;
 import its_meow.claimit.api.serialization.ClaimSerializer;
+import its_meow.claimit.api.util.BiMultiMap;
+import its_meow.claimit.api.util.ClaimChunkUtil;
+import its_meow.claimit.api.util.ClaimChunkUtil.ClaimChunk;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
@@ -29,6 +32,8 @@ public class ClaimManager {
 
 	private static ClaimManager instance = null;
 	private ArrayList<ClaimArea> claims = new ArrayList<ClaimArea>();
+	private BiMultiMap<UUID, ClaimArea> ownedClaims = new BiMultiMap<UUID, ClaimArea>();
+	private BiMultiMap<ClaimChunk, ClaimArea> chunks = new BiMultiMap<ClaimChunk, ClaimArea>();
 	private Set<EntityPlayer> admins = new HashSet<EntityPlayer>();
 
 	private ClaimManager() {}
@@ -61,7 +66,14 @@ public class ClaimManager {
 	 * @return True if the {@link ClaimRemovedEvent} wasn't canceled and if the claim was present in the list
 	 **/
 	public boolean deleteClaim(ClaimArea claim) {
-		return !MinecraftForge.EVENT_BUS.post(new ClaimRemovedEvent(claim)) && claims.remove(claim);
+	    if(!MinecraftForge.EVENT_BUS.post(new ClaimRemovedEvent(claim))) {
+	        if(claims.remove(claim)) {
+	            chunks.removeValueFromAll(claim);
+	            ownedClaims.removeValueFromAll(claim);
+	            return true;
+	        }
+	    }
+	    return false;
 	}
 
 	/** @return A copy of the claims list. Final. **/
@@ -75,14 +87,25 @@ public class ClaimManager {
 	 * @param pos - The position checked for a claim 
 	 * @returns The claim at the location or null if no claim is found **/
 	public ClaimArea getClaimAtLocation(World world, BlockPos pos) {
-		if(claims.size() == 0) {
-			return null;
-		}
-		for(ClaimArea claim : claims) {
-			if(claim.getWorld() == world && claim.isBlockPosInClaim(pos)) {
-				return claim;
-			}
-		}
+	    if(claims.size() == 0) {
+	        return null;
+	    }
+	    ClaimChunk chunk = ClaimChunkUtil.getChunk(pos);
+	    Set<ClaimArea> claimsInChunk = chunks.getValues(chunk);
+	    if(claimsInChunk != null && claimsInChunk.size() > 0) {
+	        for(ClaimArea claim : claimsInChunk) {
+	            if(claim.getWorld() == world && claim.isBlockPosInClaim(pos)) {
+	                return claim;
+	            }
+	        }
+	    } else {
+	        for(ClaimArea claim : claims) {
+	            if(claim.getWorld() == world && claim.isBlockPosInClaim(pos)) {
+	                chunks.put(chunk, claim); // Cache this for faster retrieval
+	                return claim;
+	            }
+	        }
+	    }
 		return null;
 	}
 
@@ -120,15 +143,7 @@ public class ClaimManager {
 	 * @param pos - The position checked for a claim 
 	 * @returns True if a claim is found, false if one is not found **/
 	public boolean isBlockInAnyClaim(World world, BlockPos pos) {
-		if(claims.size() == 0) {
-			return false;
-		}
-		for(ClaimArea claim : claims) {
-			if(claim.getWorld() == world && claim.isBlockPosInClaim(pos)) {
-				return true;
-			}
-		}
-		return false;
+		return this.getClaimAtLocation(world, pos) != null;
 	}
 	
 	/** Check claim is not overlapping/illegal and add to list. Fires ClaimAddedEvent
@@ -198,7 +213,10 @@ public class ClaimManager {
         ClaimAddedEvent event = new ClaimAddedEvent(claim);
         MinecraftForge.EVENT_BUS.post(event);
 		claims.add(claim);
-		//this.serialize(claim.getWorld());
+		ownedClaims.put(claim.getOwner(), claim);
+		for(ClaimChunk c : claim.getOverlappingChunks()) {
+		    chunks.put(c, claim);
+		}
 	}
 
 	/** Gets all claims owned by a UUID
@@ -207,13 +225,7 @@ public class ClaimManager {
 	 * **/
 	@Nullable
 	public Set<ClaimArea> getClaimsOwnedByPlayer(UUID uuid) {
-		HashSet<ClaimArea> owned = new HashSet<ClaimArea>();
-		for(ClaimArea claim : this.claims) {
-			if(claim.isTrueOwner(uuid)) {
-				owned.add(claim);
-			}
-		}
-		return owned.size() > 0 ? owned : null;
+		return ownedClaims.getValues(uuid).size() > 0 ? ownedClaims.getValues(uuid) : null;
 	}
 
 	/** Forces a world to save claim data. Removes all claim data that is stored and adds current data. **/
@@ -248,9 +260,7 @@ public class ClaimManager {
 	/** Forces a world to load claim data. 
 	 * Overwrites new claim data since last load (this is because it is used at world/server startup)! A "reload" should probably save before doing this. **/
 	public void deserialize() {
-	    MinecraftForge.EVENT_BUS.post(new ClaimsClearedEvent.Pre());
-		claims.clear();
-	    MinecraftForge.EVENT_BUS.post(new ClaimsClearedEvent.Post());
+	    this.clearClaims();
 		ClaimSerializer store = ClaimSerializer.get();
 		NBTTagCompound comp = store.data;
 		if(comp != null) {
@@ -268,6 +278,14 @@ public class ClaimManager {
 	            }
 			}
 		}
+	}
+	
+	public void clearClaims() {
+	       MinecraftForge.EVENT_BUS.post(new ClaimsClearedEvent.Pre());
+	        claims.clear();
+	        ownedClaims.clear();
+	        chunks.clear();
+	        MinecraftForge.EVENT_BUS.post(new ClaimsClearedEvent.Post());
 	}
 
 }

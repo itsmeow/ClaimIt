@@ -6,6 +6,8 @@ import static net.minecraft.util.text.TextFormatting.GREEN;
 import static net.minecraft.util.text.TextFormatting.RED;
 import static net.minecraft.util.text.TextFormatting.YELLOW;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -21,10 +23,12 @@ import its_meow.claimit.api.permission.ClaimPermissionMember;
 import its_meow.claimit.api.permission.ClaimPermissionRegistry;
 import its_meow.claimit.command.CommandCIBase;
 import its_meow.claimit.util.CommandUtils;
+import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.math.BlockPos;
 
 public class CommandSubClaimPermissionList extends CommandCIBase {
 
@@ -95,7 +99,7 @@ public class CommandSubClaimPermissionList extends CommandCIBase {
                 singletonMap.putAll(group.getOwner(), ClaimPermissionRegistry.getMemberPermissions());
                 singletonMap.putAll(group.getMembers());
                 ImmutableSetMultimap<UUID, ClaimPermissionMember> groupPermMap = ImmutableSetMultimap.copyOf(singletonMap);
-                
+
                 if(groupPermMap.size() > 0) {
                     sendMessage(sender, YELLOW + "" + BOLD + "Members from: " + GREEN + group.getName());
                     groupPermMap.keySet().forEach((uuid) -> {
@@ -109,7 +113,7 @@ public class CommandSubClaimPermissionList extends CommandCIBase {
             sendMessage(sender, RED + "This claim has no group members.");
         }
     }
-    
+
     private static String getMemberLine(UUID member, Set<ClaimPermissionMember> permSet) {
         String permString = "";
         for(ClaimPermissionMember p : permSet) {
@@ -117,6 +121,15 @@ public class CommandSubClaimPermissionList extends CommandCIBase {
         }
         int end = permString.lastIndexOf(',');
         return permString.substring(0, end);
+    }
+
+    @Override
+    public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args, BlockPos targetPos) {
+        if(args.length == 1) {
+            return CommandBase.getListOfStringsMatchingLastWord(args, CommandUtils.getOwnedClaimNames(null, sender));
+        } else {
+            return new ArrayList<String>();
+        }
     }
 
 }

@@ -54,6 +54,11 @@ public class BiMultiMap<K, V> {
     public ImmutableSetMultimap<V, K> getValuesToKeys() {
         return ImmutableSetMultimap.copyOf(valuesToKeys);
     }
+
+    public void clear() {
+        keysToValues.clear();
+        valuesToKeys.clear();
+    }
     
 }
 

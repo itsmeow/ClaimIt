@@ -15,10 +15,12 @@ import its_meow.claimit.api.permission.ClaimPermissionMember;
 import its_meow.claimit.command.CommandCITreeBase;
 import its_meow.claimit.command.claimit.claim.permission.CommandSubClaimPermissionList;
 import its_meow.claimit.util.CommandUtils;
+import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.math.BlockPos;
 
 public class CommandSubClaimPermission extends CommandCITreeBase {
 
@@ -118,6 +120,23 @@ public class CommandSubClaimPermission extends CommandCITreeBase {
     @Override
     protected void displaySubCommands(MinecraftServer server, ICommandSender sender) throws CommandException {
         throw new CommandException("Improper argument count! Usage: \n" + YELLOW + this.getUsage(sender));
+    }
+    
+    @Override
+    public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args, BlockPos targetPos) {
+        List<String> list = new ArrayList<String>();
+        if(args.length == 1) {
+            list.add("add");
+            list.add("remove");
+            return CommandBase.getListOfStringsMatchingLastWord(args, list);
+        } else if(args.length == 2) {
+            return CommandBase.getListOfStringsMatchingLastWord(args, CommandUtils.getMemberPermissions(list));
+        } else if(args.length == 3) {
+            return CommandBase.getListOfStringsMatchingLastWord(args, CommandUtils.getPossiblePlayers(list, server, sender, args));
+        } else if(args.length == 4) {
+            return CommandBase.getListOfStringsMatchingLastWord(args, CommandUtils.getOwnedClaimNames(list, sender));
+        }
+        return list;
     }
 
 }

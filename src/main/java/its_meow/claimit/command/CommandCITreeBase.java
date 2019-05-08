@@ -13,6 +13,8 @@ import java.util.Map;
 
 import javax.annotation.Nullable;
 
+import org.apache.commons.lang3.tuple.Pair;
+
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.server.MinecraftServer;
@@ -103,7 +105,8 @@ public abstract class CommandCITreeBase extends CommandCIBase {
 
     @Override
     public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args, BlockPos pos) {
-        CommandCIBase command = this.getLowestCommandInTree(args);
+        Pair<CommandCIBase, String[]> pair = this.getLowestCommandInTree(args);
+        CommandCIBase command = pair.getLeft();
         if(command == this) {
             List<String> list = new ArrayList<String>();
             if(args.length == 1) {
@@ -120,11 +123,11 @@ public abstract class CommandCITreeBase extends CommandCIBase {
             }
             return list;
         } else {
-            return command.getTabCompletions(server, sender, shiftArgs(args), pos);
+            return command.getTabCompletions(server, sender, pair.getRight(), pos);
         }
     }
 
-    protected CommandCIBase getLowestCommandInTree(String[] args) {
+    protected Pair<CommandCIBase, String[]> getLowestCommandInTree(String[] args) {
         CommandCIBase cmd = this;
         boolean endTree = false;
         while(!endTree) {
@@ -149,7 +152,7 @@ public abstract class CommandCITreeBase extends CommandCIBase {
                 endTree = true;
             }
         }
-        return cmd;
+        return Pair.of(cmd, args);
     }
 
     /**

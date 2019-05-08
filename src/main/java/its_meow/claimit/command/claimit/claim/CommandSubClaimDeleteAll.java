@@ -4,6 +4,8 @@ import static net.minecraft.util.text.TextFormatting.AQUA;
 import static net.minecraft.util.text.TextFormatting.DARK_RED;
 import static net.minecraft.util.text.TextFormatting.RED;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -18,6 +20,7 @@ import net.minecraft.command.ICommandSender;
 import net.minecraft.command.PlayerNotFoundException;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.math.BlockPos;
 
 public class CommandSubClaimDeleteAll extends CommandCIBase implements Confirmable {
 
@@ -115,6 +118,14 @@ public class CommandSubClaimDeleteAll extends CommandCIBase implements Confirmab
         } else {
             throw new RuntimeException("A deletion was confirmed, but no player was supplied! What did you do!?!?");
         }
+    }
+    
+    @Override
+    public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args, BlockPos targetPos) {
+        if(CommandUtils.isAdmin(sender)) {
+            return CommandUtils.getPossiblePlayers(null, server, sender, args);
+        }
+        return new ArrayList<String>();
     }
 
 }

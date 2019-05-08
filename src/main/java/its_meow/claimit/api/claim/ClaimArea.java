@@ -1,6 +1,7 @@
 package its_meow.claimit.api.claim;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
@@ -21,6 +22,8 @@ import its_meow.claimit.api.permission.ClaimPermissionRegistry;
 import its_meow.claimit.api.permission.ClaimPermissionToggle;
 import its_meow.claimit.api.permission.ClaimPermissions;
 import its_meow.claimit.api.util.BiMultiMap;
+import its_meow.claimit.api.util.ClaimChunkUtil;
+import its_meow.claimit.api.util.ClaimChunkUtil.ClaimChunk;
 import its_meow.claimit.api.util.ClaimNBTUtil;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
@@ -399,6 +402,21 @@ public class ClaimArea {
 			this.viewName = this.ownerUUID + "_" + nameIn;
 		}
 		return pass;
+	}
+	
+	/**
+	 * @return A set of chunks that this claim overlaps or intersects.
+	 */
+	public Set<ClaimChunk> getOverlappingChunks() {
+	    Set<ClaimChunk> chunks = new HashSet<ClaimChunk>();
+	    ClaimChunk hChunk = ClaimChunkUtil.getChunk(this.getHXZPosition());
+	    ClaimChunk lChunk = ClaimChunkUtil.getChunk(this.getMainPosition());
+	    for(int x = lChunk.x; x <= hChunk.x; x++) {
+	        for(int z = lChunk.z; z <= hChunk.z; z++) {
+	            chunks.add(new ClaimChunk(x, z));
+	        }
+	    }
+	    return chunks;
 	}
 	
 	public NBTTagCompound serialize() {
