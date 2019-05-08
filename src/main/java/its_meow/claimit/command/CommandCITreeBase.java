@@ -101,7 +101,7 @@ public abstract class CommandCITreeBase extends CommandCIBase {
         this.displaySubCommands(server, sender);
     }
 
-    protected static String[] shiftArgs(@Nullable String[] s) {
+    public static String[] shiftArgs(@Nullable String[] s) {
         if(s == null || s.length == 0) {
             return new String[0];
         }
