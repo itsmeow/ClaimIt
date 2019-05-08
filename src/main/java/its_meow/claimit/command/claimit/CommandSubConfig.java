@@ -1,14 +1,18 @@
 package its_meow.claimit.command.claimit;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import its_meow.claimit.command.CommandCIBase;
 import its_meow.claimit.util.userconfig.UserConfigType;
-import its_meow.claimit.util.userconfig.UserConfigTypeRegistry;
 import its_meow.claimit.util.userconfig.UserConfigType.UserConfig;
+import its_meow.claimit.util.userconfig.UserConfigTypeRegistry;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.command.WrongUsageException;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.math.BlockPos;
 
 public class CommandSubConfig extends CommandCIBase {
 
@@ -94,5 +98,15 @@ public class CommandSubConfig extends CommandCIBase {
             throw new CommandException("You must be a player to use this command!");
         }
     }
+
+    @Override
+    public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args, BlockPos targetPos) {
+        if(args.length == 1) {
+            return UserConfigTypeRegistry.getRegistries().values().stream().collect(ArrayList<String>::new, (l, t) -> t.getConfigs().keySet(), (r, r1) -> r.addAll(r1));
+        } else {
+            return new ArrayList<String>();
+        }
+    }
+
 
 }
