@@ -5,16 +5,21 @@ import static net.minecraft.util.text.TextFormatting.GREEN;
 import static net.minecraft.util.text.TextFormatting.RED;
 import static net.minecraft.util.text.TextFormatting.YELLOW;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import its_meow.claimit.api.claim.ClaimArea;
 import its_meow.claimit.api.group.Group;
 import its_meow.claimit.api.group.GroupManager;
 import its_meow.claimit.command.CommandCIBase;
 import its_meow.claimit.util.CommandUtils;
+import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.command.WrongUsageException;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.math.BlockPos;
 
 public class CommandSubGroupClaim extends CommandCIBase {
 
@@ -101,6 +106,19 @@ public class CommandSubGroupClaim extends CommandCIBase {
             }
         } else {
             sendMessage(sender, RED + "No such group: " + groupName);
+        }
+    }
+
+    @Override
+    public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args, BlockPos targetPos) {
+        if(args.length == 1) {
+            return CommandBase.getListOfStringsMatchingLastWord(args, "add", "remove");
+        } else if(args.length == 2) {
+            return CommandBase.getListOfStringsMatchingLastWord(args, CommandUtils.getRelevantGroupNames(sender));
+        } else if(args.length == 3) {
+            return CommandBase.getListOfStringsMatchingLastWord(args, CommandUtils.getOwnedClaimNames(null, sender));
+        } else {
+            return new ArrayList<String>();
         }
     }
 

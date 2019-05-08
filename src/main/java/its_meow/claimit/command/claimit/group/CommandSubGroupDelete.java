@@ -4,15 +4,20 @@ import static net.minecraft.util.text.TextFormatting.AQUA;
 import static net.minecraft.util.text.TextFormatting.GREEN;
 import static net.minecraft.util.text.TextFormatting.RED;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import its_meow.claimit.api.group.Group;
 import its_meow.claimit.api.group.GroupManager;
 import its_meow.claimit.command.CommandCIBase;
 import its_meow.claimit.util.CommandUtils;
+import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.command.SyntaxErrorException;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.math.BlockPos;
 
 public class CommandSubGroupDelete extends CommandCIBase {
 
@@ -55,5 +60,16 @@ public class CommandSubGroupDelete extends CommandCIBase {
             throw new SyntaxErrorException("Invalid syntax. Usage: " + this.getUsage(sender));
         }
     }
+
+    @Override
+    public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args,
+            BlockPos targetPos) {
+        if(args.length == 1) {
+            return CommandBase.getListOfStringsMatchingLastWord(args, CommandUtils.getRelevantGroupNames(sender));
+        }
+        return new ArrayList<String>();
+    }
+
+
 
 }

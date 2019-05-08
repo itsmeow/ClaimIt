@@ -17,6 +17,7 @@ import com.mojang.authlib.GameProfile;
 
 import its_meow.claimit.api.claim.ClaimArea;
 import its_meow.claimit.api.claim.ClaimManager;
+import its_meow.claimit.api.group.GroupManager;
 import its_meow.claimit.api.permission.ClaimPermissionMember;
 import its_meow.claimit.api.permission.ClaimPermissionRegistry;
 import its_meow.claimit.api.permission.ClaimPermissionToggle;
@@ -155,6 +156,14 @@ public class CommandUtils {
             }
         }
         return list;
+    }
+    
+    public static List<String> getRelevantGroupNames(ICommandSender sender) {
+        if(!CommandUtils.isAdmin(sender) && sender instanceof EntityPlayer) {
+            UUID uuid = ((EntityPlayer) sender).getGameProfile().getId();
+            return GroupManager.getGroups().stream().filter(g -> (g.getMembers().keySet().contains(uuid) || g.isOwner(uuid))).collect(ArrayList<String>::new, (l, group) -> l.add(group.getName()), (r, r1) -> r.addAll(r1)); 
+        }
+        return new ArrayList<String>();
     }
 
     public static List<String> getPossiblePlayers(@Nullable List<String> list, MinecraftServer server, ICommandSender sender, String[] args) {

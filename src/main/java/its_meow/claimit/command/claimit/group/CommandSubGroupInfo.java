@@ -7,6 +7,8 @@ import static net.minecraft.util.text.TextFormatting.GREEN;
 import static net.minecraft.util.text.TextFormatting.RED;
 import static net.minecraft.util.text.TextFormatting.YELLOW;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 import com.google.common.collect.ImmutableSet;
@@ -18,10 +20,12 @@ import its_meow.claimit.api.group.GroupManager;
 import its_meow.claimit.api.permission.ClaimPermissionMember;
 import its_meow.claimit.command.CommandCIBase;
 import its_meow.claimit.util.CommandUtils;
+import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 public class CommandSubGroupInfo extends CommandCIBase {
@@ -98,6 +102,15 @@ public class CommandSubGroupInfo extends CommandCIBase {
                 sendMessage(player, BLUE + " + " + YELLOW + claim.getDisplayedViewName() + BLUE + " of " + GREEN + CommandUtils.getNameForUUID(claim.getOwner(), world.getMinecraftServer()));
             }
         }
+    }
+    
+    @Override
+    public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args,
+            BlockPos targetPos) {
+        if(args.length == 1) {
+            return CommandBase.getListOfStringsMatchingLastWord(args, CommandUtils.getRelevantGroupNames(sender));
+        }
+        return new ArrayList<String>();
     }
 
 }

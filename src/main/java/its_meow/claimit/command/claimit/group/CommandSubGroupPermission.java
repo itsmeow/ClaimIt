@@ -15,11 +15,13 @@ import its_meow.claimit.api.group.GroupManager;
 import its_meow.claimit.api.permission.ClaimPermissionMember;
 import its_meow.claimit.command.CommandCIBase;
 import its_meow.claimit.util.CommandUtils;
+import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.command.WrongUsageException;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.math.BlockPos;
 
 public class CommandSubGroupPermission extends CommandCIBase {
 
@@ -107,6 +109,21 @@ public class CommandSubGroupPermission extends CommandCIBase {
         } else {
             sendMessage(sender, RED + "No such group: " + groupname);
         }
+    }
+    
+    @Override
+    public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args, BlockPos targetPos) {
+        List<String> list = new ArrayList<String>();
+        if(args.length == 1) {
+            return CommandBase.getListOfStringsMatchingLastWord(args, "add", "remove");
+        } else if(args.length == 2) {
+            return CommandBase.getListOfStringsMatchingLastWord(args, CommandUtils.getMemberPermissions(list));
+        } else if(args.length == 3) {
+            return CommandBase.getListOfStringsMatchingLastWord(args, CommandUtils.getPossiblePlayers(list, server, sender, args));
+        } else if(args.length == 4) {
+            return CommandBase.getListOfStringsMatchingLastWord(args, CommandUtils.getRelevantGroupNames(sender));
+        }
+        return list;
     }
 
 }
