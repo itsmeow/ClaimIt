@@ -65,7 +65,7 @@ public class CommandSubHelp extends CommandCIBase {
                         }
                         if(cmdI instanceof CommandCITreeBase) {
                             CommandCITreeBase cmd = (CommandCITreeBase) cmdI;
-                            cmdI = cmd.getLowestCommandInTree(args2, true);
+                            cmdI = cmd.getLowestCommandInTree(args2, true).getLeft();
                         }
                     }
                     if(cmdI instanceof CommandCIBase) {
