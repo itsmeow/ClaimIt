@@ -4,12 +4,17 @@ import its_meow.claimit.api.ClaimItAPI;
 import its_meow.claimit.command.CommandClaimIt;
 import its_meow.claimit.userconfig.UserConfigs;
 import its_meow.claimit.util.ConfirmationManager;
+import its_meow.claimit.util.userconfig.UserConfigManager;
+import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.Mod.Instance;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
+import net.minecraftforge.fml.common.event.FMLServerStoppingEvent;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
+@Mod.EventBusSubscriber(modid = ClaimIt.MOD_ID)
 @Mod(modid = ClaimIt.MOD_ID, name = ClaimIt.NAME, version = ClaimIt.VERSION, acceptedMinecraftVersions = ClaimIt.acceptedMCV, acceptableRemoteVersions = "*", dependencies = "after-required:claimitapi")
 public class ClaimIt {
     
@@ -20,16 +25,28 @@ public class ClaimIt {
     
 	@Instance(ClaimIt.MOD_ID)
 	public static ClaimIt mod;
-
+	
+	@EventHandler
+	public void preInit(FMLPreInitializationEvent event) {
+	    UserConfigs.register();
+	}
+	
     @EventHandler
     public void serverLoad(FMLServerStartingEvent event) {
+        UserConfigManager.deserialize();
         ConfirmationManager.getManager().removeAllConfirms();
         event.registerServerCommand(new CommandClaimIt());
     }
     
     @EventHandler
-    public void preInit(FMLPreInitializationEvent event) {
-        UserConfigs.register();
+    public void serverStop(FMLServerStoppingEvent event) {
+        UserConfigManager.serialize();
     }
 
+    
+    @SubscribeEvent
+    public static void onWorldSave(WorldEvent.Save e) {
+        UserConfigManager.serialize();
+    }
+    
 }

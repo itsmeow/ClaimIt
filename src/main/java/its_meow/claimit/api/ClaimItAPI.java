@@ -9,7 +9,6 @@ import its_meow.claimit.api.claim.ClaimManager;
 import its_meow.claimit.api.config.ClaimItAPIConfig;
 import its_meow.claimit.api.group.GroupManager;
 import its_meow.claimit.api.permission.ClaimPermissions;
-import its_meow.claimit.api.userconfig.UserConfigManager;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -40,14 +39,12 @@ public class ClaimItAPI {
     public void serverLoad(FMLServerStartingEvent event) {
         ClaimManager.getManager().clearAdmins();
         ClaimManager.getManager().deserialize(); // Clears claims list as well
-        UserConfigManager.getManager().deserialize();
         GroupManager.deserialize();
     }
     
     @EventHandler
     public void serverStop(FMLServerStoppingEvent event) {
         ClaimManager.getManager().serialize();
-        UserConfigManager.getManager().serialize();
         GroupManager.serialize();
     }
     
@@ -71,7 +68,6 @@ public class ClaimItAPI {
     public static void onWorldSave(WorldEvent.Save e) {
         if(!e.getWorld().isRemote) {
             ClaimManager.getManager().serialize();
-            UserConfigManager.getManager().serialize();
             GroupManager.serialize();
         }
     }

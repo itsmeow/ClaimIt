@@ -1,12 +1,9 @@
 package its_meow.claimit.command.claimit;
 
-import its_meow.claimit.api.userconfig.UserConfig;
-import its_meow.claimit.api.userconfig.UserConfigBoolean;
-import its_meow.claimit.api.userconfig.UserConfigFloat;
-import its_meow.claimit.api.userconfig.UserConfigManager;
-import its_meow.claimit.api.userconfig.UserConfigRegistry;
-import its_meow.claimit.api.userconfig.UserConfigString;
 import its_meow.claimit.command.CommandCIBase;
+import its_meow.claimit.util.userconfig.UserConfigType;
+import its_meow.claimit.util.userconfig.UserConfigTypeRegistry;
+import its_meow.claimit.util.userconfig.UserConfigType.UserConfig;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.command.WrongUsageException;
@@ -15,108 +12,87 @@ import net.minecraft.server.MinecraftServer;
 
 public class CommandSubConfig extends CommandCIBase {
 
-	@Override
-	public String getName() {
-		return "config";
-	}
+    @Override
+    public String getName() {
+        return "config";
+    }
 
-	@Override
-	public String getUsage(ICommandSender sender) {
-		return "/claimit config <config> <value>";
-	}
-	
+    @Override
+    public String getUsage(ICommandSender sender) {
+        return "/claimit config <config> <value>";
+    }
+
     @Override
     public String getHelp(ICommandSender sender) {
         return "User configuration command. With no arguments, lists your configurations. Specify a configuration to view its value. Specify a configuration and a value as arguments to set the value.";
     }
 
-	@Override
-	public boolean checkPermission(MinecraftServer server, ICommandSender sender) {
-		return true;
-	}
+    @Override
+    public boolean checkPermission(MinecraftServer server, ICommandSender sender) {
+        return true;
+    }
 
-	@SuppressWarnings("unchecked")
-	@Override
-	public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
-		if(sender instanceof EntityPlayer) {
-			if(args.length > 2) {
-				throw new WrongUsageException("Too many arguments!");
-			}
-			EntityPlayer player = (EntityPlayer) sender;
-			if(args.length == 0) {
-				for(String name : UserConfigRegistry.getConfigs().keySet()) {
-					UserConfig<?> config = UserConfigRegistry.getConfig(name);
-					if(config.defaultValue instanceof Boolean) {
-						Boolean value = UserConfigManager.getManager().get(player.getGameProfile().getId(), (UserConfigBoolean) config);
-						sendMessage(player, config.parsedName + ": " + value.toString());
-					}
-					if(config.defaultValue instanceof Float) {
-						Float value = UserConfigManager.getManager().get(player.getGameProfile().getId(), (UserConfigFloat) config);
-						sendMessage(player, config.parsedName + ": " + value.toString());
-					}
-					if(config.defaultValue instanceof String) {
-						String value = UserConfigManager.getManager().get(player.getGameProfile().getId(), (UserConfigString) config);
-						sendMessage(player, config.parsedName + ": " + value);
-					}
-				}
-			}
-			if(args.length == 1) {
-				String cfgName = args[0];
-				UserConfig<?> config = UserConfigRegistry.getConfig(cfgName);
-				if(config == null) {
-					throw new CommandException("Invalid config name! Possible values: " + UserConfigRegistry.getValidConfigList());
-				} else {
-					if(config.defaultValue instanceof Boolean) {
-						Boolean value = UserConfigManager.getManager().get(player.getGameProfile().getId(), (UserConfigBoolean) config);
-						sendMessage(player, config.parsedName + ": " + value.toString());
-					}
-					if(config.defaultValue instanceof Float) {
-						Float value = UserConfigManager.getManager().get(player.getGameProfile().getId(), (UserConfigFloat) config);
-						sendMessage(player, config.parsedName + ": " + value.toString());
-					}
-					if(config.defaultValue instanceof String) {
-						String value = UserConfigManager.getManager().get(player.getGameProfile().getId(), (UserConfigString) config);
-						sendMessage(player, config.parsedName + ": " + value);
-					}
-				}
-			}
-			if(args.length == 2) {
-				String cfgName = args[0];
-				UserConfig<?> config = UserConfigRegistry.getConfig(cfgName);
-				String valueStr = args[1];
-				if(config == null) {
-					throw new CommandException("Invalid config name! Possible values: " + UserConfigRegistry.getValidConfigList());
-				} else {
-					if(config.defaultValue instanceof Boolean) {
-						if(valueStr.equalsIgnoreCase("true") || valueStr.equalsIgnoreCase("false")) {
-							Boolean bool = Boolean.valueOf(valueStr);
-							UserConfigManager.getManager().<Boolean>set(player.getGameProfile().getId(), (UserConfig<Boolean>) config, bool);
-							sendMessage(player, "Set " + cfgName + " to " + valueStr);
-						} else {
-							throw new CommandException("Invalid value for config " + cfgName + " of " + valueStr + "\nSpecify: true or false");
-						}
-					}
-					if(config.defaultValue instanceof Float) {
-						try {
-							if(Float.valueOf(valueStr) != null) {
-								Float floatV = Float.valueOf(valueStr);
-								UserConfigManager.getManager().<Float>set(player.getGameProfile().getId(), (UserConfig<Float>) config, floatV);
-								sendMessage(player, "Set " + cfgName + " to " + valueStr);
-							} else {
-								throw new CommandException("Invalid value for config " + cfgName + " of " + valueStr + "\nSpecify: A number");
-							}
-						} catch (NumberFormatException e) {
-							throw new CommandException("Invalid value for config " + cfgName + " of " + valueStr + "\nSpecify: A number");
-						}
-					}
-					if(config.defaultValue instanceof String) {
-
-					}
-				}
-			}
-		} else {
-			throw new CommandException("You must be a player to use this command!");
-		}
-	}
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    @Override
+    public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
+        if(sender instanceof EntityPlayer) {
+            if(args.length > 2) {
+                throw new WrongUsageException("Too many arguments!");
+            }
+            EntityPlayer player = (EntityPlayer) sender;
+            if(args.length == 0) {
+                for(Class<?> clazz : UserConfigTypeRegistry.getRegistries().keySet()) {
+                    UserConfigType<?> type = UserConfigTypeRegistry.getRegistries().get(clazz);
+                    for(UserConfig<?> config : type.getConfigs().values()) {
+                        Object value = type.storage.getValueFor((UserConfig) config, player.getGameProfile().getId());
+                        if(value == null) {
+                            value = config.defaultValue;
+                        }
+                        sendMessage(player, config.parsedName + ": " + value.toString());
+                    }
+                }
+            } else if(args.length == 1) {
+                String parsedName = args[0];
+                boolean hit = false;
+                for(Class<?> clazz : UserConfigTypeRegistry.getRegistries().keySet()) {
+                    UserConfigType<?> type = UserConfigTypeRegistry.getRegistries().get(clazz);
+                    UserConfig<?> config = type.getConfig(parsedName);
+                    if(config != null) {
+                        Object value = type.storage.getValueFor((UserConfig) config, player.getGameProfile().getId());
+                        if(value == null) {
+                            value = config.defaultValue;
+                        }
+                        sendMessage(player, config.parsedName + ": " + value.toString());
+                        hit = true;
+                    }
+                }
+                if(!hit) {
+                    throw new CommandException("Invalid config name!");
+                }
+            } else if(args.length == 2) {
+                String parsedName = args[0];
+                String valueStr = args[1];
+                boolean hit = false;
+                for(Class<?> clazz : UserConfigTypeRegistry.getRegistries().keySet()) {
+                    UserConfigType<?> type = UserConfigTypeRegistry.getRegistries().get(clazz);
+                    UserConfig<?> config = type.getConfig(parsedName);
+                    if(config != null) {
+                        if(type.isValidValue(valueStr)) {
+                            type.setValue((UserConfig) config, player.getGameProfile().getId(), valueStr);
+                            sendMessage(player, "Set " + parsedName + " to " + valueStr);
+                            hit = true;
+                        } else {
+                            throw new CommandException("Invalid value for config " + parsedName + " of " + valueStr + "!");
+                        }
+                    }
+                }
+                if(!hit) {
+                    throw new CommandException("Invalid config name!");
+                }
+            }
+        } else {
+            throw new CommandException("You must be a player to use this command!");
+        }
+    }
 
 }

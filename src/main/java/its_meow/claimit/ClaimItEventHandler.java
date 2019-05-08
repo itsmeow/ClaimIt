@@ -3,8 +3,8 @@ package its_meow.claimit;
 import java.util.HashMap;
 
 import its_meow.claimit.api.claim.ClaimManager;
-import its_meow.claimit.api.userconfig.UserConfigManager;
 import its_meow.claimit.userconfig.UserConfigs;
+import its_meow.claimit.util.userconfig.UserConfigTypeRegistry;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
@@ -31,13 +31,15 @@ public class ClaimItEventHandler {
             BlockPos pos = e.player.getPosition();
             if(mgr.isBlockInAnyClaim(e.player.world, lastMsPos.get(e.player))) {
                 if(!mgr.isBlockInAnyClaim(e.player.world, pos)) {
-                    if(UserConfigManager.getManager().get(e.player.getGameProfile().getId(), UserConfigs.EXIT_MESSAGE)) {
+                    Boolean value = UserConfigTypeRegistry.BOOLEAN.storage.getValueFor(UserConfigs.EXIT_MESSAGE, e.player.getGameProfile().getId());
+                    if(value == null || value) {
                         e.player.sendStatusMessage(new TextComponentString(TextFormatting.GOLD + "You are no longer in a claimed area."), true);
                     }
                 }
             } else {
                 if(mgr.isBlockInAnyClaim(e.player.world, pos)) {
-                    if(UserConfigManager.getManager().get(e.player.getGameProfile().getId(), UserConfigs.ENTRY_MESSAGE)) {
+                    Boolean value = UserConfigTypeRegistry.BOOLEAN.storage.getValueFor(UserConfigs.ENTRY_MESSAGE, e.player.getGameProfile().getId());
+                    if((value == null || value)) {
                         e.player.sendStatusMessage(new TextComponentString(TextFormatting.LIGHT_PURPLE + "You are now in a claimed area."), true);
                     }
                 }
