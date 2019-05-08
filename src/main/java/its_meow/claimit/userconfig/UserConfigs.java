@@ -11,8 +11,6 @@ public class UserConfigs {
 	public static void register() {
 		UserConfigTypeRegistry.BOOLEAN.addConfig(ENTRY_MESSAGE);
 		UserConfigTypeRegistry.BOOLEAN.addConfig(EXIT_MESSAGE);
-		UserConfigTypeRegistry.FLOAT.addConfig(new UserConfig<Float>("test_float", 32.5F, "Testing float!"));
-		UserConfigTypeRegistry.STRING.addConfig(new UserConfig<String>("test_string_1", "yeet!", "Testing float!"));
 	}
 	
 }
