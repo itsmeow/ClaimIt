@@ -161,7 +161,7 @@ public class CommandUtils {
     public static List<String> getRelevantGroupNames(ICommandSender sender) {
         if(!CommandUtils.isAdmin(sender) && sender instanceof EntityPlayer) {
             UUID uuid = ((EntityPlayer) sender).getGameProfile().getId();
-            return GroupManager.getGroups().stream().filter(g -> (g.getMembers().keySet().contains(uuid) || g.isOwner(uuid))).collect(ArrayList<String>::new, (l, group) -> l.add(group.getName()), (r, r1) -> r.addAll(r1)); 
+            return GroupManager.getGroups().stream().filter(g -> (g.getMembers().keySet().contains(uuid) || g.isOwner(uuid))).collect(ArrayList<String>::new, (l, g) -> l.add(g.getName()), (l, l1) -> l1.addAll(l));
         }
         return new ArrayList<String>();
     }
