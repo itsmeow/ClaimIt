@@ -77,9 +77,13 @@ public class CommandSubGroupClaim extends CommandCIBase {
                     // Add claim
                     if(!group.hasClaim(claim)) {
                         if(CommandUtils.isAdmin(sender) || (sender instanceof EntityPlayer && claim.isOwner((EntityPlayer)sender))) {
-                            group.addClaim(claim);
-                            sendMessage(sender, GREEN + "Successfully added claim " + YELLOW + claim.getDisplayedViewName() + GREEN + " to group " + DARK_GREEN + groupName);
-                            sendMessage(sender, YELLOW + "Please make sure you trust " + CommandUtils.getNameForUUID(group.getOwner(), server) + " and the people they trust, as they will have full permission in this claim, as well as the ability to add more people!");
+                            if(CommandUtils.isAdmin(sender) || (sender instanceof EntityPlayer) && group.getMembers().containsKey(((EntityPlayer) sender).getGameProfile().getId())) {
+                                group.addClaim(claim);
+                                sendMessage(sender, GREEN + "Successfully added claim " + YELLOW + claim.getDisplayedViewName() + GREEN + " to group " + DARK_GREEN + groupName);
+                                sendMessage(sender, YELLOW + "Please make sure you trust " + CommandUtils.getNameForUUID(group.getOwner(), server) + " and the people they trust, as they will have full permission in this claim, as well as the ability to add more people!");
+                            } else {
+                                sendMessage(sender, RED + "You cannot add claims to a group you are not a member of!");
+                            }
                         } else {
                             sendMessage(sender, RED + "You do not own this claim!");
                         }

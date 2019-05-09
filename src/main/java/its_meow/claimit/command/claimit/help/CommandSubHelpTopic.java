@@ -7,7 +7,6 @@ import java.util.Set;
 
 import com.google.common.collect.ListMultimap;
 import com.google.common.collect.MultimapBuilder;
-
 import its_meow.claimit.command.CommandCIBase;
 import its_meow.claimit.util.text.CommandChatStyle;
 import net.minecraft.command.CommandException;
@@ -36,7 +35,12 @@ public class CommandSubHelpTopic extends CommandCIBase {
                 YELLOW + "Now, identify what permissions you want to add (modify for place/break, entity for livestock and mobs, use for doors and chests)",
                 YELLOW + "Finally, mix all this info together and run a command (hint: hit tab for autocomplete): " + GREEN + "/claimit claim permission add <permission> <playername> [claimname]", 
                 YELLOW + "Now your friends should have permissions! You can use the same command but with 'remove' instead of 'add' to remove troublemakers.");
-    }
+        TopicHelpRegistry.add("groups", YELLOW + "Do you have a lot of friends? Tired of spamming the add command? Want people to be able to add others while gone?", 
+                YELLOW + "Even if you haven't got a ton a friends, I've got the thing for you! Groups! With groups you can manage a user's permissions in multiple claims as well as share claims via groups.", 
+                YELLOW + "The idea is you add members to a group first. Give them member permissions that you want them to have in ALL claims that are eventually added to the group.", 
+                YELLOW + "Now that you have your members, add a claim to the group. This will give members their permissions in this claim. Keep in mind those with manage_perms will be able to meddle with claims, so be careful.", 
+                YELLOW + "Also, you have to directly own a claim to add it to a group, since the owner automatically gets all permissions. Claims can be removed by the owner at any time.");
+        }
 
     @Override
     public String getHelp(ICommandSender sender) {
