@@ -10,9 +10,9 @@ import com.google.common.collect.ImmutableList;
 
 import its_meow.claimit.ClaimIt;
 import its_meow.claimit.api.claim.ClaimArea;
-import its_meow.claimit.api.event.ClaimAddedEvent;
-import its_meow.claimit.api.event.ClaimRemovedEvent;
-import its_meow.claimit.api.event.ClaimsClearedEvent;
+import its_meow.claimit.api.event.claim.ClaimAddedEvent;
+import its_meow.claimit.api.event.claim.ClaimRemovedEvent;
+import its_meow.claimit.api.event.claim.ClaimsClearedEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 

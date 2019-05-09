@@ -1,4 +1,4 @@
-package its_meow.claimit.api.event;
+package its_meow.claimit.api.event.group;
 
 import its_meow.claimit.api.claim.ClaimArea;
 import its_meow.claimit.api.group.Group;

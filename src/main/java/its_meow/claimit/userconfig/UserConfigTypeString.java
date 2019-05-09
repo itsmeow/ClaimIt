@@ -1,7 +1,7 @@
 package its_meow.claimit.userconfig;
 
-import its_meow.claimit.api.util.NBTDeserializer;
-import its_meow.claimit.api.util.NBTSerializer;
+import its_meow.claimit.api.util.nbt.NBTDeserializer;
+import its_meow.claimit.api.util.nbt.NBTSerializer;
 
 public class UserConfigTypeString extends UserConfigType<String> {
 

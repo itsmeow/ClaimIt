@@ -1,4 +1,4 @@
-package its_meow.claimit.api.util;
+package its_meow.claimit.api.util.objects;
 
 import java.util.Set;
 

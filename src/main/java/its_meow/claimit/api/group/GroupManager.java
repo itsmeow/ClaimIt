@@ -8,10 +8,10 @@ import com.google.common.collect.ImmutableSet;
 
 import its_meow.claimit.api.ClaimItAPI;
 import its_meow.claimit.api.claim.ClaimArea;
-import its_meow.claimit.api.event.GroupClaimAddedEvent;
-import its_meow.claimit.api.event.GroupClaimRemovedEvent;
+import its_meow.claimit.api.event.group.GroupClaimAddedEvent;
+import its_meow.claimit.api.event.group.GroupClaimRemovedEvent;
 import its_meow.claimit.api.serialization.GlobalDataSerializer;
-import its_meow.claimit.api.util.BiMultiMap;
+import its_meow.claimit.api.util.objects.BiMultiMap;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;

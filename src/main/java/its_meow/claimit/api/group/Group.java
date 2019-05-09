@@ -10,11 +10,11 @@ import com.google.common.collect.ImmutableSetMultimap;
 import com.google.common.collect.SetMultimap;
 
 import its_meow.claimit.api.claim.ClaimArea;
-import its_meow.claimit.api.event.GroupClaimAddedEvent;
-import its_meow.claimit.api.event.GroupClaimRemovedEvent;
+import its_meow.claimit.api.event.group.GroupClaimAddedEvent;
+import its_meow.claimit.api.event.group.GroupClaimRemovedEvent;
 import its_meow.claimit.api.permission.ClaimPermissionMember;
-import its_meow.claimit.api.util.BiMultiMap;
-import its_meow.claimit.api.util.ClaimNBTUtil;
+import its_meow.claimit.api.util.nbt.ClaimNBTUtil;
+import its_meow.claimit.api.util.objects.BiMultiMap;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.MinecraftForge;

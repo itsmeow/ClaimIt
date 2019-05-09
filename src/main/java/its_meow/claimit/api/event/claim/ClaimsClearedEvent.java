@@ -1,4 +1,4 @@
-package its_meow.claimit.api.event;
+package its_meow.claimit.api.event.claim;
 
 import net.minecraftforge.fml.common.eventhandler.Event;
 

@@ -1,4 +1,4 @@
-package its_meow.claimit.api.event;
+package its_meow.claimit.api.event.claim;
 
 import its_meow.claimit.api.claim.ClaimArea;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;

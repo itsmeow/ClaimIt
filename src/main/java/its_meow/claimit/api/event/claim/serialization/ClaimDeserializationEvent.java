@@ -1,6 +1,7 @@
-package its_meow.claimit.api.event;
+package its_meow.claimit.api.event.claim.serialization;
 
 import its_meow.claimit.api.claim.ClaimArea;
+import its_meow.claimit.api.event.claim.ClaimEvent;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
 
 /** Fired right before a claim is about to be added to the claims list - after all the data has been loaded.

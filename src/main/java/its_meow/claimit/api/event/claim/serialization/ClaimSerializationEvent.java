@@ -1,4 +1,4 @@
-package its_meow.claimit.api.event;
+package its_meow.claimit.api.event.claim.serialization;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;

@@ -6,8 +6,8 @@ import java.util.UUID;
 
 import com.google.common.collect.ImmutableMap;
 
-import its_meow.claimit.api.util.NBTDeserializer;
-import its_meow.claimit.api.util.NBTSerializer;
+import its_meow.claimit.api.util.nbt.NBTDeserializer;
+import its_meow.claimit.api.util.nbt.NBTSerializer;
 import its_meow.claimit.userconfig.UserConfigValueStorage.UserConfigTypeStorage.UserConfigUUIDValue;
 
 public abstract class UserConfigType<T> {

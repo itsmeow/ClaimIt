@@ -1,6 +1,7 @@
-package its_meow.claimit.api.event;
+package its_meow.claimit.api.event.claim;
 
 import its_meow.claimit.api.claim.ClaimArea;
+import its_meow.claimit.api.event.claim.serialization.ClaimDeserializationEvent;
 
 /**
  * Fires when a claim is added using {@link its_meow.claimit.api.claim.ClaimManager#addClaimToListInsecurely(ClaimArea)} (or any methods that call such)
