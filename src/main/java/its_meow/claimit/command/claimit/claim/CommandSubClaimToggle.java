@@ -12,7 +12,7 @@ import its_meow.claimit.api.claim.ClaimArea;
 import its_meow.claimit.api.permission.ClaimPermissionRegistry;
 import its_meow.claimit.api.permission.ClaimPermissionToggle;
 import its_meow.claimit.command.CommandCIBase;
-import its_meow.claimit.util.CommandUtils;
+import its_meow.claimit.util.command.CommandUtils;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;

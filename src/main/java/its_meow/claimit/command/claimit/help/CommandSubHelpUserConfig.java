@@ -7,9 +7,9 @@ import static net.minecraft.util.text.TextFormatting.UNDERLINE;
 import static net.minecraft.util.text.TextFormatting.YELLOW;
 
 import its_meow.claimit.command.CommandCIBase;
-import its_meow.claimit.util.userconfig.UserConfigType;
-import its_meow.claimit.util.userconfig.UserConfigTypeRegistry;
-import its_meow.claimit.util.userconfig.UserConfigType.UserConfig;
+import its_meow.claimit.userconfig.UserConfigType;
+import its_meow.claimit.userconfig.UserConfigTypeRegistry;
+import its_meow.claimit.userconfig.UserConfigType.UserConfig;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.server.MinecraftServer;

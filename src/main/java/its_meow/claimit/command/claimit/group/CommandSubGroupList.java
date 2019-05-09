@@ -9,7 +9,7 @@ import java.util.UUID;
 import its_meow.claimit.api.group.Group;
 import its_meow.claimit.api.group.GroupManager;
 import its_meow.claimit.command.CommandCIBase;
-import its_meow.claimit.util.CommandUtils;
+import its_meow.claimit.util.command.CommandUtils;
 import its_meow.claimit.util.text.CommandChatStyle;
 import its_meow.claimit.util.text.TextComponentStyled;
 import net.minecraft.command.CommandException;

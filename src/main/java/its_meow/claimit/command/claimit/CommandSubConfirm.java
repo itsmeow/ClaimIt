@@ -1,8 +1,8 @@
 package its_meow.claimit.command.claimit;
 
 import its_meow.claimit.command.CommandCIBase;
-import its_meow.claimit.util.Confirmable;
-import its_meow.claimit.util.ConfirmationManager;
+import its_meow.claimit.util.command.ConfirmationManager;
+import its_meow.claimit.util.command.IConfirmable;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.server.MinecraftServer;
@@ -33,7 +33,7 @@ public class CommandSubConfirm extends CommandCIBase {
 	public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
 		ConfirmationManager mgr = ConfirmationManager.getManager();
 		if(mgr.needsConfirm(sender)) {
-		    Confirmable action = mgr.getAction(sender);
+		    IConfirmable action = mgr.getAction(sender);
 			sendMessage(sender, "Confirmed action: " + action.getConfirmName());
 			ConfirmationManager.getManager().doAction(server, sender, action);
 			mgr.removeConfirm(sender);

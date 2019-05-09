@@ -15,7 +15,7 @@ import javax.annotation.Nullable;
 
 import org.apache.commons.lang3.tuple.Pair;
 
-import its_meow.claimit.util.CommandHelpRegistry;
+import its_meow.claimit.util.command.CommandHelpRegistry;
 import its_meow.claimit.util.text.CommandChatStyle;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;

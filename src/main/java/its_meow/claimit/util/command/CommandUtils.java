@@ -1,4 +1,4 @@
-package its_meow.claimit.util;
+package its_meow.claimit.util.command;
 
 import static net.minecraft.util.text.TextFormatting.AQUA;
 import static net.minecraft.util.text.TextFormatting.GREEN;

@@ -1,11 +1,11 @@
-package its_meow.claimit.util.userconfig;
+package its_meow.claimit.userconfig;
 
 import java.util.UUID;
 
 import javax.annotation.Nullable;
 
 import its_meow.claimit.serialization.ClaimItGlobalDataSerializer;
-import its_meow.claimit.util.userconfig.UserConfigType.UserConfig;
+import its_meow.claimit.userconfig.UserConfigType.UserConfig;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.util.Constants;
 

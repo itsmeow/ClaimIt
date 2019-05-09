@@ -1,6 +1,6 @@
 package its_meow.claimit.command;
 
-import its_meow.claimit.util.CommandUtils;
+import its_meow.claimit.util.command.CommandUtils;
 import its_meow.claimit.util.text.TextComponentCommand;
 import its_meow.claimit.util.text.TextComponentStyled;
 import net.minecraft.command.CommandBase;

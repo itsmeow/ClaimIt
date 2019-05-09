@@ -1,10 +1,10 @@
-package its_meow.claimit.util;
+package its_meow.claimit.util.command;
 
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.server.MinecraftServer;
 
-public interface Confirmable {
+public interface IConfirmable {
     
     String getConfirmName();
     

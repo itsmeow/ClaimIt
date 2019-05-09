@@ -1,4 +1,4 @@
-package its_meow.claimit.util;
+package its_meow.claimit.util.command;
 
 import java.util.HashMap;
 
@@ -13,7 +13,7 @@ public class ConfirmationManager {
 	private static ConfirmationManager instance = null;
 	
 	private ConfirmationManager() {
-		 confirmActions = new HashMap<ICommandSender, Pair<Confirmable, String[]>>();
+		 confirmActions = new HashMap<ICommandSender, Pair<IConfirmable, String[]>>();
 	}
 
 	public static ConfirmationManager getManager() {
@@ -24,17 +24,17 @@ public class ConfirmationManager {
 		return instance;
 	}
 	
-	private HashMap<ICommandSender, Pair<Confirmable, String[]>> confirmActions;
+	private HashMap<ICommandSender, Pair<IConfirmable, String[]>> confirmActions;
 	
 	public boolean needsConfirm(ICommandSender sender) {
 		return confirmActions.containsKey(sender);
 	}
 	
-	public Confirmable getAction(ICommandSender sender) {
+	public IConfirmable getAction(ICommandSender sender) {
 		return confirmActions.get(sender).getLeft();
 	}
 	
-	public boolean addConfirm(ICommandSender sender, Confirmable action, String[] args) {
+	public boolean addConfirm(ICommandSender sender, IConfirmable action, String[] args) {
 		if(needsConfirm(sender)) {
 			return false;
 		} else {
@@ -56,7 +56,7 @@ public class ConfirmationManager {
 		this.confirmActions.clear();
 	}
 
-    public void doAction(MinecraftServer server, ICommandSender sender, Confirmable action) throws CommandException {
+    public void doAction(MinecraftServer server, ICommandSender sender, IConfirmable action) throws CommandException {
         action.doAction(server, sender, confirmActions.get(sender).getRight());
     }
 	

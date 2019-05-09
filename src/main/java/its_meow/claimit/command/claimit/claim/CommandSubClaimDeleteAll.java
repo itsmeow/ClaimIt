@@ -12,9 +12,9 @@ import java.util.UUID;
 import its_meow.claimit.api.claim.ClaimArea;
 import its_meow.claimit.api.claim.ClaimManager;
 import its_meow.claimit.command.CommandCIBase;
-import its_meow.claimit.util.CommandUtils;
-import its_meow.claimit.util.Confirmable;
-import its_meow.claimit.util.ConfirmationManager;
+import its_meow.claimit.util.command.CommandUtils;
+import its_meow.claimit.util.command.ConfirmationManager;
+import its_meow.claimit.util.command.IConfirmable;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.command.PlayerNotFoundException;
@@ -22,7 +22,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
 
-public class CommandSubClaimDeleteAll extends CommandCIBase implements Confirmable {
+public class CommandSubClaimDeleteAll extends CommandCIBase implements IConfirmable {
 
 	@Override
 	public String getName() {

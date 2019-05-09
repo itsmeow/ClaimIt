@@ -15,7 +15,7 @@ import its_meow.claimit.command.claimit.CommandSubConfirm;
 import its_meow.claimit.command.claimit.CommandSubGroup;
 import its_meow.claimit.command.claimit.CommandSubHelp;
 import its_meow.claimit.config.ClaimItConfig;
-import its_meow.claimit.util.CommandHelpRegistry;
+import its_meow.claimit.util.command.CommandHelpRegistry;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.server.MinecraftServer;
 
