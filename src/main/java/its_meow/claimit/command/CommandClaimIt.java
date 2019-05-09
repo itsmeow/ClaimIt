@@ -1,12 +1,6 @@
 package its_meow.claimit.command;
 
-import static net.minecraft.util.text.TextFormatting.AQUA;
-import static net.minecraft.util.text.TextFormatting.BOLD;
-import static net.minecraft.util.text.TextFormatting.DARK_PURPLE;
-import static net.minecraft.util.text.TextFormatting.DARK_RED;
-import static net.minecraft.util.text.TextFormatting.GRAY;
-import static net.minecraft.util.text.TextFormatting.RESET;
-import static net.minecraft.util.text.TextFormatting.YELLOW;
+import static net.minecraft.util.text.TextFormatting.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,6 +14,7 @@ import its_meow.claimit.command.claimit.CommandSubConfig;
 import its_meow.claimit.command.claimit.CommandSubConfirm;
 import its_meow.claimit.command.claimit.CommandSubGroup;
 import its_meow.claimit.command.claimit.CommandSubHelp;
+import its_meow.claimit.config.ClaimItConfig;
 import its_meow.claimit.util.CommandHelpRegistry;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.server.MinecraftServer;
@@ -73,6 +68,7 @@ public class CommandClaimIt extends CommandCITreeBase {
     public void executeBaseCommand(MinecraftServer server, ICommandSender sender, String[] args) {
         sendMessage(sender, GRAY + "" + BOLD + ClaimIt.NAME + RESET + "" + DARK_PURPLE + " Version " + YELLOW + ClaimIt.VERSION + DARK_PURPLE + " by " + DARK_RED + "" + BOLD + "its_meow");
         sendMessage(sender, GRAY + "" + BOLD + ClaimItAPI.NAME + RESET + "" + DARK_PURPLE + " Version " + YELLOW + ClaimItAPI.VERSION);
+        sendMessage(sender, GRAY + "" + BOLD + "" + ITALIC + "Claiming item is " + RESET + DARK_RED + ClaimItConfig.claim_create_item_display);
         sendMessage(sender, AQUA + "" + BOLD + "Subcommands: ");
         sendCMessage(sender, YELLOW, "/claimit claim");
         sendCMessage(sender, YELLOW, "/claimit group");
