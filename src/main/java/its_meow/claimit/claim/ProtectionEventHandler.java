@@ -22,7 +22,6 @@ import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ActionResult;
@@ -64,7 +63,7 @@ public class ProtectionEventHandler {
 		if(claim != null) {
 			EntityPlayer player = e.getEntityPlayer();
 			e.setCanceled(!claim.canUse(player));
-		} else if(claim == null && e.getItemStack().getItem() == Items.SHEARS && !world.isRemote) { // Add a claim with shears
+		} else if(claim == null && ClaimIt.claiming_item != null && e.getItemStack().getItem() == ClaimIt.claiming_item && !world.isRemote) { // Add a claim with shears
 			EntityPlayer player = e.getEntityPlayer();
 			EnumHand hand = e.getHand();
 			ItemStack stack = player.getHeldItem(hand);
