@@ -28,7 +28,11 @@ ClaimArea claim = ClaimManager.getManager().getClaimByTrueName(trueName);
 
 Remember, whenever you retrieve a claim, it is `Nullable`.
 <br><br>
-<h1>Checking Permissions</h1>
+
+<h1>Permissions in Claims</h1>
+<br>
+<h2>Checking Member Permissions</h2>
+
 Now you have your `ClaimArea` objects. These are very versatile and useful objects that can give you all sorts of information about a claim.
 The number one thing about claims is probably permissions. They control who can and cannot do things inside a given area. Retrieving permissions for a user is also very easy.
 Keep in mind, the owner and server administrators (in admin mode) are always considered to have a permission, unless you use other methods of retrieval.
@@ -57,3 +61,13 @@ claim.canManage(player);
 
 You can also check specifically if a user is the owner of a claim via `claim.isTrueOwner(player)` or `claim.isTrueOwner(uuid)`.
 There's a reason the word "true" is in there. `claim.isOwner(player)` returns the same thing given an owner, but also returns true for administrators. Generally it's a good idea to use `isOwner`, because administrators should be able to fully manage claims, as the owner would.
+
+<h2>Checking Toggle Permissions</h2>
+
+Toggles are claim-specific boolean values. Getting them is very simple:
+
+```java
+claim.isPermissionToggled(togglePermission);
+```
+
+Similarly, you may ask where the toggles are at? They are also located in `ClaimPermissions`. Make sure the types match.
