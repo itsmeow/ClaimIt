@@ -68,7 +68,7 @@ public class CommandClaimIt extends CommandCITreeBase {
     public void executeBaseCommand(MinecraftServer server, ICommandSender sender, String[] args) {
         sendMessage(sender, GRAY + "" + BOLD + ClaimIt.NAME + RESET + "" + DARK_PURPLE + " Version " + YELLOW + ClaimIt.VERSION + DARK_PURPLE + " by " + DARK_RED + "" + BOLD + "its_meow");
         sendMessage(sender, GRAY + "" + BOLD + ClaimItAPI.NAME + RESET + "" + DARK_PURPLE + " Version " + YELLOW + ClaimItAPI.VERSION);
-        sendMessage(sender, GRAY + "" + BOLD + "" + ITALIC + "Claiming item is " + RESET + DARK_RED + ClaimItConfig.claim_create_item_display);
+        sendMessage(sender, BLUE + "Claiming item is " + RESET + GREEN + ITALIC + ClaimItConfig.claim_create_item_display);
         sendMessage(sender, AQUA + "" + BOLD + "Subcommands: ");
         sendCMessage(sender, YELLOW, "/claimit claim");
         sendCMessage(sender, YELLOW, "/claimit group");
