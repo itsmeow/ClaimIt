@@ -1,11 +1,13 @@
 nav:
   - Home: 'index.md'
   - Claims:
-    - Getting Claims: 'claims/getting_claims.md'
+    - Managing Claims: 'claims/claim_management.md'
     - Checking Permissions in Claims: 'claims/checking_permissions.md'
     - Setting Permissions in Claims: 'claims/setting_permissions.md'
   - Permissions:
     - Adding Permissions: 'permissions/adding_permissions.md'
+  - Groups:
+    - Group Management: 'groups/group_management.md'
 
 site_name: ClaimIt API
 theme: readthedocs
