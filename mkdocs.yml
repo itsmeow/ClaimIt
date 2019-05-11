@@ -5,6 +5,6 @@ pages:
     - Checking Permissions in Claims: 'claims/checking_permissions.md'
 
 site_name: ClaimIt API
-theme: cinder
+theme: readthedocs
 nav:
  - Home: index.md
