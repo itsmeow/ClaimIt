@@ -438,13 +438,12 @@ public class ClaimArea {
 	    int[] claimVals = tag.getIntArray("CLAIMINFO");
         UUID owner = UUID.fromString(tag.getString("OWNERUID"));
         UUID ownerOffline = UUID.fromString(tag.getString("OWNERUIDOFF"));
-        System.out.println("Owner: " + owner);
         String trueViewName = tag.getString("TRUEVIEWNAME");
         if(trueViewName == null || trueViewName.equals("")) {
             trueViewName = keyName;
         }
         if(claimVals.length > 0 && claimVals[0] == 0) {
-            System.out.println("Valid version.");
+            ClaimItAPI.logger.debug("Valid version.");
             ClaimArea claim = new ClaimArea(claimVals[1], claimVals[2], claimVals[3], claimVals[4], claimVals[5], owner, ownerOffline, trueViewName);
             claim.addMembers(ClaimNBTUtil.readMembers(tag));
             claim.setToggles(ClaimNBTUtil.readToggles(tag));

@@ -80,7 +80,7 @@ public class GroupManager {
         if(comp != null) {
             NBTTagCompound groupsTag = comp.getCompoundTag("GROUPS");
             for(String key : groupsTag.getKeySet()) {
-                System.out.println("Loading " + key);
+                ClaimItAPI.logger.debug("Loading " + key);
                 Group group = Group.deserialize(groupsTag.getCompoundTag(key));
                 if(!addGroup(group)) {
                     ClaimItAPI.logger.error("Duplicate group name of " + group.name + " failed to load! Was the data edited?");

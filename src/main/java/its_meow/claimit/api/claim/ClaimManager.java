@@ -7,8 +7,6 @@ import java.util.UUID;
 
 import javax.annotation.Nullable;
 
-import org.apache.logging.log4j.Level;
-
 import com.google.common.collect.ImmutableList;
 
 import its_meow.claimit.api.ClaimItAPI;
@@ -230,7 +228,7 @@ public class ClaimManager {
 
 	/** Forces a world to save claim data. Removes all claim data that is stored and adds current data. **/
 	public void serialize() {
-		ClaimItAPI.logger.info("Saving claims data.");
+		ClaimItAPI.logger.debug("Saving claims data.");
 		ClaimSerializer store = ClaimSerializer.get();
 		if(store != null && store.data != null && store.data.getSize() > 0) {
 			Set<String> toRemove = new HashSet<String>();
@@ -265,7 +263,7 @@ public class ClaimManager {
 		NBTTagCompound comp = store.data;
 		if(comp != null) {
 			for(String key : comp.getKeySet()) {
-				System.out.println("Loading " + key);
+				ClaimItAPI.logger.debug("Loading " + key);
 	            ClaimArea claim = ClaimArea.deserialize(comp.getCompoundTag(key), key);
 
 	            ClaimDeserializationEvent event = new ClaimDeserializationEvent(claim);
@@ -274,7 +272,7 @@ public class ClaimManager {
 	            if(!event.isCanceled()) {
 	                this.addClaimNoEvent(event.getClaim());
 	            } else {
-	                ClaimItAPI.logger.log(Level.INFO, "Event cancelled loading of this claim.");
+	                ClaimItAPI.logger.debug("Event cancelled loading of this claim.");
 	            }
 			}
 		}
