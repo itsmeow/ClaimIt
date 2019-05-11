@@ -103,7 +103,8 @@ public class CommandSubConfig extends CommandCIBase {
     @Override
     public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args, BlockPos targetPos) {
         if(args.length == 1) {
-            return CommandBase.getListOfStringsMatchingLastWord(args, UserConfigTypeRegistry.getRegistries().values().stream().collect(ArrayList<String>::new, (l, t) -> l.addAll(t.getConfigs().keySet()), (r, r1) -> r1.addAll(r)));
+            ArrayList<String> configs = UserConfigTypeRegistry.getRegistries().values().stream().collect(ArrayList<String>::new, (l, t) -> l.addAll(t.getConfigs().keySet()), (r, r1) -> r1.addAll(r));
+            return CommandBase.getListOfStringsMatchingLastWord(args, configs);
         } else {
             return new ArrayList<String>();
         }
