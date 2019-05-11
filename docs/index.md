@@ -79,7 +79,7 @@ Here's an example of using it to return a class that extends a common proxy inte
 }
 ```
 
-With this method, say you had an active compatability class in `net.yourmod.compat.ActiveClaimIt` and a corresponding `net.yourmod.compat.InactiveClaimIt` which both extend `ClaimItCompatProxy`
+With this method, say you had an active compatability class in `net.yourmod.compat.ActiveClaimIt` and a corresponding `net.yourmod.compat.InactiveClaimIt` which both extend `ClaimItCompatProxy`<br>
 `ClaimItCompatProxy` has an abstract method called `register()`, which when called will do something that classloads ClaimIt inside the Active class, while the Inactive class does nothing.
 So, should I want to do an optional dependency call during preinit, I could do something like this:
 

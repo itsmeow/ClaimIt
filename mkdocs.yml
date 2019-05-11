@@ -3,6 +3,9 @@ nav:
   - Claims:
     - Getting Claims: 'claims/getting_claims.md'
     - Checking Permissions in Claims: 'claims/checking_permissions.md'
+    - Setting Permissions in Claims: 'claims/setting_permissions.md'
+  - Permissions:
+  	- Adding Permissions: 'permissions/adding_permissions.md'
 
 site_name: ClaimIt API
 theme: readthedocs
