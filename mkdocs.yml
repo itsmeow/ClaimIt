@@ -1,4 +1,4 @@
-pages:
+nav:
   - Home: 'index.md'
   - Claims:
     - Getting Claims: 'claims/getting_claims.md'
@@ -6,5 +6,3 @@ pages:
 
 site_name: ClaimIt API
 theme: readthedocs
-nav:
- - Home: index.md
