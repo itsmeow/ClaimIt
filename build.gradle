@@ -51,7 +51,9 @@ task apiJar(type: Jar) {
     classifier = 'api'
 }
 
-tasks.jar.dependsOn apiJar
+reobf {
+    apiJar {}
+}
 
 jar {
     from "LICENSE"
