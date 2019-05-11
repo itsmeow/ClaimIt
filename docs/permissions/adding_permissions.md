@@ -28,6 +28,8 @@ Just like member permissions, these should be kept statically for later checking
 public static final ClaimPermissionToggle ENTITY_SPAWN = new ClaimPermissionToggle("entity_spawn", false, "Turning on allows mobs and animals to spawn.");
 ```
 
+The first argument is once again a unique name that is used to identify this toggle. The second is the default value. This is what all claims will start with this set to. The third is help information.
+
 And register them like so:
 
 ```java
