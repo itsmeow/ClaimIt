@@ -6,14 +6,17 @@ ClaimIt API has been designed for modders to integrate their mods and develop ad
 
 How does one actually set up development for ClaimIt? How should I go about integrating my mod?<br>
 The first choice is whether to include ClaimIt API as an *optional* dependency in your base mod, or to develop an external/addon mod.<br>
+
 The benefits of an addon mod:
-* Can reference ClaimIt API directly, no need for proxies or lambda hacks to avoid classloading
-* Can post events in your base mod to check for ClaimIt hooks in addon mod<br>
+
+   * Can reference ClaimIt API directly, no need for proxies or lambda hacks to avoid classloading
+   * Can post events in your base mod to check for ClaimIt hooks in addon mod<br>
 
 The benefits of integration:
-* No need to maintain another mod
-* Keeps everything contained
-* Less likelihood of everything breaking if your mod changes
+
+   * No need to maintain another mod
+   * Keeps everything contained
+   * Less likelihood of everything breaking if your mod changes
 
 ### Adding it to the project
 
