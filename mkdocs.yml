@@ -1,0 +1,10 @@
+pages:
+  - Home: 'index.md'
+  - Claims:
+    - Getting Claims: 'claims/getting_claims.md'
+    - Checking Permissions in Claims: 'claims/checking_permissions.md'
+
+site_name: ClaimIt API
+theme: cinder
+nav:
+ - Home: index.md
