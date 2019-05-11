@@ -2,7 +2,7 @@
 ClaimIt API has been designed for modders to integrate their mods and develop addons, so I will be using my best efforts to document how to use it.
 <br>
 
-<h1>Getting started</h1>
+## Getting started
 
 How does one actually set up development for ClaimIt? How should I go about integrating my mod?<br>
 The first choice is whether to include ClaimIt API as an *optional* dependency in your base mod, or to develop an external/addon mod.<br>
@@ -15,7 +15,7 @@ The benefits of integration:
  - Keeps everything contained
  - Less likelihood of everything breaking if your mod changes
 
-<h1>Adding it to the project</h1>
+### Adding it to the project
 
 Once you've figured out which one you want to do, you'll need to add ClaimIt API to your buildscript.<br>
 This is fairly simple. First, add the CurseForge maven to your repositories.<br>
@@ -41,7 +41,7 @@ Make sure you replace the version with the latest, so as not to be incompatible.
 Now that you've done this, rerun `gradlew setupDecompWorkspace` and your IDE task `gradlew eclipse` if applicable. You should also refresh Eclipse (F5 on project).<br>
 You should now see ClaimIt API in your build path!
 
-<h1>How To: Optional Dependencies</h1>
+## How To: Optional Dependencies
 
 You may skip this if you are developing an addon mod. This is a quick how-to for those who wish to optionally depend on ClaimIt API in their mod.<br>
 First, I introduce the concept of classloading. A class is loaded if it is referenced in code, as an argument in a function, as a return type, or as a field. If a class is loaded that does not exist, the game will crash. So, you must avoid classloading ClaimIt API should it not be present.<br>
@@ -51,7 +51,7 @@ Luckily, Forge includes the `Loader` class, which you can use to check if a mod 
 boolean apiPresent = Loader.isModLoaded("claimitapi");
 ```
 
-<h3>The Reflect Way</h3>
+### The Reflect Way
 
 However, just an if statement is not enough to stop classloading! Remember, I said references in code load classes. So, how do you avoid this?
 The first way is via reflection. This is generally not recommended, but it is probably a little easier for those who don't understand lambdas.
@@ -108,7 +108,7 @@ public static void onSomethingChangeInMod(YourEventHere event) {
 
 Now, you can post your own events that get passed to your ClaimIt API module, should it exist, without classloading!
 
-<h3>The Lambda Way</h3>
+### The Lambda Way
 
 I did mention another method, this is lambdas. This one is very simple should you know how to utilize it. There's a small trick in Java that if you have *TWO* lambda operators in a row and then classload, simply having it as a variable somewhere doesn't classload the innermost lambda.
 For example, I can safely do the following:
@@ -125,6 +125,6 @@ if(Loader.isLoaded("claimitapi") {
 
 Now that you have the rundown of avoiding classloading, you can safely develop using ClaimIt API directly in your mod! Addon makers are still however free to do whatever they please, with a hard dependency.
 
-<h1>What next?</h1>
+## What next?
 
 There are more specific pages for pieces of the API that you could wish to interact with. Check them out!

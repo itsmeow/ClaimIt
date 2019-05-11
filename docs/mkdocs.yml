@@ -1,3 +1,5 @@
 pages:
   - Home: 'index.md'
-    - Claims: 'docs/claims.md'
+  - Claims:
+    - Getting Claims: 'claims/getting_claims.md'
+    - Checking Permissions in Claims: 'claims/checking_permissions.md'
