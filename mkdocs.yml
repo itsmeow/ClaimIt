@@ -10,4 +10,8 @@ nav:
     - Group Management: 'groups/group_management.md'
 
 site_name: ClaimIt API
-theme: readthedocs
+theme:
+    name: readthedocs
+    highlightjs: true
+    hljs_languages:
+        - java
