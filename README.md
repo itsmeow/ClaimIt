@@ -50,10 +50,12 @@ List of default permissions:
    * `claimit.command.claimit.help.command`
    * `claimit.command.claimit.help.userconfig`
 
-The list of admin permissions:
+The list of non default admin permissions:
 
    * `claimit.admin` - Required for all of the below, allows enabling admin mode via `/claimit admin`
    * `claimit.claim.manage.others` - This grants the ability to bypass protections as admin. **This is also required for most "claim.*.others" permissions**
+   
+The list of default admin permissions (these require one of the above, but are default. You can set these to false to block a specific one):
    * `claimit.command.claimit.claim.manage.others` - View manage dialog for other's claims as admin
    * `claimit.command.claimit.claim.delete.others` - Allow deleting other's claims as admin
    * `claimit.command.claimit.claim.deleteall.others` - Allow deleting all of another's claims as admin
@@ -62,6 +64,7 @@ The list of admin permissions:
    * `claimit.command.claimit.claim.permission.list.others` - Allow viewing members of another's claims as admin
    * `claimit.command.claimit.claim.setname.others` - Allow setting the name of other's claims as admin
    * `claimit.command.claimit.claim.toggle.others` - Allow editing of toggles on other's claims as admin
+   * `claimit.command.claimit.claim.info.others` - Allow getting info for claims via true name as admin. Note you can still view info at a given location.
    * `claimit.command.claimit.group.claim.others` - Allow adding claims to groups you are not a member of as admin
    * `claimit.command.claimit.group.delete.others` - Allow deleting claims you do not own as admin
    * `claimit.command.claimit.group.list.others` - Allow listing all groups on the server or all groups owned by a player as admin

@@ -12,14 +12,12 @@ import java.util.UUID;
 
 import its_meow.claimit.api.claim.ClaimArea;
 import its_meow.claimit.api.permission.ClaimPermissionMember;
-import its_meow.claimit.api.permission.ClaimPermissions;
 import its_meow.claimit.command.CommandCITreeBase;
 import its_meow.claimit.command.claimit.claim.permission.CommandSubClaimPermissionList;
 import its_meow.claimit.util.command.CommandUtils;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
 
@@ -40,7 +38,7 @@ public class CommandSubClaimPermission extends CommandCITreeBase {
         list.add("perm");
         return list;
     }
-    
+
     @Override
     public String getHelp(ICommandSender sender) {
         return "Both a tree command and a command. Add or remove members from a claim. Subcommand 'list' exists. First required argument is add or remove. Second is a member permission. Third is a username. Fourth, optional argument is a claim name. Otherwise, your current location is used.";
@@ -74,32 +72,22 @@ public class CommandSubClaimPermission extends CommandCITreeBase {
         ClaimPermissionMember permission = CommandUtils.getPermissionMember(permissionStr, "\n" + YELLOW + this.getUsage(sender));
         UUID id = CommandUtils.getUUIDForName(username, server);
         ClaimArea claim = CommandUtils.getClaimWithNameOrLocation(claimName, sender);
-        
+
         if(claim != null) {
-            if(sender instanceof EntityPlayer && !CommandUtils.isAdminNoded(sender, "claimit.command.claimit.claim.permission.others") && !claim.isOwner((EntityPlayer)sender) && !claim.inPermissionList(ClaimPermissions.MANAGE_PERMS, ((EntityPlayer) sender).getGameProfile().getId())) {
+            if(!CommandUtils.isAdminWithNodeOrManage(sender, claim, "claimit.command.claimit.claim.permission.others")) {
                 throw new CommandException("You cannot modify members of this claim!");
             }
             if(action.equals("add"))  {
                 // Add user
-                if(!claim.inPermissionList(permission, id) || claim.isOwner(id)) {
-                    if(!(sender instanceof EntityPlayer) && sender.canUseCommand(2, "claimit.command.claimit.claim.permission.others") || (sender instanceof EntityPlayer && claim.canManage((EntityPlayer) sender))) {
-                        claim.addMember(permission, id);
-                        sendMessage(sender, GREEN + "Successfully added " + YELLOW + username + GREEN + " to claim " + DARK_GREEN + claim.getDisplayedViewName() + GREEN + " with permission " + AQUA + permission.parsedName);
-                    } else {
-                        sendMessage(sender, RED + "You cannot modify members of this claim!");
-                    }
+                if(claim.addMember(permission, id)) {
+                    sendMessage(sender, GREEN + "Successfully added " + YELLOW + username + GREEN + " to claim " + DARK_GREEN + claim.getDisplayedViewName() + GREEN + " with permission " + AQUA + permission.parsedName);
                 } else {
                     sendMessage(sender, YELLOW + "This player already has that permission!");
                 }
             } else if(action.equals("remove")) {
                 // Remove user
-                if(claim.inPermissionList(permission, id)) {
-                    if(!(sender instanceof EntityPlayer) && sender.canUseCommand(2, "claimit.command.claimit.claim.permission.others") || (sender instanceof EntityPlayer && claim.canManage((EntityPlayer) sender))) {
-                        claim.removeMember(permission, id);
+                if(claim.removeMember(permission, id)) {
                         sendMessage(sender, GREEN + "Successfully removed permission " + AQUA + permission.parsedName + GREEN + " from user " + YELLOW + username + GREEN + " in claim " + DARK_GREEN + claim.getDisplayedViewName());
-                    } else {
-                        sendMessage(sender, RED + "You cannot modify members of this claim!");
-                    }
                 } else {
                     sendMessage(sender, YELLOW + "This player does not have that permission!");
                 }
@@ -114,13 +102,14 @@ public class CommandSubClaimPermission extends CommandCITreeBase {
             }
         }
     }
-    
+
     @Override
     public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args, BlockPos targetPos) {
         List<String> list = new ArrayList<String>();
         if(args.length == 1) {
             list.add("add");
             list.add("remove");
+            list.add("list");
             return CommandBase.getListOfStringsMatchingLastWord(args, list);
         } else if(args.length == 2) {
             return CommandBase.getListOfStringsMatchingLastWord(args, CommandUtils.getMemberPermissions(list));

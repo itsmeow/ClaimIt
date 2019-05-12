@@ -140,7 +140,7 @@ public class CommandUtils {
     }
 
     public static boolean isAdmin(ICommandSender sender) {
-        return (((!(sender instanceof EntityPlayer) && sender.canUseCommand(2, "")) || ((sender instanceof EntityPlayer) && AdminManager.isAdmin((EntityPlayer) sender))));
+        return isAdminNoded(sender, "");
     }
     
     public static boolean isAdminNoded(ICommandSender sender, String permNode) {
@@ -151,16 +151,16 @@ public class CommandUtils {
         return (((!(sender instanceof EntityPlayer) && sender.canUseCommand(2, permNode) && sender.canUseCommand(2, "claimit.claim.manage.others")) || ((sender instanceof EntityPlayer) && AdminManager.isAdmin((EntityPlayer) sender) && sender.canUseCommand(0, "claimit.claim.manage.others") && sender.canUseCommand(0, permNode))));
     }
     
-    public static boolean equivalentOwnerWithNode(ICommandSender sender, ClaimArea claim, String permNode) {
+    public static boolean isAdminWithNodeOrOwner(ICommandSender sender, ClaimArea claim, String permNode) {
         if(sender instanceof EntityPlayer) {
-            return claim.isOwner((EntityPlayer) sender) ^ CommandUtils.isAdminNodedNeedsManage(sender, permNode);
+            return claim.isOwner((EntityPlayer) sender) || CommandUtils.isAdminNodedNeedsManage(sender, permNode);
         }
         return CommandUtils.isAdminNodedNeedsManage(sender, permNode);
     }
     
-    public static boolean canManagePermsWithNode(ICommandSender sender, ClaimArea claim, String permNode) {
+    public static boolean isAdminWithNodeOrManage(ICommandSender sender, ClaimArea claim, String permNode) {
         if(sender instanceof EntityPlayer) {
-            return claim.canManage((EntityPlayer) sender) ^ CommandUtils.isAdminNodedNeedsManage(sender, permNode);
+            return claim.canManage((EntityPlayer) sender) || CommandUtils.isAdminNodedNeedsManage(sender, permNode);
         }
         return CommandUtils.isAdminNodedNeedsManage(sender, permNode);
     }
@@ -169,7 +169,7 @@ public class CommandUtils {
         if(list == null) {
             list = new ArrayList<String>();
         }
-        if(!CommandUtils.isAdmin(sender) && sender instanceof EntityPlayer) {
+        if(sender instanceof EntityPlayer) {
             EntityPlayer player = (EntityPlayer) sender;
             Set<ClaimArea> owned = ClaimManager.getManager().getClaimsOwnedByPlayer(player.getGameProfile().getId());
             if(owned != null) {
@@ -182,7 +182,7 @@ public class CommandUtils {
     }
     
     public static List<String> getRelevantGroupNames(ICommandSender sender) {
-        if(!CommandUtils.isAdmin(sender) && sender instanceof EntityPlayer) {
+        if(sender instanceof EntityPlayer) {
             UUID uuid = ((EntityPlayer) sender).getGameProfile().getId();
             return GroupManager.getGroups().stream().filter(g -> (g.getMembers().keySet().contains(uuid) || g.isOwner(uuid))).collect(ArrayList<String>::new, (l, g) -> l.add(g.getName()), (l, l1) -> l1.addAll(l));
         }

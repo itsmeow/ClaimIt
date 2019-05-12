@@ -39,7 +39,7 @@ public class CommandSubClaimSetName extends CommandCIBase {
 				EntityPlayer player = (EntityPlayer) sender;
 				ClaimArea claim = ClaimManager.getManager().getClaimAtLocation(player.world, player.getPosition());
 				if(claim != null) {
-					if(CommandUtils.equivalentOwnerWithNode(sender, claim, "claimit.command.claimit.claim.setname.others")) {
+					if(CommandUtils.isAdminWithNodeOrOwner(sender, claim, "claimit.command.claimit.claim.setname.others")) {
 						boolean pass = claim.setViewName(args[0]);
 						if(pass) {
 							sendMessage(sender, AQUA + "Set this claim's name to: " + GREEN + claim.getDisplayedViewName());
@@ -50,7 +50,7 @@ public class CommandSubClaimSetName extends CommandCIBase {
 							sendMessage(sender, RED + "Failed to set name. There is another claim " + (AdminManager.isAdmin(player) ? "this player owns" : "you own") + " with this name.");
 						}
 					} else {
-						sendMessage(sender, RED + "You do not own this claim!");
+						sendMessage(sender, RED + "You cannot rename this claim!");
 					}
 				} else {
 					sendMessage(sender, RED + "No claim there or you don't own the claim!");

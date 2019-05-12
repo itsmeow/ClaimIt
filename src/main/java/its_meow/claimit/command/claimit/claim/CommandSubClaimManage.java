@@ -50,12 +50,12 @@ public class CommandSubClaimManage extends CommandCIBase {
         }
         ClaimArea claim = CommandUtils.getClaimWithNameOrLocation(cName, sender);
         if(claim != null) {
-            if(CommandUtils.canManagePermsWithNode(sender, claim, "claimit.command.claimit.claim.manage.others")) {
+            if(CommandUtils.isAdminWithNodeOrManage(sender, claim, "claimit.command.claimit.claim.manage.others")) {
                 String fName = (CommandUtils.isAdmin(sender) ? claim.getTrueViewName() : claim.getDisplayedViewName());
                 if(args.length < 1) {
                     sendMessage(sender, BLUE + "" + BOLD + "Management for " + GREEN + claim.getDisplayedViewName() + BLUE + ":");
                     sendSMessage(sender, ITALIC + "" + UNDERLINE + "" + YELLOW + "View Info", new ClaimInfoChatStyle(fName));
-                    if(CommandUtils.equivalentOwnerWithNode(sender, claim, "claimit.command.claimit.claim.delete.others")) {
+                    if(CommandUtils.isAdminWithNodeOrOwner(sender, claim, "claimit.command.claimit.claim.delete.others")) {
                         sendSMessage(sender, ITALIC + "" + UNDERLINE + "" + RED + "Delete", new CommandChatStyle("/claimit claim delete " + fName, true, "Click to delete"));
                     }
                     if(claim.getMembers().keySet().size() > 0) {

@@ -76,12 +76,8 @@ public class CommandSubClaimPermissionList extends CommandCIBase {
     private static void outputMembers(ClaimArea claim, ICommandSender sender) throws CommandException {
         ImmutableSetMultimap<UUID,ClaimPermissionMember> permMap = claim.getMembers();
         Set<Group> groups = GroupManager.getGroupsForClaim(claim);
-        if(sender instanceof EntityPlayer) {
-            if(!claim.canManage((EntityPlayer) sender)) {
-                throw new CommandException("You cannot view the members of this claim!");
-            } else if(!CommandUtils.isAdminNoded(sender, "claimit.claim.permission.list.others") && !claim.isOwner((EntityPlayer) sender)) {
-                throw new CommandException("You cannot view the members of this claim!");
-            }
+        if(!CommandUtils.isAdminWithNodeOrManage(sender, claim, "claimit.claim.permission.list.others")) {
+            throw new CommandException("You cannot view the members of this claim!");
         }
         if((permMap == null || permMap.isEmpty())) {
             sendMessage(sender, RED + "This claim has no members.");
