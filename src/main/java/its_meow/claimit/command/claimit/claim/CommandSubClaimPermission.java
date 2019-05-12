@@ -76,12 +76,12 @@ public class CommandSubClaimPermission extends CommandCITreeBase {
         ClaimArea claim = CommandUtils.getClaimWithNameOrLocation(claimName, sender);
         
         if(claim != null) {
-            if(sender instanceof EntityPlayer && !CommandUtils.isAdminNoded(sender, "claimit.command.claimit.claim.permission.others") && !claim.isTrueOwner((EntityPlayer)sender) && !claim.inPermissionList(ClaimPermissions.MANAGE_PERMS, ((EntityPlayer) sender).getGameProfile().getId())) {
+            if(sender instanceof EntityPlayer && !CommandUtils.isAdminNoded(sender, "claimit.command.claimit.claim.permission.others") && !claim.isOwner((EntityPlayer)sender) && !claim.inPermissionList(ClaimPermissions.MANAGE_PERMS, ((EntityPlayer) sender).getGameProfile().getId())) {
                 throw new CommandException("You cannot modify members of this claim!");
             }
             if(action.equals("add"))  {
                 // Add user
-                if(!claim.inPermissionList(permission, id) || claim.isTrueOwner(id)) {
+                if(!claim.inPermissionList(permission, id) || claim.isOwner(id)) {
                     if(!(sender instanceof EntityPlayer) && sender.canUseCommand(2, "claimit.command.claimit.claim.permission.others") || (sender instanceof EntityPlayer && claim.canManage((EntityPlayer) sender))) {
                         claim.addMember(permission, id);
                         sendMessage(sender, GREEN + "Successfully added " + YELLOW + username + GREEN + " to claim " + DARK_GREEN + claim.getDisplayedViewName() + GREEN + " with permission " + AQUA + permission.parsedName);

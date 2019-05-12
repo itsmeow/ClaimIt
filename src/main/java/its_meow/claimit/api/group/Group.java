@@ -38,7 +38,7 @@ public class Group {
      */
     protected void removeMemberClaims(UUID uuid) {
         ArrayList<ClaimArea> toRemove = new ArrayList<ClaimArea>();
-        claims.forEach(c -> {if(c.isTrueOwner(uuid)) toRemove.add(c);});
+        claims.forEach(c -> {if(c.isOwner(uuid)) toRemove.add(c);});
         toRemove.forEach(c -> claims.remove(c));
     }
     

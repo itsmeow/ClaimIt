@@ -4,6 +4,7 @@ import static net.minecraft.util.text.TextFormatting.AQUA;
 import static net.minecraft.util.text.TextFormatting.GREEN;
 import static net.minecraft.util.text.TextFormatting.RED;
 
+import its_meow.claimit.AdminManager;
 import its_meow.claimit.api.claim.ClaimArea;
 import its_meow.claimit.api.claim.ClaimManager;
 import its_meow.claimit.command.CommandCIBase;
@@ -38,15 +39,15 @@ public class CommandSubClaimSetName extends CommandCIBase {
 				EntityPlayer player = (EntityPlayer) sender;
 				ClaimArea claim = ClaimManager.getManager().getClaimAtLocation(player.world, player.getPosition());
 				if(claim != null) {
-					if(claim.isOwner(player) || CommandUtils.isAdminNoded(sender, "claimit.command.claimit.claim.setname.others")) {
+					if(CommandUtils.equivalentOwnerWithNode(sender, claim, "claimit.command.claimit.claim.setname.others")) {
 						boolean pass = claim.setViewName(args[0]);
 						if(pass) {
 							sendMessage(sender, AQUA + "Set this claim's name to: " + GREEN + claim.getDisplayedViewName());
-							if(ClaimManager.getManager().isAdmin(player)) {
+							if(AdminManager.isAdmin(player)) {
 								sendMessage(sender, AQUA + "Set this claim's true name to: " + GREEN + claim.getTrueViewName());
 							}
 						} else {
-							sendMessage(sender, RED + "Failed to set name. There is another claim " + (ClaimManager.getManager().isAdmin(player) ? "this player owns" : "you own") + " with this name.");
+							sendMessage(sender, RED + "Failed to set name. There is another claim " + (AdminManager.isAdmin(player) ? "this player owns" : "you own") + " with this name.");
 						}
 					} else {
 						sendMessage(sender, RED + "You do not own this claim!");

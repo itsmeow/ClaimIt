@@ -68,7 +68,7 @@ public class CommandSubClaimToggle extends CommandCIBase {
 		ClaimPermissionToggle perm = CommandUtils.getPermissionToggle(args[0], this.getUsage(sender));
 		
 		// Argh, if they don't have edit others and admin on, they aren't the owner, and they cannot manage
-		if(!CommandUtils.isAdminNoded(sender, "claimit.command.claimit.claim.toggle.others") && sender instanceof EntityPlayer && !claim.isTrueOwner((EntityPlayer) sender) && !claim.inPermissionList(ClaimPermissions.MANAGE_PERMS, ((EntityPlayer) sender).getGameProfile().getId())) {
+		if(!CommandUtils.isAdminNoded(sender, "claimit.command.claimit.claim.toggle.others") && sender instanceof EntityPlayer && !claim.isOwner((EntityPlayer) sender) && !claim.inPermissionList(ClaimPermissions.MANAGE_PERMS, ((EntityPlayer) sender).getGameProfile().getId())) {
 		    throw new CommandException("You cannot modify toggles of thid claim!");
 		}
 		

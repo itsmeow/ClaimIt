@@ -1,6 +1,5 @@
 package its_meow.claimit.command.claimit.claim;
 
-import static net.minecraft.util.text.TextFormatting.RED;
 import static net.minecraft.util.text.TextFormatting.YELLOW;
 
 import java.util.ArrayList;
@@ -13,7 +12,6 @@ import its_meow.claimit.util.command.CommandUtils;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
 
@@ -52,17 +50,12 @@ public class CommandSubClaimDelete extends CommandCIBase {
         } else if(claim == null) {
             throw new CommandException("There is no claim with this name you own!");
         }
-        if(sender instanceof EntityPlayer && (!claim.isTrueOwner((EntityPlayer)sender) && !CommandUtils.isAdminNoded(sender, "claimit.command.claimit.claim.delete.others"))) {
+        if(!CommandUtils.equivalentOwnerWithNode(sender, claim, "claimit.command.claimit.claim.delete.others")) {
             throw new CommandException("You do not have permission to delete this claim!");
         }
 
-        if((sender instanceof EntityPlayer && (claim.isOwner(((EntityPlayer) sender)))) || sender.canUseCommand(2, "")) {
-            boolean success = ClaimManager.getManager().deleteClaim(claim);
-            sendMessage(sender, YELLOW + (success ? "Claim deleted." : "Claim was not deleted, something canceled it."));
-        } else {
-            sendMessage(sender, RED + "You do not own this claim!");
-        }
-
+        boolean success = ClaimManager.getManager().deleteClaim(claim);
+        sendMessage(sender, YELLOW + (success ? "Claim deleted." : "Claim was not deleted, something canceled it."));
     }
 
     @Override

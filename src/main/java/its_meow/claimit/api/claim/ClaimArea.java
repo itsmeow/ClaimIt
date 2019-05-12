@@ -95,48 +95,11 @@ public class ClaimArea {
 	}
 
 	public boolean isOwner(EntityPlayer player) {
-		try {
-			if(this.getOwner().equals(EntityPlayer.getUUID(player.getGameProfile()))) {
-				// If online UUID does match then make sure offline does too
-				if(this.getOwnerOffline().equals(EntityPlayer.getOfflineUUID(player.getName()))) {
-					return true;
-				}
-			}
-			if(ClaimManager.getManager().isAdmin(player) && player.canUseCommand(0, "claimit.claim.manage.others")) {
-				return true;
-			}
-			return false;
-		} catch (Exception e) {
-			e.printStackTrace();
-			return false;
-		}
+		return isOwner(player.getGameProfile().getId());
 	}
 
-	public boolean isTrueOwner(EntityPlayer player) {
-		try {
-			if(this.getOwner().equals(EntityPlayer.getUUID(player.getGameProfile()))) {
-				// If online UUID does match then make sure offline does too
-				if(this.getOwnerOffline().equals(EntityPlayer.getOfflineUUID(player.getName()))) {
-					return true;
-				}
-			}
-			return false;
-		} catch (Exception e) {
-			e.printStackTrace();
-			return false;
-		}
-	}
-
-	public boolean isTrueOwner(UUID owner) {
-		try {
-			if(this.getOwner().equals(owner)) {
-				return true;
-			}
-			return false;
-		} catch (Exception e) {
-			e.printStackTrace();
-			return false;
-		}
+	public boolean isOwner(UUID owner) {
+	    return this.getOwner().equals(owner);
 	}
 
 	public boolean canModify(EntityPlayer player) {
@@ -159,9 +122,8 @@ public class ClaimArea {
 		return hasPermission(ClaimPermissions.MANAGE_PERMS, player);
 	}
 
-
 	public boolean hasPermission(ClaimPermissionMember permission, EntityPlayer player) {		
-		return this.isOwner(player) || isMemberPermissionToggled(permission) || this.memberLists.getValues(permission).contains(player.getGameProfile().getId()) || hasPermissionFromGroup(permission, player);
+		return (this.isOwner(player) || isMemberPermissionToggled(permission) || this.memberLists.getValues(permission).contains(player.getGameProfile().getId()) || hasPermissionFromGroup(permission, player));
 	}
 	
 	private boolean hasPermissionFromGroup(ClaimPermissionMember permission, EntityPlayer player) {

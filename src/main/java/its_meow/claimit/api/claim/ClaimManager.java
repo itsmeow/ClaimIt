@@ -21,7 +21,6 @@ import its_meow.claimit.api.serialization.ClaimSerializer;
 import its_meow.claimit.api.util.objects.BiMultiMap;
 import its_meow.claimit.api.util.objects.ClaimChunkUtil;
 import its_meow.claimit.api.util.objects.ClaimChunkUtil.ClaimChunk;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -33,7 +32,6 @@ public class ClaimManager {
 	private ArrayList<ClaimArea> claims = new ArrayList<ClaimArea>();
 	private BiMultiMap<UUID, ClaimArea> ownedClaims = new BiMultiMap<UUID, ClaimArea>();
 	private BiMultiMap<ClaimChunk, ClaimArea> chunks = new BiMultiMap<ClaimChunk, ClaimArea>();
-	private Set<EntityPlayer> admins = new HashSet<EntityPlayer>();
 
 	private ClaimManager() {}
 
@@ -43,22 +41,6 @@ public class ClaimManager {
 		}
 
 		return instance;
-	}
-
-	/** Adds a player to the admin list, allowing claim bypass **/
-	public void addAdmin(EntityPlayer player) {
-		admins.add(player);
-	}
-
-	/** Removes a player from the admin list, removing claim bypass **/
-	public void removeAdmin(EntityPlayer player) {
-		admins.remove(player);
-	}
-
-	/** Tells whether a player is an admin/has claim bypass
-	 * @return True if has admin, false if not. **/
-	public boolean isAdmin(EntityPlayer player) {
-		return admins.contains(player);
 	}
 
 	/** Removes a claim. 
@@ -115,7 +97,7 @@ public class ClaimManager {
 	 * @returns The claim with this name and owner or null if no claim is found **/
 	public ClaimArea getClaimByNameAndOwner(String name, UUID owner) {
 		for(ClaimArea claim : this.claims) {
-			if(claim.isTrueOwner(owner)) {
+			if(claim.isOwner(owner)) {
 				if(claim.getTrueViewName().equals(owner + "_" + name)) {
 					return claim;
 				}
@@ -200,11 +182,6 @@ public class ClaimManager {
 		    addClaimToListInsecurely(claim);
 		}
 		return doAdd;
-	}
-
-	/** Clears the list of players with admin enabled. **/
-	public void clearAdmins() {
-		this.admins.clear();
 	}
 
 	/** Adds a claim to the claim list without checking for overlaps. Don't use! **/

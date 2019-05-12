@@ -1,6 +1,12 @@
 package its_meow.claimit.command.claimit.claim;
 
-import static net.minecraft.util.text.TextFormatting.*;
+import static net.minecraft.util.text.TextFormatting.BLUE;
+import static net.minecraft.util.text.TextFormatting.BOLD;
+import static net.minecraft.util.text.TextFormatting.GREEN;
+import static net.minecraft.util.text.TextFormatting.ITALIC;
+import static net.minecraft.util.text.TextFormatting.RED;
+import static net.minecraft.util.text.TextFormatting.UNDERLINE;
+import static net.minecraft.util.text.TextFormatting.YELLOW;
 
 import java.util.List;
 import java.util.Set;
@@ -16,7 +22,6 @@ import its_meow.claimit.util.text.ClaimInfoChatStyle;
 import its_meow.claimit.util.text.CommandChatStyle;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
 
@@ -45,12 +50,12 @@ public class CommandSubClaimManage extends CommandCIBase {
         }
         ClaimArea claim = CommandUtils.getClaimWithNameOrLocation(cName, sender);
         if(claim != null) {
-            if(CommandUtils.isAdminNoded(sender, "claimit.command.claimit.claim.manage.others") || (sender instanceof EntityPlayer && claim.canManage((EntityPlayer) sender))) {
+            if(CommandUtils.canManagePermsWithNode(sender, claim, "claimit.command.claimit.claim.manage.others")) {
                 String fName = (CommandUtils.isAdmin(sender) ? claim.getTrueViewName() : claim.getDisplayedViewName());
                 if(args.length < 1) {
                     sendMessage(sender, BLUE + "" + BOLD + "Management for " + GREEN + claim.getDisplayedViewName() + BLUE + ":");
                     sendSMessage(sender, ITALIC + "" + UNDERLINE + "" + YELLOW + "View Info", new ClaimInfoChatStyle(fName));
-                    if(CommandUtils.isAdmin(sender) || (sender instanceof EntityPlayer && claim.isOwner((EntityPlayer) sender))) {
+                    if(CommandUtils.equivalentOwnerWithNode(sender, claim, "claimit.command.claimit.claim.delete.others")) {
                         sendSMessage(sender, ITALIC + "" + UNDERLINE + "" + RED + "Delete", new CommandChatStyle("/claimit claim delete " + fName, true, "Click to delete"));
                     }
                     if(claim.getMembers().keySet().size() > 0) {

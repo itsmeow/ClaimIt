@@ -37,7 +37,6 @@ public class ClaimItAPI {
 
     @EventHandler
     public void serverLoad(FMLServerStartingEvent event) {
-        ClaimManager.getManager().clearAdmins();
         ClaimManager.getManager().deserialize(); // Clears claims list as well
         GroupManager.deserialize();
     }

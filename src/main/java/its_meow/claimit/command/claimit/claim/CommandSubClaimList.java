@@ -19,6 +19,7 @@ import java.util.UUID;
 
 import com.mojang.authlib.GameProfile;
 
+import its_meow.claimit.AdminManager;
 import its_meow.claimit.api.claim.ClaimArea;
 import its_meow.claimit.api.claim.ClaimManager;
 import its_meow.claimit.command.CommandCIBase;
@@ -145,14 +146,14 @@ public class CommandSubClaimList extends CommandCIBase {
                     i++;
                 }
                 if(ClaimPageTracker.getPage(filter, pg) != null) {
-                    sender.sendMessage(new TextComponentStyled(GREEN + "" + ITALIC + "" + UNDERLINE + "Next Page", new PageChatStyle("claimit claim list", ClaimManager.getManager().isAdmin(player), String.valueOf(pg + 1), pName)));
+                    sender.sendMessage(new TextComponentStyled(GREEN + "" + ITALIC + "" + UNDERLINE + "Next Page", new PageChatStyle("claimit claim list", AdminManager.isAdmin(player), String.valueOf(pg + 1), pName)));
                 }
             }
         } else if(sender.canUseCommand(4, "claimit.claim.list.others")) {
             sendMessage(sender, "Detected server console. Getting all claims. Specify a name to get only their claims.");
             int i = 0;
             for(ClaimArea claim : ClaimManager.getManager().getClaimsList()) {
-                if(filter == null || claim.isTrueOwner(filter)) {
+                if(filter == null || claim.isOwner(filter)) {
                     i++;
                     sendMessage(sender, "####CLAIM INFO####");
                     sendMessage(sender, "Claim #" + i + ", owned by: " + CommandUtils.getNameForUUID(claim.getOwner(), server));

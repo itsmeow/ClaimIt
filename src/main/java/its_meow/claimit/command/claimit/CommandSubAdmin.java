@@ -3,7 +3,7 @@ package its_meow.claimit.command.claimit;
 import static net.minecraft.util.text.TextFormatting.GREEN;
 import static net.minecraft.util.text.TextFormatting.RED;
 
-import its_meow.claimit.api.claim.ClaimManager;
+import its_meow.claimit.AdminManager;
 import its_meow.claimit.command.CommandCIBase;
 import its_meow.claimit.util.TeleportUtils;
 import net.minecraft.command.CommandException;
@@ -35,11 +35,11 @@ public class CommandSubAdmin extends CommandCIBase {
         if(args.length != 4 || !args[0].equals("tpdimxz")) {
             if(sender instanceof EntityPlayer) {
                 if(this.checkPermission(server, sender)) {
-                    if(ClaimManager.getManager().isAdmin((EntityPlayer) sender)) {
-                        ClaimManager.getManager().removeAdmin((EntityPlayer) sender);
+                    if(AdminManager.isAdmin((EntityPlayer) sender)) {
+                        AdminManager.removeAdmin((EntityPlayer) sender);
                         sendMessage(sender, GREEN + "Admin bypass disabled.");
                     } else {
-                        ClaimManager.getManager().addAdmin((EntityPlayer) sender);
+                        AdminManager.addAdmin((EntityPlayer) sender);
                         sendMessage(sender, GREEN + "Admin bypass enabled. You may now manage all claims.");
                     }
                 } else {
@@ -48,7 +48,7 @@ public class CommandSubAdmin extends CommandCIBase {
             } else {
                 sendMessage(sender, "You must be a player to use this command!");
             }
-        } else if(args.length == 4 && args[0].equals("tpdimxz") && sender instanceof EntityPlayerMP) {
+        } else if(args.length == 4 && args[0].equals("tpdimxz") && sender instanceof EntityPlayerMP && sender.canUseCommand(2, "minecraft.command.tp")) {
             try {
                 EntityPlayerMP p = (EntityPlayerMP) sender;
                 int dim = Integer.valueOf(args[1]);
@@ -65,6 +65,8 @@ public class CommandSubAdmin extends CommandCIBase {
             } catch(NullPointerException | NumberFormatException e) {
                 sendMessage(sender, "Invalid coordinates.");
             }
+        } else {
+            throw new CommandException("You do not have permission to teleport!");
         }
     }
 

@@ -15,6 +15,7 @@ import javax.annotation.Nullable;
 
 import com.mojang.authlib.GameProfile;
 
+import its_meow.claimit.AdminManager;
 import its_meow.claimit.api.claim.ClaimArea;
 import its_meow.claimit.api.claim.ClaimManager;
 import its_meow.claimit.api.group.GroupManager;
@@ -38,7 +39,7 @@ public class CommandUtils {
         if(sender instanceof EntityPlayer) {
             EntityPlayer player = ((EntityPlayer) sender);
             claim = mgr.getClaimByNameAndOwner(claimName, player.getUniqueID());
-            if(claim == null && mgr.isAdmin(player)) {
+            if(claim == null && AdminManager.isAdmin(player)) {
                 sendMessage(sender, AQUA + "Using true name.");
                 claim = mgr.getClaimByTrueName(claimName);
             }
@@ -139,11 +140,29 @@ public class CommandUtils {
     }
 
     public static boolean isAdmin(ICommandSender sender) {
-        return (((!(sender instanceof EntityPlayer) && sender.canUseCommand(2, "")) || ((sender instanceof EntityPlayer) && ClaimManager.getManager().isAdmin((EntityPlayer) sender))));
+        return (((!(sender instanceof EntityPlayer) && sender.canUseCommand(2, "")) || ((sender instanceof EntityPlayer) && AdminManager.isAdmin((EntityPlayer) sender))));
     }
     
     public static boolean isAdminNoded(ICommandSender sender, String permNode) {
-        return (((!(sender instanceof EntityPlayer) && sender.canUseCommand(2, permNode)) || ((sender instanceof EntityPlayer) && ClaimManager.getManager().isAdmin((EntityPlayer) sender) && sender.canUseCommand(0, permNode))));
+        return (((!(sender instanceof EntityPlayer) && sender.canUseCommand(2, permNode)) || ((sender instanceof EntityPlayer) && AdminManager.isAdmin((EntityPlayer) sender) && sender.canUseCommand(0, permNode))));
+    }
+    
+    public static boolean isAdminNodedNeedsManage(ICommandSender sender, String permNode) {
+        return (((!(sender instanceof EntityPlayer) && sender.canUseCommand(2, permNode) && sender.canUseCommand(2, "claimit.claim.manage.others")) || ((sender instanceof EntityPlayer) && AdminManager.isAdmin((EntityPlayer) sender) && sender.canUseCommand(0, "claimit.claim.manage.others") && sender.canUseCommand(0, permNode))));
+    }
+    
+    public static boolean equivalentOwnerWithNode(ICommandSender sender, ClaimArea claim, String permNode) {
+        if(sender instanceof EntityPlayer) {
+            return claim.isOwner((EntityPlayer) sender) ^ CommandUtils.isAdminNodedNeedsManage(sender, permNode);
+        }
+        return CommandUtils.isAdminNodedNeedsManage(sender, permNode);
+    }
+    
+    public static boolean canManagePermsWithNode(ICommandSender sender, ClaimArea claim, String permNode) {
+        if(sender instanceof EntityPlayer) {
+            return claim.canManage((EntityPlayer) sender) ^ CommandUtils.isAdminNodedNeedsManage(sender, permNode);
+        }
+        return CommandUtils.isAdminNodedNeedsManage(sender, permNode);
     }
 
     public static List<String> getOwnedClaimNames(@Nullable List<String> list, ICommandSender sender) {

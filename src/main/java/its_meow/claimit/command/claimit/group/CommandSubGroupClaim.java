@@ -62,7 +62,7 @@ public class CommandSubGroupClaim extends CommandCIBase {
                 if(action.equals("add"))  {
                     // Add claim
                     if(!group.hasClaim(claim)) {
-                        if(CommandUtils.isAdminNoded(sender, "claimit.claim.manage.others") || (sender instanceof EntityPlayer && claim.isOwner((EntityPlayer)sender))) {
+                        if(CommandUtils.equivalentOwnerWithNode(sender, claim, "claimit.claim.manage.others")) {
                             if(CommandUtils.isAdminNoded(sender, "claimit.command.claimit.group.claim.others") || (sender instanceof EntityPlayer) && group.getMembers().containsKey(((EntityPlayer) sender).getGameProfile().getId())) {
                                 group.addClaim(claim);
                                 sendMessage(sender, GREEN + "Successfully added claim " + YELLOW + claim.getDisplayedViewName() + GREEN + " to group " + DARK_GREEN + groupName);

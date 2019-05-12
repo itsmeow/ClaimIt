@@ -48,6 +48,7 @@ public class ClaimIt {
 	
     @EventHandler
     public void serverLoad(FMLServerStartingEvent event) {
+        AdminManager.clearAdmins();
         UserConfigManager.deserialize();
         ConfirmationManager.getManager().removeAllConfirms();
         event.registerServerCommand(new CommandClaimIt());

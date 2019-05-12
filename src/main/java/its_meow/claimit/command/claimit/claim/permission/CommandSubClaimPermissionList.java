@@ -79,7 +79,7 @@ public class CommandSubClaimPermissionList extends CommandCIBase {
         if(sender instanceof EntityPlayer) {
             if(!claim.canManage((EntityPlayer) sender)) {
                 throw new CommandException("You cannot view the members of this claim!");
-            } else if(!CommandUtils.isAdminNoded(sender, "claimit.claim.permission.list.others") && !claim.isTrueOwner((EntityPlayer) sender)) {
+            } else if(!CommandUtils.isAdminNoded(sender, "claimit.claim.permission.list.others") && !claim.isOwner((EntityPlayer) sender)) {
                 throw new CommandException("You cannot view the members of this claim!");
             }
         }
