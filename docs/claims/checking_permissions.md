@@ -30,9 +30,6 @@ claim.canPVP(player);
 claim.canManage(player);
 ```
 
-You can also check specifically if a user is the owner of a claim via `claim.isTrueOwner(player)` or `claim.isTrueOwner(uuid)`.
-There's a reason the word "true" is in there. `claim.isOwner(player)` returns the same thing given an owner, but also returns true for administrators. Generally it's a good idea to use `isOwner`, because administrators should be able to fully manage claims, as the owner would.
-
 ## Checking Toggle Permissions
 
 Toggles are claim-specific boolean values. Getting them is very simple:
@@ -42,3 +39,13 @@ claim.isPermissionToggled(togglePermission);
 ```
 
 Similarly, you may ask where the toggles are at? They are also located in `ClaimPermissions`. Make sure the types match.
+
+## Checking for Ownership:
+
+Simply:
+
+```java
+boolean owner = claim.isOwner(player)
+```
+
+There's also an overload that accepts a UUID.
