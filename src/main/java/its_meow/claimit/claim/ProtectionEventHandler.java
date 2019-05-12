@@ -65,44 +65,47 @@ public class ProtectionEventHandler {
 			e.setCanceled(!claim.canUse(player));
 		} else if(claim == null && ClaimIt.claiming_item != null && e.getItemStack().getItem() == ClaimIt.claiming_item && !world.isRemote) { // Add a claim with shears
 			EntityPlayer player = e.getEntityPlayer();
-			EnumHand hand = e.getHand();
-			ItemStack stack = player.getHeldItem(hand);
-			NBTTagCompound data = stack.getTagCompound();
-			if(data == null) {
-				NBTTagCompound newTag = new NBTTagCompound();
-				data = newTag;
-				stack.setTagCompound(newTag);
-			}
-			boolean isInClaim = ClaimManager.getManager().isBlockInAnyClaim(world, pos);
-			if(!isInClaim) {
-				int[] posArray = {pos.getX(), pos.getZ()};
-				if(data.hasKey("Corner1")) {
-					player.sendMessage(new TextComponentString(BLUE + "Added corner 2 at " + AQUA + posArray[0] + BLUE + ", " + AQUA + posArray[1]));
-					int[] corner1 = data.getIntArray("Corner1");
-					int[] corner2 = posArray;
-					BlockPos c1 = new BlockPos(corner1[0], 0, corner1[1]);
-					BlockPos c2 = new BlockPos(corner2[0], 0, corner2[1]);
-					BlockPos sideL = c2.subtract(c1); // Subtract to get side lengths
-					// Claim corners are automatically corrected to proper values by constructor
-					ClaimArea newClaim;
-					newClaim = new ClaimArea(player.dimension, c1.getX(), c1.getZ(), sideL.getX(), sideL.getZ(), player);
-					if(newClaim.getSideLengthX() >= 1 && newClaim.getSideLengthZ() >= 1) {
-						boolean didClaim = ClaimManager.getManager().addClaim(newClaim); // Add claim
-						player.sendMessage(new TextComponentString(didClaim ? GREEN + "Claim added successfully!" : RED + "This claim overlaps another claim!"));
-					} else {
-						player.sendMessage(new TextComponentString(RED + "Your claim must have a length of at least 2 in both directions!"));
-					}
-					// Remove data so a new claim can be made.
-					data.removeTag("Corner1");
-				} else {
-					data.setIntArray("Corner1", posArray);
-					player.sendMessage(new TextComponentString(BLUE + "Added corner 1 at " + AQUA + posArray[0] + BLUE + ", " + AQUA + posArray[1]));
-				}
+			if(player.canUseCommand(0, "claimit.claim.create")) {
+			    EnumHand hand = e.getHand();
+			    ItemStack stack = player.getHeldItem(hand);
+			    NBTTagCompound data = stack.getTagCompound();
+			    if(data == null) {
+			        NBTTagCompound newTag = new NBTTagCompound();
+			        data = newTag;
+			        stack.setTagCompound(newTag);
+			    }
+			    boolean isInClaim = ClaimManager.getManager().isBlockInAnyClaim(world, pos);
+			    if(!isInClaim) {
+			        int[] posArray = {pos.getX(), pos.getZ()};
+			        if(data.hasKey("Corner1")) {
+			            player.sendMessage(new TextComponentString(BLUE + "Added corner 2 at " + AQUA + posArray[0] + BLUE + ", " + AQUA + posArray[1]));
+			            int[] corner1 = data.getIntArray("Corner1");
+			            int[] corner2 = posArray;
+			            BlockPos c1 = new BlockPos(corner1[0], 0, corner1[1]);
+			            BlockPos c2 = new BlockPos(corner2[0], 0, corner2[1]);
+			            BlockPos sideL = c2.subtract(c1); // Subtract to get side lengths
+			            // Claim corners are automatically corrected to proper values by constructor
+			            ClaimArea newClaim;
+			            newClaim = new ClaimArea(player.dimension, c1.getX(), c1.getZ(), sideL.getX(), sideL.getZ(), player);
+			            if(newClaim.getSideLengthX() >= 1 && newClaim.getSideLengthZ() >= 1) {
+			                boolean didClaim = ClaimManager.getManager().addClaim(newClaim); // Add claim
+			                player.sendMessage(new TextComponentString(didClaim ? GREEN + "Claim added successfully!" : RED + "This claim overlaps another claim!"));
+			            } else {
+			                player.sendMessage(new TextComponentString(RED + "Your claim must have a length of at least 2 in both directions!"));
+			            }
+			            // Remove data so a new claim can be made.
+			            data.removeTag("Corner1");
+			        } else {
+			            data.setIntArray("Corner1", posArray);
+			            player.sendMessage(new TextComponentString(BLUE + "Added corner 1 at " + AQUA + posArray[0] + BLUE + ", " + AQUA + posArray[1]));
+			        }
+			    } else {
+			        data.removeTag("Corner1");
+			        player.sendMessage(new TextComponentString(RED + "You cannot set a corner inside an existing claim!"));
+			    }
 			} else {
-				data.removeTag("Corner1");
-				player.sendMessage(new TextComponentString(RED + "You cannot set a corner inside an existing claim!"));
+			    player.sendMessage(new TextComponentString(RED + "You do not have permission to make claims!"));
 			}
-
 
 		}
 	}

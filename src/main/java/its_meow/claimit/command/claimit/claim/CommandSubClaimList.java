@@ -64,7 +64,7 @@ public class CommandSubClaimList extends CommandCIBase {
         String page = null;
         int pg = 0;
         boolean error = false;
-        boolean admin = CommandUtils.isAdmin(sender);
+        boolean admin = CommandUtils.isAdminNoded(sender, "claimit.claim.list.others");
         if(args.length >= 1 && admin) {
             try {
                 Integer.parseInt(args[0]);
@@ -108,7 +108,7 @@ public class CommandSubClaimList extends CommandCIBase {
 
         if(sender instanceof EntityPlayer) {
             EntityPlayer player = (EntityPlayer) sender;
-            if(!CommandUtils.isAdminNoded(player, "claimit.claim.list.others")) {
+            if(!admin) {
                 final Set<ClaimArea> claims = ClaimManager.getManager().getClaimsOwnedByPlayer(player.getGameProfile().getId());
                 if(claims != null) {
                     int i = 0;

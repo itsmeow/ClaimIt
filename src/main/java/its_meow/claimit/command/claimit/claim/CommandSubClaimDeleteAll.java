@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
+import com.google.common.collect.ImmutableSet;
+
 import its_meow.claimit.api.claim.ClaimArea;
 import its_meow.claimit.api.claim.ClaimManager;
 import its_meow.claimit.command.CommandCIBase;
@@ -97,7 +99,7 @@ public class CommandSubClaimDeleteAll extends CommandCIBase implements IConfirma
                 if(sender instanceof EntityPlayer && !uuid.equals(((EntityPlayer) sender).getGameProfile().getId()) || !CommandUtils.isAdminNoded(sender, "claimit.claim.deleteall.others")) {
                     throw new CommandException("You do not have permission to remove " + player + "'s claims.");
                 }
-                Set<ClaimArea> owned = ClaimManager.getManager().getClaimsOwnedByPlayer(uuid);
+                ImmutableSet<ClaimArea> owned = ClaimManager.getManager().getClaimsOwnedByPlayer(uuid);
                 if(owned == null) {
                     throw new CommandException("No claims were found.");
                 }

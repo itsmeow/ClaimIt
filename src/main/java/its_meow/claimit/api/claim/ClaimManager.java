@@ -8,6 +8,7 @@ import java.util.UUID;
 import javax.annotation.Nullable;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 
 import its_meow.claimit.api.ClaimItAPI;
 import its_meow.claimit.api.event.claim.ClaimAddedEvent;
@@ -222,8 +223,8 @@ public class ClaimManager {
 	 * @return A {@link Set} of ClaimAreas owned by the player. If no claims are owned, returns null.
 	 * **/
 	@Nullable
-	public Set<ClaimArea> getClaimsOwnedByPlayer(UUID uuid) {
-		return ownedClaims.getValues(uuid).size() > 0 ? ownedClaims.getValues(uuid) : null;
+	public ImmutableSet<ClaimArea> getClaimsOwnedByPlayer(UUID uuid) {
+		return ownedClaims.getValues(uuid).size() > 0 ? ImmutableSet.copyOf(ownedClaims.getValues(uuid)) : null;
 	}
 
 	/** Forces a world to save claim data. Removes all claim data that is stored and adds current data. **/
