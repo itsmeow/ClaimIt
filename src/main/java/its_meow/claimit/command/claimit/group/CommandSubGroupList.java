@@ -21,7 +21,7 @@ public class CommandSubGroupList extends CommandCIBase {
 
     @Override
     public String getHelp(ICommandSender sender) {
-        return CommandUtils.isAdminNoded(sender, "claimit.group.list.others") ? "Lists all groups on the server. Optional username argument." : "Lists all groups you are in. Takes no arguments.";
+        return CommandUtils.isAdminNoded(sender, "claimit.command.group.list.others") ? "Lists all groups on the server. Optional username argument." : "Lists all groups you are in. Takes no arguments.";
     }
 
     @Override
@@ -31,12 +31,12 @@ public class CommandSubGroupList extends CommandCIBase {
 
     @Override
     public String getUsage(ICommandSender sender) {
-        return "/claimit group list" + (CommandUtils.isAdminNoded(sender, "claimit.group.list.others") ? " [username]" : "");
+        return "/claimit group list" + (CommandUtils.isAdminNoded(sender, "claimit.command.claimit.group.list.others") ? " [username]" : "");
     }
 
     @Override
     public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
-        boolean admin = CommandUtils.isAdminNoded(sender, "claimit.group.list.others");
+        boolean admin = CommandUtils.isAdminNoded(sender, "claimit.command.claimit.group.list.others");
         if(args.length > 0 && !admin) {
             throw new CommandException("Invalid argument count! Usage: " + this.getUsage(sender));
         }

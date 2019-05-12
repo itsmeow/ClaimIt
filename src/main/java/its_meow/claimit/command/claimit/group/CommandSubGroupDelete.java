@@ -42,7 +42,7 @@ public class CommandSubGroupDelete extends CommandCIBase {
             String groupname = args[0];
             Group group = GroupManager.getGroup(groupname);
             if(group != null) {
-                if(CommandUtils.isAdminNoded(sender, "claimit.group.delete.others") || (sender instanceof EntityPlayer && group.isOwner((EntityPlayer)sender))) {
+                if(CommandUtils.isAdminNoded(sender, "claimit.command.claimit.group.delete.others") || (sender instanceof EntityPlayer && group.isOwner((EntityPlayer)sender))) {
                     GroupManager.removeGroup(group);
                     sendMessage(sender, AQUA + "Deleted group: " + GREEN + groupname);
                 } else {

@@ -11,12 +11,14 @@ import java.util.List;
 import its_meow.claimit.api.claim.ClaimArea;
 import its_meow.claimit.api.permission.ClaimPermissionRegistry;
 import its_meow.claimit.api.permission.ClaimPermissionToggle;
+import its_meow.claimit.api.permission.ClaimPermissions;
 import its_meow.claimit.command.CommandCIBase;
 import its_meow.claimit.util.command.CommandUtils;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.command.WrongUsageException;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
 
@@ -64,7 +66,12 @@ public class CommandSubClaimToggle extends CommandCIBase {
 		}
 		
 		ClaimPermissionToggle perm = CommandUtils.getPermissionToggle(args[0], this.getUsage(sender));
-
+		
+		// Argh, if they don't have edit others and admin on, they aren't the owner, and they cannot manage
+		if(!CommandUtils.isAdminNoded(sender, "claimit.command.claimit.claim.toggle.others") && sender instanceof EntityPlayer && !claim.isTrueOwner((EntityPlayer) sender) && !claim.inPermissionList(ClaimPermissions.MANAGE_PERMS, ((EntityPlayer) sender).getGameProfile().getId())) {
+		    throw new CommandException("You cannot modify toggles of thid claim!");
+		}
+		
 		if(CommandUtils.canManagePerms(sender, claim)) {
 			if(perm.getForceEnabled()) {
 				claim.setPermissionToggle(perm, perm.getForceValue());

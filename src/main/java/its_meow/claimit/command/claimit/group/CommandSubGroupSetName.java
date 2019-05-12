@@ -38,7 +38,7 @@ public class CommandSubGroupSetName extends CommandCIBase {
             String name = args[1];
             Group group = GroupManager.getGroup(groupname);
             if(group != null) {
-                if(CommandUtils.isAdminNoded(sender, "claimit.group.setname.others") || (sender instanceof EntityPlayer && group.isOwner((EntityPlayer)sender))) {
+                if(CommandUtils.isAdminNoded(sender, "claimit.command.claimit.group.setname.others") || (sender instanceof EntityPlayer && group.isOwner((EntityPlayer)sender))) {
                     boolean pass = GroupManager.renameGroup(groupname, name);
                     if(pass) {
                         sendMessage(sender, AQUA + "Set this group's name to: " + GREEN + group.getName());

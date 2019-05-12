@@ -38,7 +38,7 @@ public class CommandSubClaimSetName extends CommandCIBase {
 				EntityPlayer player = (EntityPlayer) sender;
 				ClaimArea claim = ClaimManager.getManager().getClaimAtLocation(player.world, player.getPosition());
 				if(claim != null) {
-					if(claim.isOwner(player) || CommandUtils.isAdminNoded(sender, "claimit.claim.setname.others")) {
+					if(claim.isOwner(player) || CommandUtils.isAdminNoded(sender, "claimit.command.claimit.claim.setname.others")) {
 						boolean pass = claim.setViewName(args[0]);
 						if(pass) {
 							sendMessage(sender, AQUA + "Set this claim's name to: " + GREEN + claim.getDisplayedViewName());
