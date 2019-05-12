@@ -46,5 +46,10 @@ public class CommandSubClaim extends CommandCITreeBase {
 	public boolean checkPermission(MinecraftServer server, ICommandSender sender) {
 		return true;
 	}
+
+    @Override
+    protected String getPermissionString() {
+        return "claimit.claim";
+    }
 	
 }

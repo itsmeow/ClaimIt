@@ -9,7 +9,6 @@ import its_meow.claimit.command.claimit.group.CommandSubGroupList;
 import its_meow.claimit.command.claimit.group.CommandSubGroupPermission;
 import its_meow.claimit.command.claimit.group.CommandSubGroupSetName;
 import net.minecraft.command.ICommandSender;
-import net.minecraft.server.MinecraftServer;
 
 public class CommandSubGroup extends CommandCITreeBase {
 
@@ -41,8 +40,8 @@ public class CommandSubGroup extends CommandCITreeBase {
     }
 
     @Override
-    public boolean checkPermission(MinecraftServer server, ICommandSender sender) {
-        return true;
+    protected String getPermissionString() {
+        return "claimit.group";
     }
 
 }

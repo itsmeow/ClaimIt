@@ -55,4 +55,9 @@ public class CommandSubGroupCreate extends CommandCIBase {
         }
     }
 
+    @Override
+    protected String getPermissionString() {
+        return "claimit.group.create";
+    }
+
 }

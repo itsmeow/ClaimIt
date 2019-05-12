@@ -60,4 +60,9 @@ public class CommandSubHelpUserConfig extends CommandCIBase {
         }
     }
 
+    @Override
+    protected String getPermissionString() {
+        return "claimit.help.userconfig";
+    }
+
 }

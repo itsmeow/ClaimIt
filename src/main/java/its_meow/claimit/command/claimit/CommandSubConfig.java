@@ -32,11 +32,6 @@ public class CommandSubConfig extends CommandCIBase {
         return "User configuration command. With no arguments, lists your configurations. Specify a configuration to view its value. Specify a configuration and a value as arguments to set the value.";
     }
 
-    @Override
-    public boolean checkPermission(MinecraftServer server, ICommandSender sender) {
-        return true;
-    }
-
     @SuppressWarnings({ "unchecked", "rawtypes" })
     @Override
     public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
@@ -108,6 +103,11 @@ public class CommandSubConfig extends CommandCIBase {
         } else {
             return new ArrayList<String>();
         }
+    }
+
+    @Override
+    protected String getPermissionString() {
+        return null;
     }
 
 

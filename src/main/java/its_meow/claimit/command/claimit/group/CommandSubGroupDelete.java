@@ -37,17 +37,12 @@ public class CommandSubGroupDelete extends CommandCIBase {
     }
 
     @Override
-    public boolean checkPermission(MinecraftServer server, ICommandSender sender) {
-        return true;
-    }
-
-    @Override
     public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
         if(args.length == 1) {
             String groupname = args[0];
             Group group = GroupManager.getGroup(groupname);
             if(group != null) {
-                if(CommandUtils.isAdmin(sender) || (sender instanceof EntityPlayer && group.isOwner((EntityPlayer)sender))) {
+                if(CommandUtils.isAdminNoded(sender, "claimit.group.delete.others") || (sender instanceof EntityPlayer && group.isOwner((EntityPlayer)sender))) {
                     GroupManager.removeGroup(group);
                     sendMessage(sender, AQUA + "Deleted group: " + GREEN + groupname);
                 } else {
@@ -68,6 +63,11 @@ public class CommandSubGroupDelete extends CommandCIBase {
             return CommandBase.getListOfStringsMatchingLastWord(args, CommandUtils.getRelevantGroupNames(sender));
         }
         return new ArrayList<String>();
+    }
+
+    @Override
+    protected String getPermissionString() {
+        return "claimit.group.delete";
     }
 
 

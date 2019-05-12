@@ -25,10 +25,6 @@ import net.minecraft.util.math.BlockPos;
 
 public class CommandSubGroupPermission extends CommandCIBase {
 
-    public CommandSubGroupPermission() {
-
-    }
-
     @Override
     public String getName() {
         return "permission";
@@ -53,11 +49,6 @@ public class CommandSubGroupPermission extends CommandCIBase {
     }
 
     @Override
-    public boolean checkPermission(MinecraftServer server, ICommandSender sender) {
-        return true;
-    }
-
-    @Override
     public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
 
         if(args.length != 4) {
@@ -79,7 +70,7 @@ public class CommandSubGroupPermission extends CommandCIBase {
                 if(action.equals("add"))  {
                     // Add user
                     if(!group.inPermissionList(permission, id) || group.isOwner(id)) {
-                        if(CommandUtils.isAdmin(sender) || (sender instanceof EntityPlayer && group.isOwner((EntityPlayer) sender))) {
+                        if(CommandUtils.isAdminNoded(sender, "claimit.group.permission.others") || (sender instanceof EntityPlayer && group.isOwner((EntityPlayer) sender))) {
                             group.addMemberPermission(id, permission);
                             sendMessage(sender, GREEN + "Successfully added " + YELLOW + username + GREEN + " to group " + DARK_GREEN + groupname + GREEN + " with permission " + AQUA + permission.parsedName);
                         } else {
@@ -91,7 +82,7 @@ public class CommandSubGroupPermission extends CommandCIBase {
                 } else if(action.equals("remove")) {
                     // Remove user
                     if(group.inPermissionList(permission, id)) {
-                        if(CommandUtils.isAdmin(sender) || (sender instanceof EntityPlayer && group.isOwner((EntityPlayer) sender))) {
+                        if(CommandUtils.isAdminNoded(sender, "claimit.group.permission.others") || (sender instanceof EntityPlayer && group.isOwner((EntityPlayer) sender))) {
                             group.removeMemberPermission(id, permission);
                             sendMessage(sender, GREEN + "Successfully removed permission " + AQUA + permission.parsedName + GREEN + " from user " + YELLOW + username + GREEN + " in group " + DARK_GREEN + groupname);
                         } else {
@@ -124,6 +115,11 @@ public class CommandSubGroupPermission extends CommandCIBase {
             return CommandBase.getListOfStringsMatchingLastWord(args, CommandUtils.getRelevantGroupNames(sender));
         }
         return list;
+    }
+
+    @Override
+    protected String getPermissionString() {
+        return "claimit.group.permission";
     }
 
 }

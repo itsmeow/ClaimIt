@@ -19,49 +19,52 @@ import net.minecraft.util.math.BlockPos;
 
 public class CommandSubClaimDelete extends CommandCIBase {
 
-	@Override
-	public String getName() {
-		return "delete";
-	}
+    @Override
+    public String getName() {
+        return "delete";
+    }
 
-	@Override
-	public String getUsage(ICommandSender sender) {
-		return "/claimit claim delete [claimname]";
-	}
-	
+    @Override
+    public String getUsage(ICommandSender sender) {
+        return "/claimit claim delete [claimname]";
+    }
+
     @Override
     public String getHelp(ICommandSender sender) {
         return "Deletes a claim. With no arguments, attempts claim at your location. Specify a claim name as an argument to delete that claim. " + (CommandUtils.isAdmin(sender) ? "Admins must specify a true name if using arguments." : "");
     }
 
-	@Override
-	public boolean checkPermission(MinecraftServer server, ICommandSender sender) {
-		return true;
-	}
+    @Override
+    protected String getPermissionString() {
+        return "claimit.claim.delete";
+    }
 
-	@Override
-	public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
+    @Override
+    public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
 
-		String claimName = null;
-		if(args.length == 1) {
-			claimName = args[0];
-		}
-		ClaimArea claim = CommandUtils.getClaimWithNameOrLocation(claimName, sender);
-		if(claimName == null && claim == null) {
-			throw new CommandException("There is no claim here!");
-		} else if(claim == null) {
-			throw new CommandException("There is no claim with this name you own!");
-		}
+        String claimName = null;
+        if(args.length == 1) {
+            claimName = args[0];
+        }
+        ClaimArea claim = CommandUtils.getClaimWithNameOrLocation(claimName, sender);
+        if(claimName == null && claim == null) {
+            throw new CommandException("There is no claim here!");
+        } else if(claim == null) {
+            throw new CommandException("There is no claim with this name you own!");
+        }
+        if(sender instanceof EntityPlayer && !claim.isTrueOwner((EntityPlayer)sender) && !CommandUtils.isAdminNoded(sender, "claimit.claim.delete.others")) {
+            throw new CommandException("You do not have permission to delete this claim!");
+        }
 
-		if((sender instanceof EntityPlayer && (claim.isOwner((EntityPlayer) sender) || ClaimManager.getManager().isAdmin((EntityPlayer) sender))) || (!(sender instanceof EntityPlayer) && sender.canUseCommand(2, ""))) {
-			boolean success = ClaimManager.getManager().deleteClaim(claim);
-			sendMessage(sender, YELLOW + (success ? "Claim deleted." : "Claim was not deleted, something canceled it."));
-		} else {
-			sendMessage(sender, RED + "You do not own this claim!");
-		}
+        if((sender instanceof EntityPlayer && (claim.isOwner(((EntityPlayer) sender)))) || sender.canUseCommand(2, "")) {
+            boolean success = ClaimManager.getManager().deleteClaim(claim);
+            sendMessage(sender, YELLOW + (success ? "Claim deleted." : "Claim was not deleted, something canceled it."));
+        } else {
+            sendMessage(sender, RED + "You do not own this claim!");
+        }
 
-	}
-	
+    }
+
     @Override
     public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args, BlockPos targetPos) {
         if(args.length == 1) {

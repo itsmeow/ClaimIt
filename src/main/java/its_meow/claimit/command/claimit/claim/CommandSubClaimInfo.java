@@ -46,11 +46,6 @@ public class CommandSubClaimInfo extends CommandCIBase {
     }
 
     @Override
-    public boolean checkPermission(MinecraftServer server, ICommandSender sender) {
-        return true;
-    }
-
-    @Override
     public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
 
         /*
@@ -78,15 +73,15 @@ public class CommandSubClaimInfo extends CommandCIBase {
                 if(claim != null) {
                     outputClaimInfo(claim, player);
                 } else {
-                    if(CommandUtils.isAdmin(sender) && (claim = ClaimManager.getManager().getClaimByTrueName(args[0])) != null) {
+                    if(CommandUtils.isAdminNoded(sender, "claimit.claim.info.others") && (claim = ClaimManager.getManager().getClaimByTrueName(args[0])) != null) {
                         outputClaimInfo(claim, player);
                     } else {
                         sendMessage(sender, RED + "No claim with this name" + (CommandUtils.isAdmin(sender) ? "!" : " that you own!"));
                     }
                 }
-            } else if(CommandUtils.isAdmin(sender)) {
+            } else if(CommandUtils.isAdminNoded(sender, "claimit.claim.info.others")) {
                 ClaimArea claim = ClaimManager.getManager().getClaimByTrueName(args[0]);
-                if(CommandUtils.isAdmin(sender) && claim != null) {
+                if(claim != null) {
                     outputClaimInfo(claim, sender);
                 } else {
                     sendMessage(sender, "No claim with this true name found!");
@@ -127,6 +122,11 @@ public class CommandSubClaimInfo extends CommandCIBase {
         } else {
             return new ArrayList<String>();
         }
+    }
+
+    @Override
+    protected String getPermissionString() {
+        return "claimit.claim.info";
     }
 
 }

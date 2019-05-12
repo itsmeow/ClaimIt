@@ -78,7 +78,12 @@ public class CommandSubHelpTopic extends CommandCIBase {
             throw new CommandException("Too many arguments! Usage: " + this.getUsage(sender));
         }
     }
-    
+
+    @Override
+    protected String getPermissionString() {
+        return "claimit.help.topic";
+    }
+
     public static class TopicHelpRegistry {
 
         private static final ListMultimap<String, String> lines = MultimapBuilder.hashKeys().arrayListValues().build();

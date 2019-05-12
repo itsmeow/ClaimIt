@@ -26,8 +26,8 @@ public class CommandSubAdmin extends CommandCIBase {
     }
 
     @Override
-    public boolean checkPermission(MinecraftServer server, ICommandSender sender) {
-        return sender.canUseCommand(2, "claimit admin");
+    public int getRequiredPermissionLevel() {
+        return 2;
     }
 
     @Override
@@ -71,6 +71,11 @@ public class CommandSubAdmin extends CommandCIBase {
     @Override
     public String getHelp(ICommandSender sender) {
         return "Toggles admin mode on or off (if you have permission to do so), which allows server level management of ClaimIt.";
+    }
+
+    @Override
+    protected String getPermissionString() {
+        return "claimit.admin";
     }
 
 }

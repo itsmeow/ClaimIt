@@ -51,11 +51,6 @@ public class CommandSubClaimPermission extends CommandCITreeBase {
     }
 
     @Override
-    public boolean checkPermission(MinecraftServer server, ICommandSender sender) {
-        return true;
-    }
-
-    @Override
     public boolean isUsernameIndex(String[] args, int index) {
         return args.length == 3;
     }
@@ -83,7 +78,7 @@ public class CommandSubClaimPermission extends CommandCITreeBase {
             if(action.equals("add"))  {
                 // Add user
                 if(!claim.inPermissionList(permission, id) || claim.isTrueOwner(id)) {
-                    if(!(sender instanceof EntityPlayer) && sender.canUseCommand(2, "") || (sender instanceof EntityPlayer && claim.canManage((EntityPlayer) sender))) {
+                    if(!(sender instanceof EntityPlayer) && sender.canUseCommand(2, "claimit.claim.permission.others") || (sender instanceof EntityPlayer && claim.canManage((EntityPlayer) sender))) {
                         claim.addMember(permission, id);
                         sendMessage(sender, GREEN + "Successfully added " + YELLOW + username + GREEN + " to claim " + DARK_GREEN + claim.getDisplayedViewName() + GREEN + " with permission " + AQUA + permission.parsedName);
                     } else {
@@ -95,7 +90,7 @@ public class CommandSubClaimPermission extends CommandCITreeBase {
             } else if(action.equals("remove")) {
                 // Remove user
                 if(claim.inPermissionList(permission, id)) {
-                    if(!(sender instanceof EntityPlayer) && sender.canUseCommand(2, "") || (sender instanceof EntityPlayer && claim.canManage((EntityPlayer) sender))) {
+                    if(!(sender instanceof EntityPlayer) && sender.canUseCommand(2, "claimit.claim.permission.others") || (sender instanceof EntityPlayer && claim.canManage((EntityPlayer) sender))) {
                         claim.removeMember(permission, id);
                         sendMessage(sender, GREEN + "Successfully removed permission " + AQUA + permission.parsedName + GREEN + " from user " + YELLOW + username + GREEN + " in claim " + DARK_GREEN + claim.getDisplayedViewName());
                     } else {
@@ -131,6 +126,11 @@ public class CommandSubClaimPermission extends CommandCITreeBase {
             return CommandBase.getListOfStringsMatchingLastWord(args, CommandUtils.getOwnedClaimNames(list, sender));
         }
         return list;
+    }
+
+    @Override
+    protected String getPermissionString() {
+        return "claimit.claim.permission";
     }
 
 

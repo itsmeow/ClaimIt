@@ -45,22 +45,12 @@ public class CommandSubClaimList extends CommandCIBase {
 
     @Override
     public String getUsage(ICommandSender sender) {
-        if(sender instanceof EntityPlayer) {
-            if(ClaimManager.getManager().isAdmin((EntityPlayer) sender)) {
-                return "/claimit claim list [username] [page]";
-            }
-        }
-        return "/claimit claim list";
+        return CommandUtils.isAdminNoded(sender, "claimit.claim.list.others") ? "/claimit claim list [username] [page]" : "/claimit claim list";
     }
 
     @Override
     public String getHelp(ICommandSender sender) {
-        return CommandUtils.isAdmin(sender) ? "Lists all claims on the server, takes a page number (or no page for 1) as an argument, can filter to a player (first argument). Next Page is clickable." : "Lists all claims you own. Click names to view info on them.";
-    }
-
-    @Override
-    public boolean checkPermission(MinecraftServer server, ICommandSender sender) {
-        return true;
+        return CommandUtils.isAdminNoded(sender, "claimit.claim.list.others") ? "Lists all claims on the server, takes a page number (or no page for 1) as an argument, can filter to a player (first argument). Next Page is clickable." : "Lists all claims you own. Click names to view info on them.";
     }
 
     @Override
@@ -118,7 +108,7 @@ public class CommandSubClaimList extends CommandCIBase {
 
         if(sender instanceof EntityPlayer) {
             EntityPlayer player = (EntityPlayer) sender;
-            if(!ClaimManager.getManager().isAdmin(player)) {
+            if(!CommandUtils.isAdminNoded(player, "claimit.claim.list.others")) {
                 final Set<ClaimArea> claims = ClaimManager.getManager().getClaimsOwnedByPlayer(player.getGameProfile().getId());
                 if(claims != null) {
                     int i = 0;
@@ -158,7 +148,7 @@ public class CommandSubClaimList extends CommandCIBase {
                     sender.sendMessage(new TextComponentStyled(GREEN + "" + ITALIC + "" + UNDERLINE + "Next Page", new PageChatStyle("claimit claim list", ClaimManager.getManager().isAdmin(player), String.valueOf(pg + 1), pName)));
                 }
             }
-        } else { // Sender is console!
+        } else if(sender.canUseCommand(4, "claimit.claim.list.others")) {
             sendMessage(sender, "Detected server console. Getting all claims. Specify a name to get only their claims.");
             int i = 0;
             for(ClaimArea claim : ClaimManager.getManager().getClaimsList()) {
@@ -187,6 +177,11 @@ public class CommandSubClaimList extends CommandCIBase {
             return CommandUtils.getPossiblePlayers(null, server, sender, args);
         }
         return new ArrayList<String>();
+    }
+
+    @Override
+    protected String getPermissionString() {
+        return "claimit.claim.list";
     }
 
 }

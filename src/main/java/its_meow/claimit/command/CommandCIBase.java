@@ -14,7 +14,14 @@ public abstract class CommandCIBase extends CommandBase implements ICommandHelp 
 
     @Override
     public boolean checkPermission(MinecraftServer server, ICommandSender sender) {
-        return true;
+        return sender.canUseCommand(getRequiredPermissionLevel(), this.getPermissionString());
+    }
+    
+    protected abstract String getPermissionString();
+
+    @Override
+    public int getRequiredPermissionLevel() {
+        return 0;
     }
 
     /**

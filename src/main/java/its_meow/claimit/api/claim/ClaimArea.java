@@ -102,7 +102,7 @@ public class ClaimArea {
 					return true;
 				}
 			}
-			if(ClaimManager.getManager().isAdmin(player)) {
+			if(ClaimManager.getManager().isAdmin(player) && player.canUseCommand(0, "claimit.claim.manage.others")) {
 				return true;
 			}
 			return false;

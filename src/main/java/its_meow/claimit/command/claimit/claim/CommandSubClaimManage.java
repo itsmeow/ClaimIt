@@ -43,7 +43,7 @@ public class CommandSubClaimManage extends CommandCIBase {
         }
         ClaimArea claim = CommandUtils.getClaimWithNameOrLocation(cName, sender);
         if(claim != null) {
-            if(CommandUtils.isAdmin(sender) || (sender instanceof EntityPlayer && claim.canManage((EntityPlayer) sender))) {
+            if(CommandUtils.isAdminNoded(sender, "claimit.claim.manage.others") || (sender instanceof EntityPlayer && claim.canManage((EntityPlayer) sender))) {
                 String fName = (CommandUtils.isAdmin(sender) ? claim.getTrueViewName() : claim.getDisplayedViewName());
                 if(args.length < 1) {
                     sendMessage(sender, BLUE + "" + BOLD + "Management for " + GREEN + claim.getDisplayedViewName() + BLUE + ":");
@@ -83,6 +83,11 @@ public class CommandSubClaimManage extends CommandCIBase {
         } else {
             sendMessage(sender, RED + (cName == null ? "No claim at your location!" : "No claim with this name!"));
         }
+    }
+
+    @Override
+    protected String getPermissionString() {
+        return "claimit.claim.manage";
     }
 
 }

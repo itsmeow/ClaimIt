@@ -36,11 +36,6 @@ public class CommandSubClaimToggle extends CommandCIBase {
     public String getHelp(ICommandSender sender) {
         return "Controls toggle permissions. Given no arguments, will display all toggles and values. Given only a toggle as an argument, it will switch it on or off. Optional second claim name argument, defaults to location.";
     }
-	
-	@Override
-	public boolean checkPermission(MinecraftServer server, ICommandSender sender) {
-		return true;
-	}
 
 	@Override
 	public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
@@ -94,6 +89,11 @@ public class CommandSubClaimToggle extends CommandCIBase {
             return CommandBase.getListOfStringsMatchingLastWord(args, CommandUtils.getOwnedClaimNames(list, sender));
         }
         return list;
+    }
+
+    @Override
+    protected String getPermissionString() {
+        return "claimit.claim.toggle";
     }
 
 }

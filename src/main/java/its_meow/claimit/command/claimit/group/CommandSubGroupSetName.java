@@ -32,18 +32,13 @@ public class CommandSubGroupSetName extends CommandCIBase {
     }
 
     @Override
-    public boolean checkPermission(MinecraftServer server, ICommandSender sender) {
-        return true;
-    }
-
-    @Override
     public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
         if(args.length == 2) {
             String groupname = args[0];
             String name = args[1];
             Group group = GroupManager.getGroup(groupname);
             if(group != null) {
-                if(CommandUtils.isAdmin(sender) || (sender instanceof EntityPlayer && group.isOwner((EntityPlayer)sender))) {
+                if(CommandUtils.isAdminNoded(sender, "claimit.group.setname.others") || (sender instanceof EntityPlayer && group.isOwner((EntityPlayer)sender))) {
                     boolean pass = GroupManager.renameGroup(groupname, name);
                     if(pass) {
                         sendMessage(sender, AQUA + "Set this group's name to: " + GREEN + group.getName());
@@ -59,6 +54,11 @@ public class CommandSubGroupSetName extends CommandCIBase {
         } else {
             throw new SyntaxErrorException("Invalid syntax. Usage: " + this.getUsage(sender));
         }
+    }
+
+    @Override
+    protected String getPermissionString() {
+        return "claimit.group.setname";
     }
 
 }

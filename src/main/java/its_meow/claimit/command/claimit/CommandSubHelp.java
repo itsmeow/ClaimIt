@@ -37,10 +37,10 @@ public class CommandSubHelp extends CommandCITreeBase {
     }
 
     @Override
-    public boolean checkPermission(MinecraftServer server, ICommandSender sender) {
-        return true;
+    protected String getPermissionString() {
+        return "claimit.help";
     }
-    
+
     public void displaySubCommands(MinecraftServer server, ICommandSender sender) throws CommandException {
         sendMessage(sender, AQUA + "" + BOLD + "Subcommands: ");
         for(CommandCIBase subCmd : this.getSubCommands()) {

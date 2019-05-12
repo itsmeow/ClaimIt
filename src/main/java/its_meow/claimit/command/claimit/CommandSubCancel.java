@@ -23,11 +23,6 @@ public class CommandSubCancel extends CommandCIBase {
     public String getHelp(ICommandSender sender) {
         return "Cancels a confirmable action. (Deleting all claims, etc)";
     }
-	
-	@Override
-	public boolean checkPermission(MinecraftServer server, ICommandSender sender) {
-		return true;
-	}
 
 	@Override
 	public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
@@ -40,5 +35,10 @@ public class CommandSubCancel extends CommandCIBase {
 			sendMessage(sender, "You have no action to cancel!");
 		}
 	}
+
+    @Override
+    protected String getPermissionString() {
+        return "claimit.cancel";
+    }
 
 }

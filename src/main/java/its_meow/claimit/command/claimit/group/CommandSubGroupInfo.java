@@ -46,11 +46,6 @@ public class CommandSubGroupInfo extends CommandCIBase {
     }
 
     @Override
-    public boolean checkPermission(MinecraftServer server, ICommandSender sender) {
-        return true;
-    }
-
-    @Override
     public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
         if(args.length != 1) {
             sendMessage(sender, RED + "Invalid argument count. Specify a group name. Usage: " + this.getUsage(sender));
@@ -111,6 +106,11 @@ public class CommandSubGroupInfo extends CommandCIBase {
             return CommandBase.getListOfStringsMatchingLastWord(args, CommandUtils.getRelevantGroupNames(sender));
         }
         return new ArrayList<String>();
+    }
+
+    @Override
+    protected String getPermissionString() {
+        return "claimit.group.info";
     }
 
 }

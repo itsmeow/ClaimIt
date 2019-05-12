@@ -100,7 +100,7 @@ public class CommandUtils {
             if(claim.canManage((EntityPlayer) sender)) {
                 return true;
             }
-        } else if(sender.canUseCommand(2, "")) { // Console
+        } else if(sender.canUseCommand(2, "claimit.claim.manage.others")) { // Console
             return true;
         }
         return false;
@@ -140,6 +140,10 @@ public class CommandUtils {
 
     public static boolean isAdmin(ICommandSender sender) {
         return (((!(sender instanceof EntityPlayer) && sender.canUseCommand(2, "")) || ((sender instanceof EntityPlayer) && ClaimManager.getManager().isAdmin((EntityPlayer) sender))));
+    }
+    
+    public static boolean isAdminNoded(ICommandSender sender, String permNode) {
+        return (((!(sender instanceof EntityPlayer) && sender.canUseCommand(2, permNode)) || ((sender instanceof EntityPlayer) && ClaimManager.getManager().isAdmin((EntityPlayer) sender) && sender.canUseCommand(0, permNode))));
     }
 
     public static List<String> getOwnedClaimNames(@Nullable List<String> list, ICommandSender sender) {

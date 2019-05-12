@@ -48,11 +48,6 @@ public class CommandSubClaimPermissionList extends CommandCIBase {
     }
 
     @Override
-    public boolean checkPermission(MinecraftServer server, ICommandSender sender) {
-        return true;
-    }
-
-    @Override
     public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
         ClaimManager m = ClaimManager.getManager();
         if(args.length == 0) {
@@ -83,6 +78,8 @@ public class CommandSubClaimPermissionList extends CommandCIBase {
         Set<Group> groups = GroupManager.getGroupsForClaim(claim);
         if(sender instanceof EntityPlayer) {
             if(!claim.canManage((EntityPlayer) sender)) {
+                throw new CommandException("You cannot view the members of this claim!");
+            } else if(!CommandUtils.isAdminNoded(sender, "claimit.claim.permission.list.others") && !claim.isTrueOwner((EntityPlayer) sender)) {
                 throw new CommandException("You cannot view the members of this claim!");
             }
         }
@@ -130,6 +127,11 @@ public class CommandSubClaimPermissionList extends CommandCIBase {
         } else {
             return new ArrayList<String>();
         }
+    }
+
+    @Override
+    protected String getPermissionString() {
+        return "claimit.claim.permission.list";
     }
 
 }

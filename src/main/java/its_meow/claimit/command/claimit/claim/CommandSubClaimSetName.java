@@ -7,6 +7,7 @@ import static net.minecraft.util.text.TextFormatting.RED;
 import its_meow.claimit.api.claim.ClaimArea;
 import its_meow.claimit.api.claim.ClaimManager;
 import its_meow.claimit.command.CommandCIBase;
+import its_meow.claimit.util.command.CommandUtils;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.command.SyntaxErrorException;
@@ -31,18 +32,13 @@ public class CommandSubClaimSetName extends CommandCIBase {
     }
 
 	@Override
-	public boolean checkPermission(MinecraftServer server, ICommandSender sender) {
-		return true;
-	}
-
-	@Override
 	public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
 		if(args.length == 1) { // ci claim setname (name)
 			if(sender instanceof EntityPlayer) {
 				EntityPlayer player = (EntityPlayer) sender;
 				ClaimArea claim = ClaimManager.getManager().getClaimAtLocation(player.world, player.getPosition());
 				if(claim != null) {
-					if(claim.isOwner(player)) {
+					if(claim.isOwner(player) || CommandUtils.isAdminNoded(sender, "claimit.claim.setname.others")) {
 						boolean pass = claim.setViewName(args[0]);
 						if(pass) {
 							sendMessage(sender, AQUA + "Set this claim's name to: " + GREEN + claim.getDisplayedViewName());
@@ -65,5 +61,10 @@ public class CommandSubClaimSetName extends CommandCIBase {
 			throw new SyntaxErrorException("Specify a name with no spaces. Usage: " + this.getUsage(sender));
 		}
 	}
+
+    @Override
+    protected String getPermissionString() {
+        return "claimit.claim.setname";
+    }
 
 }

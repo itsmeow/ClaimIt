@@ -59,11 +59,6 @@ public class CommandClaimIt extends CommandCITreeBase {
 		return aliases;
 	}
 
-	@Override
-	public boolean checkPermission(MinecraftServer server, ICommandSender sender) {
-		return true;
-	}
-
     @Override
     public void executeBaseCommand(MinecraftServer server, ICommandSender sender, String[] args) {
         sendMessage(sender, GRAY + "" + BOLD + ClaimIt.NAME + RESET + "" + DARK_PURPLE + " Version " + YELLOW + ClaimIt.VERSION + DARK_PURPLE + " by " + DARK_RED + "" + BOLD + "its_meow");
@@ -76,6 +71,11 @@ public class CommandClaimIt extends CommandCITreeBase {
         sendCMessage(sender, YELLOW, "/claimit admin");
         sendCMessage(sender, YELLOW, "/claimit help");
         sendMessage(sender, AQUA + "Alias(es): " + YELLOW + aliasList);
+    }
+
+    @Override
+    protected String getPermissionString() {
+        return this.getName();
     }
 
 }
