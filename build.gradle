@@ -53,6 +53,7 @@ task apiJar(type: Jar) {
 
 reobf {
     apiJar {}
+    jar {}
 }
 
 jar {

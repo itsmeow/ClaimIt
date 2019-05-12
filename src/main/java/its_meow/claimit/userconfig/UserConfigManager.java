@@ -7,6 +7,7 @@ import javax.annotation.Nullable;
 import its_meow.claimit.serialization.ClaimItGlobalDataSerializer;
 import its_meow.claimit.userconfig.UserConfigType.UserConfig;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.world.storage.WorldSavedData;
 import net.minecraftforge.common.util.Constants;
 
 public class UserConfigManager {
@@ -35,7 +36,8 @@ public class UserConfigManager {
             }
         }
         data.setTag("USERCONFIG", configsData);
-        ClaimItGlobalDataSerializer.get().markDirty();
+        WorldSavedData wsd = ClaimItGlobalDataSerializer.get();
+        wsd.markDirty();
     }
 
     public static void deserialize() {
