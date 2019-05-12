@@ -52,7 +52,7 @@ public class CommandSubClaimDelete extends CommandCIBase {
         } else if(claim == null) {
             throw new CommandException("There is no claim with this name you own!");
         }
-        if(sender instanceof EntityPlayer && !claim.isTrueOwner((EntityPlayer)sender) && !CommandUtils.isAdminNoded(sender, "claimit.claim.delete.others")) {
+        if(sender instanceof EntityPlayer && (!claim.isTrueOwner((EntityPlayer)sender) && !CommandUtils.isAdminNoded(sender, "claimit.command.claimit.claim.delete.others"))) {
             throw new CommandException("You do not have permission to delete this claim!");
         }
 

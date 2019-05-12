@@ -2,6 +2,7 @@ package its_meow.claimit.command.claimit.claim;
 
 import static net.minecraft.util.text.TextFormatting.*;
 
+import java.util.List;
 import java.util.Set;
 
 import its_meow.claimit.api.claim.ClaimArea;
@@ -17,6 +18,7 @@ import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.math.BlockPos;
 
 public class CommandSubClaimManage extends CommandCIBase {
 
@@ -43,7 +45,7 @@ public class CommandSubClaimManage extends CommandCIBase {
         }
         ClaimArea claim = CommandUtils.getClaimWithNameOrLocation(cName, sender);
         if(claim != null) {
-            if(CommandUtils.isAdminNoded(sender, "claimit.claim.manage.others") || (sender instanceof EntityPlayer && claim.canManage((EntityPlayer) sender))) {
+            if(CommandUtils.isAdminNoded(sender, "claimit.command.claimit.claim.manage.others") || (sender instanceof EntityPlayer && claim.canManage((EntityPlayer) sender))) {
                 String fName = (CommandUtils.isAdmin(sender) ? claim.getTrueViewName() : claim.getDisplayedViewName());
                 if(args.length < 1) {
                     sendMessage(sender, BLUE + "" + BOLD + "Management for " + GREEN + claim.getDisplayedViewName() + BLUE + ":");
@@ -82,6 +84,16 @@ public class CommandSubClaimManage extends CommandCIBase {
             }
         } else {
             sendMessage(sender, RED + (cName == null ? "No claim at your location!" : "No claim with this name!"));
+        }
+    }
+
+    @Override
+    public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args,
+            BlockPos targetPos) {
+        if(CommandUtils.isAdmin(sender)) {
+            return super.getTabCompletions(server, sender, args, targetPos);
+        } else {
+            return CommandUtils.getOwnedClaimNames(null, sender);
         }
     }
 

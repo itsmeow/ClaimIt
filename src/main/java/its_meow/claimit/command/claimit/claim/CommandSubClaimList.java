@@ -45,12 +45,12 @@ public class CommandSubClaimList extends CommandCIBase {
 
     @Override
     public String getUsage(ICommandSender sender) {
-        return CommandUtils.isAdminNoded(sender, "claimit.claim.list.others") ? "/claimit claim list [username] [page]" : "/claimit claim list";
+        return CommandUtils.isAdminNoded(sender, "claimit.command.claimit.claim.list.others") ? "/claimit claim list [username] [page]" : "/claimit claim list";
     }
 
     @Override
     public String getHelp(ICommandSender sender) {
-        return CommandUtils.isAdminNoded(sender, "claimit.claim.list.others") ? "Lists all claims on the server, takes a page number (or no page for 1) as an argument, can filter to a player (first argument). Next Page is clickable." : "Lists all claims you own. Click names to view info on them.";
+        return CommandUtils.isAdminNoded(sender, "claimit.command.claimit.claim.list.others") ? "Lists all claims on the server, takes a page number (or no page for 1) as an argument, can filter to a player (first argument). Next Page is clickable." : "Lists all claims you own. Click names to view info on them.";
     }
 
     @Override
@@ -64,7 +64,7 @@ public class CommandSubClaimList extends CommandCIBase {
         String page = null;
         int pg = 0;
         boolean error = false;
-        boolean admin = CommandUtils.isAdminNoded(sender, "claimit.claim.list.others");
+        boolean admin = CommandUtils.isAdminNoded(sender, "claimit.command.claimit.claim.list.others");
         if(args.length >= 1 && admin) {
             try {
                 Integer.parseInt(args[0]);

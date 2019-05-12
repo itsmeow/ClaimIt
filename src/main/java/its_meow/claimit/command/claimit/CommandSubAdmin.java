@@ -74,6 +74,11 @@ public class CommandSubAdmin extends CommandCIBase {
     }
 
     @Override
+    public boolean checkPermission(MinecraftServer server, ICommandSender sender) {
+        return sender.canUseCommand(this.getRequiredPermissionLevel(), this.getPermissionString());
+    }
+
+    @Override
     protected String getPermissionString() {
         return "claimit.admin";
     }

@@ -77,5 +77,10 @@ public class CommandClaimIt extends CommandCITreeBase {
     protected String getPermissionString() {
         return this.getName();
     }
+    
+    @Override
+    public boolean checkPermission(MinecraftServer server, ICommandSender sender) {
+        return sender.canUseCommand(getRequiredPermissionLevel(), this.getPermissionString());
+    }
 
 }

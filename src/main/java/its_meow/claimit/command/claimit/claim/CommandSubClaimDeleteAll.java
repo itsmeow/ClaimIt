@@ -33,12 +33,12 @@ public class CommandSubClaimDeleteAll extends CommandCIBase implements IConfirma
 
 	@Override
 	public String getUsage(ICommandSender sender) {
-		return CommandUtils.isAdminNoded(sender, "claimit.claim.deleteall.others") ? "/claimit claim deleteall [username]" : "/claimit claim deleteall";
+		return CommandUtils.isAdminNoded(sender, "claimit.command.claimit.claim.deleteall.others") ? "/claimit claim deleteall [username]" : "/claimit claim deleteall";
 	}
 	
     @Override
     public String getHelp(ICommandSender sender) {
-        return CommandUtils.isAdminNoded(sender, "claimit.claim.deleteall.others") ? "Deletes all claims YOU personally (yes, you, admin user) own, or if a username is specified, all of their claims." : "Deletes all claims you own. Must be confirmed via '/claimit confirm'. Can be canceled via '/claimit cancel'";
+        return CommandUtils.isAdminNoded(sender, "claimit.command.claimit.claim.deleteall.others") ? "Deletes all claims YOU personally (yes, you, admin user) own, or if a username is specified, all of their claims." : "Deletes all claims you own. Must be confirmed via '/claimit confirm'. Can be canceled via '/claimit cancel'";
     }
 
     @Override
@@ -62,7 +62,7 @@ public class CommandSubClaimDeleteAll extends CommandCIBase implements IConfirma
             } else {
                 sendMessage(sender, RED + "You don't own any claims!");
             }
-        } else if(args.length == 1 && CommandUtils.isAdminNoded(sender, "claimit.claim.deleteall.others")) {
+        } else if(args.length == 1 && CommandUtils.isAdminNoded(sender, "claimit.command.claimit.claim.deleteall.others")) {
             String name = args[0];
             UUID uuid = CommandUtils.getUUIDForName(name, server);
             if(uuid != null) {
@@ -96,7 +96,7 @@ public class CommandSubClaimDeleteAll extends CommandCIBase implements IConfirma
             String player = args[0];
             UUID uuid = CommandUtils.getUUIDForName(player, server);
             if(uuid != null) {
-                if(sender instanceof EntityPlayer && !uuid.equals(((EntityPlayer) sender).getGameProfile().getId()) || !CommandUtils.isAdminNoded(sender, "claimit.claim.deleteall.others")) {
+                if(sender instanceof EntityPlayer && (!uuid.equals(((EntityPlayer) sender).getGameProfile().getId()) && !CommandUtils.isAdminNoded(sender, "claimit.command.claimit.claim.deleteall.others"))) {
                     throw new CommandException("You do not have permission to remove " + player + "'s claims.");
                 }
                 ImmutableSet<ClaimArea> owned = ClaimManager.getManager().getClaimsOwnedByPlayer(uuid);

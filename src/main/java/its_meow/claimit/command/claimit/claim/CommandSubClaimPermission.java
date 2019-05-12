@@ -12,6 +12,7 @@ import java.util.UUID;
 
 import its_meow.claimit.api.claim.ClaimArea;
 import its_meow.claimit.api.permission.ClaimPermissionMember;
+import its_meow.claimit.api.permission.ClaimPermissions;
 import its_meow.claimit.command.CommandCITreeBase;
 import its_meow.claimit.command.claimit.claim.permission.CommandSubClaimPermissionList;
 import its_meow.claimit.util.command.CommandUtils;
@@ -73,12 +74,15 @@ public class CommandSubClaimPermission extends CommandCITreeBase {
         ClaimPermissionMember permission = CommandUtils.getPermissionMember(permissionStr, "\n" + YELLOW + this.getUsage(sender));
         UUID id = CommandUtils.getUUIDForName(username, server);
         ClaimArea claim = CommandUtils.getClaimWithNameOrLocation(claimName, sender);
-
+        
         if(claim != null) {
+            if(sender instanceof EntityPlayer && !CommandUtils.isAdminNoded(sender, "claimit.command.claimit.claim.permission.others") && !claim.isTrueOwner((EntityPlayer)sender) && !claim.inPermissionList(ClaimPermissions.MANAGE_PERMS, ((EntityPlayer) sender).getGameProfile().getId())) {
+                throw new CommandException("You cannot modify members of this claim!");
+            }
             if(action.equals("add"))  {
                 // Add user
                 if(!claim.inPermissionList(permission, id) || claim.isTrueOwner(id)) {
-                    if(!(sender instanceof EntityPlayer) && sender.canUseCommand(2, "claimit.claim.permission.others") || (sender instanceof EntityPlayer && claim.canManage((EntityPlayer) sender))) {
+                    if(!(sender instanceof EntityPlayer) && sender.canUseCommand(2, "claimit.command.claimit.claim.permission.others") || (sender instanceof EntityPlayer && claim.canManage((EntityPlayer) sender))) {
                         claim.addMember(permission, id);
                         sendMessage(sender, GREEN + "Successfully added " + YELLOW + username + GREEN + " to claim " + DARK_GREEN + claim.getDisplayedViewName() + GREEN + " with permission " + AQUA + permission.parsedName);
                     } else {
@@ -90,7 +94,7 @@ public class CommandSubClaimPermission extends CommandCITreeBase {
             } else if(action.equals("remove")) {
                 // Remove user
                 if(claim.inPermissionList(permission, id)) {
-                    if(!(sender instanceof EntityPlayer) && sender.canUseCommand(2, "claimit.claim.permission.others") || (sender instanceof EntityPlayer && claim.canManage((EntityPlayer) sender))) {
+                    if(!(sender instanceof EntityPlayer) && sender.canUseCommand(2, "claimit.command.claimit.claim.permission.others") || (sender instanceof EntityPlayer && claim.canManage((EntityPlayer) sender))) {
                         claim.removeMember(permission, id);
                         sendMessage(sender, GREEN + "Successfully removed permission " + AQUA + permission.parsedName + GREEN + " from user " + YELLOW + username + GREEN + " in claim " + DARK_GREEN + claim.getDisplayedViewName());
                     } else {

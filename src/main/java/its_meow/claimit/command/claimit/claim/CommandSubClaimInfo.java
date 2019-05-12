@@ -73,13 +73,13 @@ public class CommandSubClaimInfo extends CommandCIBase {
                 if(claim != null) {
                     outputClaimInfo(claim, player);
                 } else {
-                    if(CommandUtils.isAdminNoded(sender, "claimit.claim.info.others") && (claim = ClaimManager.getManager().getClaimByTrueName(args[0])) != null) {
+                    if(CommandUtils.isAdminNoded(sender, "claimit.command.claimit.claim.info.others") && (claim = ClaimManager.getManager().getClaimByTrueName(args[0])) != null) {
                         outputClaimInfo(claim, player);
                     } else {
                         sendMessage(sender, RED + "No claim with this name" + (CommandUtils.isAdmin(sender) ? "!" : " that you own!"));
                     }
                 }
-            } else if(CommandUtils.isAdminNoded(sender, "claimit.claim.info.others")) {
+            } else if(CommandUtils.isAdminNoded(sender, "claimit.command.claimit.claim.info.others")) {
                 ClaimArea claim = ClaimManager.getManager().getClaimByTrueName(args[0]);
                 if(claim != null) {
                     outputClaimInfo(claim, sender);
