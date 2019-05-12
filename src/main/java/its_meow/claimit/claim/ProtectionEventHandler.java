@@ -12,8 +12,10 @@ import java.util.Set;
 import its_meow.claimit.ClaimIt;
 import its_meow.claimit.api.claim.ClaimArea;
 import its_meow.claimit.api.claim.ClaimManager;
+import its_meow.claimit.api.event.claim.ClaimCheckPermissionEvent;
 import its_meow.claimit.api.permission.ClaimPermissions;
 import its_meow.claimit.config.ClaimItConfig;
+import its_meow.claimit.util.command.CommandUtils;
 import net.minecraft.block.BlockGrass;
 import net.minecraft.block.BlockTallGrass;
 import net.minecraft.block.state.IBlockState;
@@ -53,7 +55,14 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 @Mod.EventBusSubscriber(modid = ClaimIt.MOD_ID)
 public class ProtectionEventHandler {
-
+    
+    @SubscribeEvent(priority = EventPriority.LOW)
+    public static void onPermissionCheck(ClaimCheckPermissionEvent event) {
+        if(CommandUtils.isAdminNoded(event.getCheckedPlayer(), "claimit.claim.manage.others")) {
+            event.setResult(Result.ALLOW);
+        }
+    }
+    
 	@SubscribeEvent(priority = EventPriority.HIGHEST)
 	public static void onBlockRightClicked(PlayerInteractEvent.RightClickBlock e) {
 		World world = e.getEntity().getEntityWorld();

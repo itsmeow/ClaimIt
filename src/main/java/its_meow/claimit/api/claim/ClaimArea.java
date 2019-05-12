@@ -15,6 +15,7 @@ import com.google.common.collect.ImmutableSetMultimap;
 import com.google.common.collect.SetMultimap;
 
 import its_meow.claimit.api.ClaimItAPI;
+import its_meow.claimit.api.event.claim.ClaimCheckPermissionEvent;
 import its_meow.claimit.api.group.Group;
 import its_meow.claimit.api.group.GroupManager;
 import its_meow.claimit.api.permission.ClaimPermissionMember;
@@ -30,6 +31,8 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.DimensionManager;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.common.eventhandler.Event.Result;
 
 public class ClaimArea {
 
@@ -122,8 +125,16 @@ public class ClaimArea {
 		return hasPermission(ClaimPermissions.MANAGE_PERMS, player);
 	}
 
-	public boolean hasPermission(ClaimPermissionMember permission, EntityPlayer player) {		
-		return (this.isOwner(player) || isMemberPermissionToggled(permission) || this.memberLists.getValues(permission).contains(player.getGameProfile().getId()) || hasPermissionFromGroup(permission, player));
+	public boolean hasPermission(ClaimPermissionMember permission, EntityPlayer player) {
+	    ClaimCheckPermissionEvent event = new ClaimCheckPermissionEvent(this, player, permission);
+	    MinecraftForge.EVENT_BUS.post(event);
+	    if(event.getResult() == Result.ALLOW) {
+	        return true;
+	    } else if(event.getResult() == Result.DENY) {
+	        return false;
+	    } else {
+	        return (this.isOwner(player) || isMemberPermissionToggled(permission) || this.memberLists.getValues(permission).contains(player.getGameProfile().getId()) || hasPermissionFromGroup(permission, player));
+	    }
 	}
 	
 	private boolean hasPermissionFromGroup(ClaimPermissionMember permission, EntityPlayer player) {
