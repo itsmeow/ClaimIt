@@ -1,5 +1,11 @@
 package its_meow.claimit.command.claimit.claimblocks;
 
+import static net.minecraft.util.text.TextFormatting.AQUA;
+import static net.minecraft.util.text.TextFormatting.GREEN;
+import static net.minecraft.util.text.TextFormatting.YELLOW;
+
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 import its_meow.claimit.command.CommandCIBaseAdminOnly;
@@ -10,7 +16,7 @@ import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.command.PlayerNotFoundException;
 import net.minecraft.server.MinecraftServer;
-import static net.minecraft.util.text.TextFormatting.*;
+import net.minecraft.util.math.BlockPos;
 
 public class CommandSubClaimBlocksSetAllowed extends CommandCIBaseAdminOnly {
 
@@ -49,4 +55,12 @@ public class CommandSubClaimBlocksSetAllowed extends CommandCIBaseAdminOnly {
         return "Sets allowed claim blocks for a user. First argument name, second amount of blocks.";
     }
 
+    @Override
+    public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args, BlockPos targetPos) {
+        if(args.length == 1) { 
+            return CommandBase.getListOfStringsMatchingLastWord(args, CommandUtils.getPossiblePlayers(null, server, sender, args));
+        } else {
+            return new ArrayList<String>();
+        }
+    }
 }
