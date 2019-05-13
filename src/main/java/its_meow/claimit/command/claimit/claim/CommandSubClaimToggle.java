@@ -99,7 +99,7 @@ public class CommandSubClaimToggle extends CommandCIBase {
     }
 
     @Override
-    protected String getPermissionString() {
+    public String getPermissionString() {
         return "claimit.claim.toggle";
     }
 

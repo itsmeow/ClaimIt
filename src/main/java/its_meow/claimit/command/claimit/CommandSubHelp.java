@@ -37,7 +37,7 @@ public class CommandSubHelp extends CommandCITreeBase {
     }
 
     @Override
-    protected String getPermissionString() {
+    public String getPermissionString() {
         return "claimit.help";
     }
 

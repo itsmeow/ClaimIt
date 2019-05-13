@@ -61,7 +61,7 @@ public class CommandSubHelpUserConfig extends CommandCIBase {
     }
 
     @Override
-    protected String getPermissionString() {
+    public String getPermissionString() {
         return "claimit.help.userconfig";
     }
 

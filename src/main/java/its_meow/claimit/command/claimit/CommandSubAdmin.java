@@ -81,7 +81,7 @@ public class CommandSubAdmin extends CommandCIBase {
     }
 
     @Override
-    protected String getPermissionString() {
+    public String getPermissionString() {
         return "claimit.admin";
     }
 

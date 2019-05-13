@@ -113,7 +113,7 @@ public class CommandSubGroupClaim extends CommandCIBase {
     }
 
     @Override
-    protected String getPermissionString() {
+    public String getPermissionString() {
         return "claimit.group.claim";
     }
 

@@ -68,7 +68,7 @@ public class CommandSubHelpCommand extends CommandCIBase {
     }
 
     @Override
-    protected String getPermissionString() {
+    public String getPermissionString() {
         return "claimit.help.command";
     }
 

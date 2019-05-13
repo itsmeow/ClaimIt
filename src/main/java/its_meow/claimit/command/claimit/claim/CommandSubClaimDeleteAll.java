@@ -42,7 +42,7 @@ public class CommandSubClaimDeleteAll extends CommandCIBase implements IConfirma
     }
 
     @Override
-    protected String getPermissionString() {
+    public String getPermissionString() {
         return "claimit.claim.deleteall";
     }
 

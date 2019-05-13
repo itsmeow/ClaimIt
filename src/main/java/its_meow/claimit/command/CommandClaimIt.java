@@ -12,6 +12,7 @@ import static net.minecraft.util.text.TextFormatting.RESET;
 import static net.minecraft.util.text.TextFormatting.YELLOW;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import its_meow.claimit.ClaimIt;
@@ -26,6 +27,7 @@ import its_meow.claimit.command.claimit.CommandSubGroup;
 import its_meow.claimit.command.claimit.CommandSubHelp;
 import its_meow.claimit.config.ClaimItConfig;
 import its_meow.claimit.util.command.CommandHelpRegistry;
+import its_meow.claimit.util.text.AutoFillHelpChatStyle;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.server.MinecraftServer;
 
@@ -76,17 +78,17 @@ public class CommandClaimIt extends CommandCITreeBase {
         sendMessage(sender, GRAY + "" + BOLD + ClaimItAPI.NAME + RESET + "" + DARK_PURPLE + " Version " + YELLOW + ClaimItAPI.VERSION);
         sendMessage(sender, BLUE + "Claiming item is " + RESET + GREEN + ITALIC + ClaimItConfig.claim_create_item_display);
         sendMessage(sender, AQUA + "" + BOLD + "Subcommands: ");
-        sendCMessage(sender, YELLOW, "/claimit claim");
-        sendCMessage(sender, YELLOW, "/claimit group");
-        sendCMessage(sender, YELLOW, "/claimit config");
-        sendCMessage(sender, YELLOW, "/claimit claimblocks");
-        sendCMessage(sender, YELLOW, "/claimit admin");
-        sendCMessage(sender, YELLOW, "/claimit help");
+        List<String> subCommands = Arrays.asList(new String[] {"claim", "group", "config", "claimblocks", "admin", "help"});
+        for(String cmdT : subCommands) {
+            String cmd = "/claimit " + cmdT;
+            CommandCIBase subCmd = this.getSubCommand(cmdT);
+            sendSMessage(sender, YELLOW + cmd, new AutoFillHelpChatStyle(cmd, subCmd, sender));
+        }
         sendMessage(sender, AQUA + "Alias(es): " + YELLOW + aliasList);
     }
 
     @Override
-    protected String getPermissionString() {
+    public String getPermissionString() {
         return this.getName();
     }
     

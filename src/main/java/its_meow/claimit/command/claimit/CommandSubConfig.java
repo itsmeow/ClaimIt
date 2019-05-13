@@ -106,7 +106,7 @@ public class CommandSubConfig extends CommandCIBase {
     }
 
     @Override
-    protected String getPermissionString() {
+    public String getPermissionString() {
         return null;
     }
 

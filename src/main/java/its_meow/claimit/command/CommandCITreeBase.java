@@ -16,7 +16,7 @@ import javax.annotation.Nullable;
 import org.apache.commons.lang3.tuple.Pair;
 
 import its_meow.claimit.util.command.CommandHelpRegistry;
-import its_meow.claimit.util.text.CommandChatStyle;
+import its_meow.claimit.util.text.AutoFillHelpChatStyle;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.server.MinecraftServer;
@@ -93,7 +93,7 @@ public abstract class CommandCITreeBase extends CommandCIBase {
         sendMessage(sender, AQUA + "" + BOLD + "Subcommands: ");
         for(CommandCIBase subCmd : this.getSubCommands()) {
             String cmd = this.getUsage(sender).substring(0, this.getUsage(sender).indexOf(this.getName() + " ") + this.getName().length()) + " " + subCmd.getName();
-            sendSMessage(sender, YELLOW + cmd, new CommandChatStyle("/claimit help command " + cmd.substring(1), true, "Click for help on this command"));
+            sendSMessage(sender, YELLOW + cmd, new AutoFillHelpChatStyle(cmd, subCmd, sender));
         }
     }
 

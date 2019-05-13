@@ -40,7 +40,7 @@ public class CommandSubGroup extends CommandCITreeBase {
     }
 
     @Override
-    protected String getPermissionString() {
+    public String getPermissionString() {
         return "claimit.group";
     }
 

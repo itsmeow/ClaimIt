@@ -57,7 +57,7 @@ public class CommandSubGroupSetName extends CommandCIBase {
     }
 
     @Override
-    protected String getPermissionString() {
+    public String getPermissionString() {
         return "claimit.group.setname";
     }
 

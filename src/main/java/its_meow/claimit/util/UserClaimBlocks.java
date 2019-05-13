@@ -22,23 +22,23 @@ public class UserClaimBlocks {
     
     private static HashMap<UUID, Integer> claimBlocksAllowed = new HashMap<UUID, Integer>();
     
-    public static int getClaimBlocksUsed(UUID user) {
-        return ClaimManager.getManager().getClaimsOwnedByPlayer(user).stream().mapToInt(claim -> claim.getArea()).sum();
+    public static int getClaimBlocksUsed(UUID uuid) {
+        return ClaimManager.getManager().getClaimsOwnedByPlayer(uuid).stream().mapToInt(claim -> claim.getArea()).sum();
     }
     
-    public static int getClaimBlocksRemaining(UUID user) {
-        return getClaimBlocksAllowed(user) - getClaimBlocksUsed(user);
+    public static int getClaimBlocksRemaining(UUID uuid) {
+        return getClaimBlocksAllowed(uuid) - getClaimBlocksUsed(uuid);
     }
     
-    public static int getClaimBlocksAllowed(UUID user) {
-        return claimBlocksAllowed.getOrDefault(user, ClaimItConfig.default_claim_max_area);
+    public static int getClaimBlocksAllowed(UUID uuid) {
+        return claimBlocksAllowed.getOrDefault(uuid, ClaimItConfig.default_claim_max_area);
     }
     
     /**
      * @return the previous value associated with key, or null if there was no mapping for key. (A null return can also indicate that the map previously associated null with key.)
      */
-    public static int setAllowedClaimBlocks(UUID user, int allowedBlocks) {
-        return claimBlocksAllowed.put(user, allowedBlocks);
+    public static int setAllowedClaimBlocks(UUID uuid, int allowedBlocks) {
+        return claimBlocksAllowed.put(uuid, allowedBlocks);
     }
     
     @SubscribeEvent

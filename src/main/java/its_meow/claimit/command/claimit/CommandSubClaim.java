@@ -48,7 +48,7 @@ public class CommandSubClaim extends CommandCITreeBase {
 	}
 
     @Override
-    protected String getPermissionString() {
+    public String getPermissionString() {
         return "claimit.claim";
     }
 	

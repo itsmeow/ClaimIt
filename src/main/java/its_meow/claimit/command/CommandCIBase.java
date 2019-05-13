@@ -17,7 +17,7 @@ public abstract class CommandCIBase extends CommandBase implements ICommandHelp 
         return sender.canUseCommand(getRequiredPermissionLevel(), "claimit.command." + this.getPermissionString());
     }
     
-    protected abstract String getPermissionString();
+    public abstract String getPermissionString();
 
     @Override
     public int getRequiredPermissionLevel() {
