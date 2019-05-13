@@ -15,7 +15,7 @@ public class AutoFillHelpChatStyle extends AutoFillChatStyle {
         super(command, true, GREEN + "Click to autofill. \n" 
                 + GREEN + "Usage: " + AQUA + cmd.getUsage(sender) + "\n" 
                 + GREEN + "Help: " + YELLOW + cmd.getHelp(sender) + (!CommandUtils.isAdmin(sender) ? "" : "\n"
-                + RED + "Permission String: " + cmd.getPermissionString()));
+                + RED + "Permission String: " + YELLOW + cmd.getPermissionString()));
     }
 
 }

@@ -107,7 +107,7 @@ public class CommandSubConfig extends CommandCIBase {
 
     @Override
     public String getPermissionString() {
-        return null;
+        return "claimit.config";
     }
 
 

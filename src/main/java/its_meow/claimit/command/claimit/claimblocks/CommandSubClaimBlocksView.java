@@ -1,8 +1,6 @@
 package its_meow.claimit.command.claimit.claimblocks;
 
-import static net.minecraft.util.text.TextFormatting.AQUA;
-import static net.minecraft.util.text.TextFormatting.GREEN;
-import static net.minecraft.util.text.TextFormatting.YELLOW;
+import static net.minecraft.util.text.TextFormatting.*;
 
 import java.util.UUID;
 
@@ -47,9 +45,9 @@ public class CommandSubClaimBlocksView extends CommandCIBase {
             throw new CommandException("Invalid argument count! Usage: " + this.getUsage(sender));
         }
         sendMessage(sender, AQUA + "Claim Blocks for " + YELLOW + name + AQUA + ":");
-        sendMessage(sender, GREEN + "Allowed: " + UserClaimBlocks.getClaimBlocksAllowed(uuid));
-        sendMessage(sender, GREEN + "Used: " + UserClaimBlocks.getClaimBlocksUsed(uuid));
-        sendMessage(sender, GREEN + "Remaining: " + UserClaimBlocks.getClaimBlocksRemaining(uuid));
+        sendMessage(sender, GREEN + "Allowed: " + BLUE + UserClaimBlocks.getClaimBlocksAllowed(uuid));
+        sendMessage(sender, GREEN + "Used: " + BLUE + UserClaimBlocks.getClaimBlocksUsed(uuid));
+        sendMessage(sender, GREEN + "Remaining: " + BLUE + UserClaimBlocks.getClaimBlocksRemaining(uuid));
     }
 
     @Override

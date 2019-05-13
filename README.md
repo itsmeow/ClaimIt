@@ -21,7 +21,7 @@ With Sponge present, most of the default command permissions are allowed by defa
 **You will need to give users access to** `claimit.claim.create` **when using Sponge!**<br><br>
 List of default permissions:
 
-   * `claimit`
+   * `claimit.command`
    * `claimit.command.claimit`
    * `claimit.command.claimit.claim`
    * `claimit.command.claimit.claim.info`
@@ -44,6 +44,8 @@ List of default permissions:
    * `claimit.command.claimit.config`
    * `claimit.command.claimit.cancel`
    * `claimit.command.claimit.confirm`
+   * `claimit.command.claimit.claimblocks`
+   * `claimit.command.claimit.claimblocks.view`
    * `claimit.command.claimit.help`
    * `claimit.command.claimit.help.topic`
    * `claimit.command.claimit.help.permission`
@@ -70,6 +72,8 @@ The list of default admin permissions (these require one of the above, but are d
    * `claimit.command.claimit.group.list.others` - Allow listing all groups on the server or all groups owned by a player as admin
    * `claimit.command.claimit.group.permission.others` - Allow editing members on groups you cannot as admin
    * `claimit.command.claimit.group.setname.others` - Allow renaming groups you don't own as admin
+   * `claimit.command.claimit.claimblocks.setallowed` - Allow setting maximum claim blocks as admin
+   * `claimit.command.claimit.claimblocks.view.others` - Allow viewing claim blocks of other players as admin
 
 I'll say it again.<br>
 **You will need to give users access to** `claimit.claim.create` **when using Sponge!**

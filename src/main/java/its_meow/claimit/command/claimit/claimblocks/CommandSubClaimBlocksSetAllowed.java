@@ -8,7 +8,9 @@ import its_meow.claimit.util.command.CommandUtils;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
+import net.minecraft.command.PlayerNotFoundException;
 import net.minecraft.server.MinecraftServer;
+import static net.minecraft.util.text.TextFormatting.*;
 
 public class CommandSubClaimBlocksSetAllowed extends CommandCIBaseAdminOnly {
 
@@ -29,7 +31,12 @@ public class CommandSubClaimBlocksSetAllowed extends CommandCIBaseAdminOnly {
         }
         UUID uuid = CommandUtils.getUUIDForName(args[0], server);
         int amount = CommandBase.parseInt(args[1], 4, Integer.MAX_VALUE);
-        UserClaimBlocks.setAllowedClaimBlocks(uuid, amount);
+        if(uuid != null) { 
+            UserClaimBlocks.setAllowedClaimBlocks(uuid, amount);
+            sendMessage(sender, GREEN + "Set " + YELLOW + args[0] + GREEN + "'s allowed claim blocks to " + AQUA + amount + GREEN + ". They now have " + AQUA + UserClaimBlocks.getClaimBlocksRemaining(uuid) + GREEN + " blocks remaining.");
+        } else {
+            throw new PlayerNotFoundException("Invalid player: " + args[0]);
+        }
     }
 
     @Override
