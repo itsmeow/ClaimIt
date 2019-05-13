@@ -30,7 +30,7 @@ ClaimArea claim = ClaimManager.getManager().getClaimByTrueName(trueName);
 
 Remember, whenever you retrieve a claim, it is `Nullable`.
 
-### Retrieving Claims owner by a Player
+### Retrieving Claims Owned by a Player
 You will need a UUID (you can get such from a player instance `player.getGameProfile().getId()`)
 
 ```java

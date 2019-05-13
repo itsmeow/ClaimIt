@@ -71,7 +71,7 @@ public class CommandSubGroupPermission extends CommandCIBase {
                     // Add user
                     if(!group.inPermissionList(permission, id) || group.isOwner(id)) {
                         if(CommandUtils.isAdminNoded(sender, "claimit.command.claimit.group.permission.others") || (sender instanceof EntityPlayer && group.isOwner((EntityPlayer) sender))) {
-                            group.addMemberPermission(id, permission);
+                            group.addMember(id, permission);
                             sendMessage(sender, GREEN + "Successfully added " + YELLOW + username + GREEN + " to group " + DARK_GREEN + groupname + GREEN + " with permission " + AQUA + permission.parsedName);
                         } else {
                             sendMessage(sender, RED + "You do not own this group!");
@@ -83,7 +83,7 @@ public class CommandSubGroupPermission extends CommandCIBase {
                     // Remove user
                     if(group.inPermissionList(permission, id)) {
                         if(CommandUtils.isAdminNoded(sender, "claimit.command.claimit.group.permission.others") || (sender instanceof EntityPlayer && group.isOwner((EntityPlayer) sender))) {
-                            group.removeMemberPermission(id, permission);
+                            group.removeMember(id, permission);
                             sendMessage(sender, GREEN + "Successfully removed permission " + AQUA + permission.parsedName + GREEN + " from user " + YELLOW + username + GREEN + " in group " + DARK_GREEN + groupname);
                         } else {
                             sendMessage(sender, RED + "You do not own this group!");

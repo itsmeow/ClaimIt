@@ -6,12 +6,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-import com.google.common.collect.MultimapBuilder;
-import com.google.common.collect.SetMultimap;
-
 import its_meow.claimit.api.claim.ClaimArea;
 import its_meow.claimit.api.claim.ClaimManager;
-import its_meow.claimit.api.permission.ClaimPermissionMember;
 import its_meow.claimit.api.permission.ClaimPermissionRegistry;
 import its_meow.claimit.api.permission.ClaimPermissionToggle;
 import net.minecraft.nbt.NBTTagCompound;
@@ -20,19 +16,6 @@ import net.minecraft.nbt.NBTTagString;
 import net.minecraftforge.common.util.Constants;
 
 public class ClaimNBTUtil {
-    
-    public static NBTTagCompound writeMembers(NBTTagCompound tag, SetMultimap<ClaimPermissionMember, UUID> uuids) {
-        NBTTagCompound memberCompound = new NBTTagCompound();
-        for(ClaimPermissionMember perm : uuids.keySet()) {
-            NBTTagList members = new NBTTagList();
-            for(UUID member : uuids.get(perm)) {
-                members.appendTag(new NBTTagString(member.toString()));
-            }
-            memberCompound.setTag(perm.parsedName, members);
-        }
-        tag.setTag("MEMBERS", memberCompound);
-        return tag;
-    }
     
     public static NBTTagCompound writeToggles(NBTTagCompound tag, Map<ClaimPermissionToggle, Boolean> toggles) {
         NBTTagCompound togglesTag = new NBTTagCompound();
@@ -85,23 +68,6 @@ public class ClaimNBTUtil {
             list.add(uuid);
         }
         return list;
-    }
-    
-    public static SetMultimap<ClaimPermissionMember, UUID> readMembers(NBTTagCompound tag) {
-        SetMultimap<ClaimPermissionMember, UUID> map = MultimapBuilder.hashKeys().hashSetValues().build();
-        NBTTagCompound memberCompound = tag.getCompoundTag("MEMBERS");
-        for(String permString : memberCompound.getKeySet()) {
-            if(ClaimPermissionRegistry.getPermissionMember(permString) != null) {
-                NBTTagList tagList = memberCompound.getTagList(permString, Constants.NBT.TAG_STRING);
-                ClaimPermissionMember perm = ClaimPermissionRegistry.getPermissionMember(permString);
-                for(int i = 0; i < tagList.tagCount(); i++) {
-                    String uuidString = tagList.getStringTagAt(i);
-                    UUID member = UUID.fromString(uuidString);
-                    map.put(perm, member);
-                }
-            }
-        }
-        return map;
     }
     
     public static Map<ClaimPermissionToggle, Boolean> readToggles(NBTTagCompound tag) {

@@ -2,12 +2,16 @@ nav:
   - Home: 'index.md'
   - Claims:
     - Managing Claims: 'claims/claim_management.md'
-    - Checking Permissions in Claims: 'claims/checking_permissions.md'
-    - Setting Permissions in Claims: 'claims/setting_permissions.md'
+    - Permission in Claims: 'claims/claim_permissions.md'
   - Permissions:
-    - Adding Permissions: 'permissions/adding_permissions.md'
+    - Adding New Permissions: 'permissions/adding_permissions.md'
   - Groups:
     - Group Management: 'groups/group_management.md'
+    - Permission in Groups: 'groups/group_permissions.md'
+    - Claims in Groups: 'groups/group_claims.md'
+  - Events:
+    - Claim Events: 'events/claim_events.md'
+    - Group Events: 'events/group_events.md'
 
 site_name: ClaimIt API
 theme:

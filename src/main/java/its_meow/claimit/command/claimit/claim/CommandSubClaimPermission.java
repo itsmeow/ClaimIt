@@ -79,14 +79,14 @@ public class CommandSubClaimPermission extends CommandCITreeBase {
             }
             if(action.equals("add"))  {
                 // Add user
-                if(claim.addMember(permission, id)) {
+                if(claim.addMember(id, permission)) {
                     sendMessage(sender, GREEN + "Successfully added " + YELLOW + username + GREEN + " to claim " + DARK_GREEN + claim.getDisplayedViewName() + GREEN + " with permission " + AQUA + permission.parsedName);
                 } else {
                     sendMessage(sender, YELLOW + "This player already has that permission!");
                 }
             } else if(action.equals("remove")) {
                 // Remove user
-                if(claim.removeMember(permission, id)) {
+                if(claim.removeMember(id, permission)) {
                         sendMessage(sender, GREEN + "Successfully removed permission " + AQUA + permission.parsedName + GREEN + " from user " + YELLOW + username + GREEN + " in claim " + DARK_GREEN + claim.getDisplayedViewName());
                 } else {
                     sendMessage(sender, YELLOW + "This player does not have that permission!");
