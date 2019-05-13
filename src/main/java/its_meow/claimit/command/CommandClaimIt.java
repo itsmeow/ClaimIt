@@ -1,12 +1,22 @@
 package its_meow.claimit.command;
 
-import static net.minecraft.util.text.TextFormatting.*;
+import static net.minecraft.util.text.TextFormatting.AQUA;
+import static net.minecraft.util.text.TextFormatting.BLUE;
+import static net.minecraft.util.text.TextFormatting.BOLD;
+import static net.minecraft.util.text.TextFormatting.DARK_PURPLE;
+import static net.minecraft.util.text.TextFormatting.DARK_RED;
+import static net.minecraft.util.text.TextFormatting.GRAY;
+import static net.minecraft.util.text.TextFormatting.GREEN;
+import static net.minecraft.util.text.TextFormatting.ITALIC;
+import static net.minecraft.util.text.TextFormatting.RESET;
+import static net.minecraft.util.text.TextFormatting.YELLOW;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import its_meow.claimit.ClaimIt;
 import its_meow.claimit.api.ClaimItAPI;
+import its_meow.claimit.command.claimit.CommandSubClaimBlocks;
 import its_meow.claimit.command.claimit.CommandSubAdmin;
 import its_meow.claimit.command.claimit.CommandSubCancel;
 import its_meow.claimit.command.claimit.CommandSubClaim;
@@ -29,6 +39,7 @@ public class CommandClaimIt extends CommandCITreeBase {
 		    new CommandSubConfirm(),
 		    new CommandSubCancel(),
 		    new CommandSubConfig(),
+		    new CommandSubClaimBlocks(),
 		    new CommandSubHelp()
 		);
 	    CommandHelpRegistry.registerHelp(this.getName(), this::getHelp);
@@ -68,6 +79,7 @@ public class CommandClaimIt extends CommandCITreeBase {
         sendCMessage(sender, YELLOW, "/claimit claim");
         sendCMessage(sender, YELLOW, "/claimit group");
         sendCMessage(sender, YELLOW, "/claimit config");
+        sendCMessage(sender, YELLOW, "/claimit claimblocks");
         sendCMessage(sender, YELLOW, "/claimit admin");
         sendCMessage(sender, YELLOW, "/claimit help");
         sendMessage(sender, AQUA + "Alias(es): " + YELLOW + aliasList);

@@ -197,11 +197,10 @@ public class ClaimManager {
 
 	/** Gets all claims owned by a UUID
 	 * @param uuid - The UUID of the player to be searched for
-	 * @return A {@link Set} of ClaimAreas owned by the player. If no claims are owned, returns null.
+	 * @return A {@link Set} of ClaimAreas owned by the player. If no claims are owned, returns an empty list.
 	 * **/
-	@Nullable
 	public ImmutableSet<ClaimArea> getClaimsOwnedByPlayer(UUID uuid) {
-		return ownedClaims.getValues(uuid).size() > 0 ? ImmutableSet.copyOf(ownedClaims.getValues(uuid)) : null;
+		return ImmutableSet.copyOf(ownedClaims.getValues(uuid));
 	}
 
 	/** Forces a world to save claim data. Removes all claim data that is stored and adds current data. **/

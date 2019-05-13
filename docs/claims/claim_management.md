@@ -37,7 +37,7 @@ You will need a UUID (you can get such from a player instance `player.getGamePro
 ClaimManager.getManager().getClaimsOwnedByPlayer(uuid);
 ```
 
-This can also be null if the player owns no claims.
+The list is empty if no claims are found.
 
 ### Getting all Claims
 Simple:

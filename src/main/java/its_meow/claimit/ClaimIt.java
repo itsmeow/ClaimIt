@@ -9,6 +9,7 @@ import its_meow.claimit.config.ClaimItConfig;
 import its_meow.claimit.userconfig.UserConfigManager;
 import its_meow.claimit.userconfig.UserConfigTypeRegistry;
 import its_meow.claimit.userconfig.UserConfigs;
+import its_meow.claimit.util.UserClaimBlocks;
 import its_meow.claimit.util.command.ConfirmationManager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
@@ -51,6 +52,7 @@ public class ClaimIt {
         AdminManager.clearAdmins();
         UserConfigManager.deserialize();
         ConfirmationManager.getManager().removeAllConfirms();
+        UserClaimBlocks.deserialize();
         event.registerServerCommand(new CommandClaimIt());
         claiming_item = ForgeRegistries.ITEMS.getValue(new ResourceLocation(ClaimItConfig.claim_create_item));
     }
@@ -58,11 +60,13 @@ public class ClaimIt {
     @EventHandler
     public void serverStop(FMLServerStoppingEvent event) {
         UserConfigManager.serialize();
+        UserClaimBlocks.serialize();
     }
     
     @SubscribeEvent
     public static void onWorldSave(WorldEvent.Save e) {
         UserConfigManager.serialize();
+        UserClaimBlocks.serialize();
     }
     
     private static HashMap<EntityPlayer, BlockPos> lastMsPos = new HashMap<EntityPlayer, BlockPos>();
