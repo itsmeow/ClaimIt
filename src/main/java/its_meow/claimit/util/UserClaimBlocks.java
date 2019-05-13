@@ -34,11 +34,8 @@ public class UserClaimBlocks {
         return claimBlocksAllowed.getOrDefault(uuid, ClaimItConfig.default_claim_max_area);
     }
     
-    /**
-     * @return the previous value associated with key, or null if there was no mapping for key. (A null return can also indicate that the map previously associated null with key.)
-     */
-    public static int setAllowedClaimBlocks(UUID uuid, int allowedBlocks) {
-        return claimBlocksAllowed.put(uuid, allowedBlocks);
+    public static void setAllowedClaimBlocks(UUID uuid, int allowedBlocks) {
+        claimBlocksAllowed.put(uuid, allowedBlocks);
     }
     
     @SubscribeEvent

@@ -1,6 +1,7 @@
 package its_meow.claimit.command.claimit;
 
 import its_meow.claimit.command.CommandCITreeBase;
+import its_meow.claimit.command.claimit.claimblocks.CommandSubClaimBlocksAddAllowed;
 import its_meow.claimit.command.claimit.claimblocks.CommandSubClaimBlocksSetAllowed;
 import its_meow.claimit.command.claimit.claimblocks.CommandSubClaimBlocksView;
 import net.minecraft.command.ICommandSender;
@@ -10,7 +11,8 @@ public class CommandSubClaimBlocks extends CommandCITreeBase {
     public CommandSubClaimBlocks() {
         super(
             new CommandSubClaimBlocksView(),
-            new CommandSubClaimBlocksSetAllowed()
+            new CommandSubClaimBlocksSetAllowed(),
+            new CommandSubClaimBlocksAddAllowed()
         );
     }
     

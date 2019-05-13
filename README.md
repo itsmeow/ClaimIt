@@ -73,6 +73,7 @@ The list of default admin permissions (these require one of the above, but are d
    * `claimit.command.claimit.group.permission.others` - Allow editing members on groups you cannot as admin
    * `claimit.command.claimit.group.setname.others` - Allow renaming groups you don't own as admin
    * `claimit.command.claimit.claimblocks.setallowed` - Allow setting maximum claim blocks as admin
+   * `claimit.command.claimit.claimblocks.addallowed` - Allow adding to maximum claim blocks as admin
    * `claimit.command.claimit.claimblocks.view.others` - Allow viewing claim blocks of other players as admin
 
 I'll say it again.<br>
