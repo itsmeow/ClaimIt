@@ -10,6 +10,7 @@ import static net.minecraft.util.text.TextFormatting.YELLOW;
 
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 import its_meow.claimit.api.claim.ClaimArea;
 import its_meow.claimit.api.group.Group;
@@ -39,7 +40,7 @@ public class CommandSubClaimManage extends CommandCIBase {
 
     @Override
     public String getUsage(ICommandSender sender) {
-        return "/claimit claim manage [claimname]";
+        return "/claimit claim manage [claimname] [member] [playername]";
     }
 
     @Override
@@ -79,8 +80,12 @@ public class CommandSubClaimManage extends CommandCIBase {
                         sendSMessage(sender, ITALIC + "" + UNDERLINE + "" + RED + "Remove Permission", new CommandChatStyle("/claimit claim manage " + fName + " member " + args[2] + " remove", true, "Click to remove permission"));
                     } else if(args.length == 4 && (args[3].equals("add") || args[3].equals("remove"))) {
                         sendMessage(sender, BLUE + "" + ITALIC + "Choose permission to " + args[3] + ":");
+                        UUID uuid = CommandUtils.getUUIDForName(args[2], server);
                         for(ClaimPermissionMember perm : ClaimPermissionRegistry.getMemberPermissions()) {
-                            sendSMessage(sender, BLUE + " - " + ITALIC + "" + UNDERLINE + "" + YELLOW + perm.parsedName, new CommandChatStyle("/claimit claim permission " + args[3] + " " + perm.parsedName + " " + args[2] + " " + fName, true, "Click to " + args[3]));
+                            boolean isInList = claim.inPermissionList(perm, uuid);
+                            if((args[3].equals("add") && !isInList) || (args[3].equals("remove") && isInList)) {
+                                sendSMessage(sender, BLUE + " - " + ITALIC + "" + UNDERLINE + "" + YELLOW + perm.parsedName, new CommandChatStyle("/claimit claim permission " + args[3] + " " + perm.parsedName + " " + args[2] + " " + fName, true, "Click to " + args[3]));
+                            }
                         }
                     }
                 }
