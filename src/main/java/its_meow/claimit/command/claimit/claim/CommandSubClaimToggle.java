@@ -14,6 +14,7 @@ import its_meow.claimit.api.permission.ClaimPermissionToggle;
 import its_meow.claimit.api.permission.ClaimPermissions;
 import its_meow.claimit.command.CommandCIBase;
 import its_meow.claimit.util.command.CommandUtils;
+import its_meow.claimit.util.text.CommandChatStyle;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
@@ -51,14 +52,13 @@ public class CommandSubClaimToggle extends CommandCIBase {
 		}
 		if(args.length == 0 || (args.length == 1 && args[0].equals("list"))) {
 			if(CommandUtils.canManagePerms(sender, claim)) {
-				String out = "";
 				for(ClaimPermissionToggle toggle : ClaimPermissionRegistry.getTogglePermissions()) {
 					boolean toggled = claim.isPermissionToggled(toggle);
 					String toggledStr = toggled ? "ON" : "OFF";
 					toggledStr = toggle.defaultValue == toggled ? GREEN + toggledStr : RED + toggledStr;
-					out += YELLOW + toggle.parsedName + BLUE + ": " + toggledStr + "\n";
+					sendSMessage(sender, YELLOW + toggle.parsedName + BLUE + ": " + toggledStr, new CommandChatStyle("/claimit claim toggle " + toggle.parsedName, true, "Click to toggle"));
 				}
-				throw new CommandException(out.trim());
+				return;
 			}
 		}
 		if(args.length > 2 || args.length < 1) {

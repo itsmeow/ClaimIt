@@ -128,24 +128,21 @@ public class ClaimManager {
 	}
 	
 	/** Check claim is not overlapping/illegal and add to list. Fires ClaimAddedEvent
-     * @param claim - The claim to be added 
-     * @returns true if claim was added, false if not. **/
-	public boolean addClaim(ClaimArea claim) {
+     * @param claim - The claim to be added **/
+	public ClaimAddResult addClaim(ClaimArea claim) {
 	    return addClaim(claim, true);
 	}
 	
 	/** Check claim is not overlapping/illegal and add to list. Does not fire a ClaimAddedEvent
-     * @param claim - The claim to be added 
-     * @returns true if claim was added, false if not. **/
-	public boolean addClaimNoEvent(ClaimArea claim) {
+     * @param claim - The claim to be added **/
+	public ClaimAddResult addClaimNoEvent(ClaimArea claim) {
 	    return addClaim(claim, false);
 	}
 
 	/** Check claim is not overlapping/illegal and add to list 
 	 * @param claim - The claim to be added 
-	 * @param fireEvent - If true, will fire a Claim Added event
-	 * @returns true if claim was added, false if not. **/
-	private boolean addClaim(ClaimArea claim, boolean fireEvent) {
+	 * @param fireEvent - If true, will fire a Claim Added event **/
+	private ClaimAddResult addClaim(ClaimArea claim, boolean fireEvent) {
 		if(claims.size() != 0) {
 			for(ClaimArea claimI : claims) {
 				if(claimI.getDimensionID() == claim.getDimensionID()) {
@@ -153,7 +150,7 @@ public class ClaimManager {
 						for(int j = 0; j <= claim.getSideLengthZ(); j++) {
 							BlockPos toCheck = new BlockPos(claim.getMainPosition().getX() + i, 0, claim.getMainPosition().getZ() + j);
 							if(claimI.isBlockPosInClaim(toCheck)) {
-								return false;
+								return ClaimAddResult.OVERLAP;
 							}
 						}
 					}
@@ -162,7 +159,7 @@ public class ClaimManager {
 						for(int j = 0; j <= claimI.getSideLengthZ(); j++) {
 							BlockPos toCheck = new BlockPos(claimI.getMainPosition().getX() + i, 0, claimI.getMainPosition().getZ() + j);
 							if(claim.isBlockPosInClaim(toCheck)) {
-								return false;
+								return ClaimAddResult.OVERLAP;
 							}
 						}
 					}
@@ -180,8 +177,10 @@ public class ClaimManager {
 		}
 		if(doAdd) {
 		    addClaimToListInsecurely(claim);
+		    return ClaimAddResult.ADDED;
+		} else {
+		    return ClaimAddResult.CANCELLED;
 		}
-		return doAdd;
 	}
 
 	/** Adds a claim to the claim list without checking for overlaps. Don't use! **/
@@ -263,4 +262,10 @@ public class ClaimManager {
 	        MinecraftForge.EVENT_BUS.post(new ClaimsClearedEvent.Post());
 	}
 
+	public static enum ClaimAddResult {
+	    ADDED,
+	    OVERLAP,
+	    CANCELLED;
+	}
+	
 }

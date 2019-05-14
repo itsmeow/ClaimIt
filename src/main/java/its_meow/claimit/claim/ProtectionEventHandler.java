@@ -97,8 +97,14 @@ public class ProtectionEventHandler {
 			            ClaimArea newClaim;
 			            newClaim = new ClaimArea(player.dimension, c1.getX(), c1.getZ(), sideL.getX(), sideL.getZ(), player);
 			            if(newClaim.getSideLengthX() >= 1 && newClaim.getSideLengthZ() >= 1) {
-			                boolean didClaim = ClaimManager.getManager().addClaim(newClaim); // Add claim
-			                player.sendMessage(new TextComponentString(didClaim ? GREEN + "Claim added successfully!" : RED + "This claim overlaps another claim!"));
+			                ClaimManager.ClaimAddResult result = ClaimManager.getManager().addClaim(newClaim); // Add claim
+			                if(result == ClaimManager.ClaimAddResult.ADDED) {
+			                    player.sendMessage(new TextComponentString(GREEN + "Claim added successfully!"));
+			                } else if (result == ClaimManager.ClaimAddResult.OVERLAP) {
+			                    player.sendMessage(new TextComponentString(RED + "This claim overlaps another claim!"));
+			                } else {
+			                    player.sendMessage(new TextComponentString(RED + "This claim could not be added!"));
+			                }
 			            } else {
 			                player.sendMessage(new TextComponentString(RED + "Your claim must have a length of at least 2 in both directions!"));
 			            }
