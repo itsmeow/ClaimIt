@@ -7,6 +7,9 @@
 ### Why is this mod special?
 This mod is built with the idea of creating easy compatibility that allows mods to integrate properly with the claiming system to avoid the need for banning items.
 
+### Do my users need to download ClaimIt?
+No. It's server side only, but loads on integrated servers (singleplayer/LAN) just fine.
+
 ### API
 ClaimIt has an expansive API for integration and addition. You can view its documentation via clicking the docs badge or looking at the `docs/` directory.
 
