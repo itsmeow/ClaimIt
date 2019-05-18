@@ -10,6 +10,9 @@ This mod is built with the idea of creating easy compatibility that allows mods 
 ### Do my users need to download ClaimIt?
 No. It's server side only, but loads on integrated servers (singleplayer/LAN) just fine.
 
+### I have questions/need support! Where can I get help?
+Your options are the ingame help command, this article, and my [Discord server](https://discord.gg/zrjXjP5).
+
 ### API
 ClaimIt has an expansive API for integration and addition. You can view its documentation via clicking the docs badge or looking at the `docs/` directory.
 
