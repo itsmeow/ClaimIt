@@ -95,6 +95,20 @@ public class ClaimManager {
 	    }
 		return null;
 	}
+	
+	@Nullable
+	/**
+	 * Gives a list of claims in a ClaimChunk
+	 * @param dimensionID - The dimension ID of the world to check
+	 * @param chunk - The chunk
+	 * @return A list of claims or empty list or null
+	 */
+	public ImmutableSet<ClaimArea> getClaimsInChunk(int dimensionID, ClaimChunk chunk) {
+	    if(this.chunks.containsKey(dimensionID)) {
+	        return ImmutableSet.copyOf(this.chunks.get(dimensionID).getValues(chunk));
+	    }
+	    return null;
+	}
 
 	@Nullable
 	/** Gets the claim by the viewable name and the owner
