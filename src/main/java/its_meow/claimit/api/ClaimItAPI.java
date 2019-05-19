@@ -50,14 +50,13 @@ public class ClaimItAPI {
     @EventHandler
     public void preInit(FMLPreInitializationEvent event) {
         ClaimPermissions.register();
-        
         File directory = event.getModConfigurationDirectory();
         config = new Configuration(new File(directory.getPath(), "claimit_api.cfg")); 
-        ClaimItAPIConfig.readConfig(config);
     }
 
     @EventHandler
     public void postInit(FMLPostInitializationEvent e) {
+        ClaimItAPIConfig.readConfig(config);
         if(config.hasChanged()){
             config.save();
         }

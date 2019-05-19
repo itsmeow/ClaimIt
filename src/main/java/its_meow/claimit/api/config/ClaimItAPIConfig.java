@@ -18,8 +18,8 @@ public class ClaimItAPIConfig extends Configuration {
         String claimPermissions = "claim_permissions";
         cfg.addCustomCategoryComment(claimPermissions, "Force specific permissions to not work");
         for(ClaimPermissionToggle toggle : ClaimPermissionRegistry.getTogglePermissions()) {
-            boolean doForce = cfg.getBoolean("do_force_" + toggle.parsedName + "_value", claimPermissions, false, "Set true to force " + toggle.parsedName + " in claims to the value of 'force_" + toggle.parsedName + "_value'");
-            boolean forceValue = cfg.getBoolean("force_" + toggle.parsedName + "_value", claimPermissions, true, "Set to whatever value you want this to be if 'do_force_" + toggle.parsedName + "_value' is true");
+            boolean doForce = cfg.getBoolean("do_force_" + toggle.parsedName + "_value", claimPermissions + "." + toggle.parsedName, false, "Set true to force " + toggle.parsedName + " in claims to the value of 'force_" + toggle.parsedName + "_value'");
+            boolean forceValue = cfg.getBoolean("force_" + toggle.parsedName + "_value", claimPermissions + "." + toggle.parsedName, true, "Set to whatever value you want this to be if 'do_force_" + toggle.parsedName + "_value' is true");
             toggle.setForceEnabled(doForce);
             toggle.setForceValue(forceValue);
         }
