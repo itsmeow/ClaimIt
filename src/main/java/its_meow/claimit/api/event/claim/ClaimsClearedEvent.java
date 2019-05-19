@@ -6,7 +6,7 @@ import net.minecraftforge.fml.common.eventhandler.Event;
  * Use subclasses Post and Pre
  * @author its_meow
  */
-public class ClaimsClearedEvent {
+public abstract class ClaimsClearedEvent {
     
     /**
      * Non-cancelable event that fires before claims are cleared during deserialization.
