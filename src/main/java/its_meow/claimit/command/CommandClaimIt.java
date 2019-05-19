@@ -17,14 +17,15 @@ import java.util.List;
 
 import its_meow.claimit.ClaimIt;
 import its_meow.claimit.api.ClaimItAPI;
-import its_meow.claimit.command.claimit.CommandSubClaimBlocks;
 import its_meow.claimit.command.claimit.CommandSubAdmin;
 import its_meow.claimit.command.claimit.CommandSubCancel;
 import its_meow.claimit.command.claimit.CommandSubClaim;
+import its_meow.claimit.command.claimit.CommandSubClaimBlocks;
 import its_meow.claimit.command.claimit.CommandSubConfig;
 import its_meow.claimit.command.claimit.CommandSubConfirm;
 import its_meow.claimit.command.claimit.CommandSubGroup;
 import its_meow.claimit.command.claimit.CommandSubHelp;
+import its_meow.claimit.command.claimit.CommandSubShowBorders;
 import its_meow.claimit.config.ClaimItConfig;
 import its_meow.claimit.util.command.CommandHelpRegistry;
 import its_meow.claimit.util.text.AutoFillHelpChatStyle;
@@ -43,6 +44,7 @@ public class CommandClaimIt extends CommandCITreeBase {
 		    new CommandSubCancel(),
 		    new CommandSubConfig(),
 		    new CommandSubClaimBlocks(),
+		    new CommandSubShowBorders(),
 		    new CommandSubHelp()
 		);
 	    CommandHelpRegistry.registerHelp(this.getName(), this::getHelp);
@@ -79,7 +81,7 @@ public class CommandClaimIt extends CommandCITreeBase {
         sendMessage(sender, GRAY + "" + BOLD + ClaimItAPI.NAME + RESET + "" + DARK_PURPLE + " Version " + YELLOW + ClaimItAPI.VERSION);
         sendMessage(sender, BLUE + "Claiming item is " + RESET + GREEN + ITALIC + ClaimItConfig.claim_create_item_display);
         sendMessage(sender, AQUA + "" + BOLD + "Subcommands: ");
-        List<String> subCommands = Arrays.asList(new String[] {"claim", "group", "config", "claimblocks", "admin", "help"});
+        List<String> subCommands = Arrays.asList(new String[] {"claim", "group", "config", "claimblocks", "showborders", "admin", "help"});
         for(String cmdT : subCommands) {
             String cmd = "/claimit " + cmdT;
             CommandCIBase subCmd = this.getSubCommand(cmdT);

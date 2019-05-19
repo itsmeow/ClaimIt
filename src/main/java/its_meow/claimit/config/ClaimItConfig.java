@@ -19,4 +19,12 @@ public class ClaimItConfig {
     @Config.Comment("The default maximum area a claim can be for non-admins, in square blocks. Default 40,000 sq blocks = 200 blocks x 200 blocks. This can be increased and decreased via the claimblocks command.")
     public static int default_claim_max_area = 40_000;
     
+    @Config.RangeInt(min = 1)
+    @Config.Comment("Sets the maximum time borders can be shown with /claimit showborders. Please note each second is around 12 to 30 packets from the server to each player in order to show borders, therefore it is limited.")
+    public static int max_show_borders_seconds = 30;
+    
+    @Config.RangeInt(min = 0)
+    @Config.Comment("Sets the cooldown in seconds between each use of show borders")
+    public static int show_borders_cooldown = 60;
+    
 }
