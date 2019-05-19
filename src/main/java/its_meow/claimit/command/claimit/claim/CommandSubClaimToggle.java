@@ -56,9 +56,11 @@ public class CommandSubClaimToggle extends CommandCIBase {
 					boolean toggled = claim.isPermissionToggled(toggle);
 					String toggledStr = toggled ? "ON" : "OFF";
 					toggledStr = toggle.defaultValue == toggled ? GREEN + toggledStr : RED + toggledStr;
-					sendSMessage(sender, YELLOW + toggle.parsedName + BLUE + ": " + toggledStr, new CommandChatStyle("/claimit claim toggle " + toggle.parsedName, true, "Click to toggle"));
+					sendSMessage(sender, YELLOW + toggle.parsedName + BLUE + ": " + toggledStr, new CommandChatStyle("/claimit claim toggle " + toggle.parsedName, true, getHoverFor(toggle, claim)));
 				}
 				return;
+			} else {
+			    throw new CommandException("You cannot modify toggles of this claim!");
 			}
 		}
 		if(args.length > 2 || args.length < 1) {
@@ -78,13 +80,20 @@ public class CommandSubClaimToggle extends CommandCIBase {
 				throw new CommandException("This toggle cannot be modified. It has been forced to a value by the server.");
 			}
 			claim.flipPermissionToggle(perm);
-			boolean toggled = claim.isPermissionToggled(perm);
-			String toggledStr = toggled ? "ON" : "OFF";
-			sendSMessage(sender, GREEN + "Set " + YELLOW + perm.parsedName + GREEN + " to " + BLUE + toggledStr, new CommandChatStyle("/claimit claim toggle " + perm.parsedName, true, "Click to toggle"));
+			sendSMessage(sender, BLUE + "Set " + YELLOW + perm.parsedName + BLUE + " to " + getStringFor(perm, claim.isPermissionToggled(perm)), new CommandChatStyle("/claimit claim toggle " + perm.parsedName, true, getHoverFor(perm, claim)));
 		} else {
 			sendMessage(sender, RED + "You cannot modify toggles of this claim!");
 		}
 
+	}
+	
+	private static String getStringFor(ClaimPermissionToggle perm, boolean toggled) {
+        String toggledStr = toggled ? "ON" : "OFF";
+        return perm.defaultValue == toggled ? GREEN + toggledStr : RED + toggledStr;
+	}
+	
+	private static String getHoverFor(ClaimPermissionToggle perm, ClaimArea claim) {
+	    return BLUE + "Click to toggle " + YELLOW + perm.parsedName + BLUE + " to " + getStringFor(perm, !claim.isPermissionToggled(perm)) + "\n" + BLUE + "Help Info: " + YELLOW + perm.helpInfo;
 	}
 	
     @Override
