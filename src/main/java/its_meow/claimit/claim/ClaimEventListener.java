@@ -37,28 +37,25 @@ public class ClaimEventListener implements IWorldEventListener {
 
     @Override
     public void notifyBlockUpdate(World worldIn, BlockPos pos, IBlockState oldState, IBlockState newState, int flags) {
-
+        
     }
 
     @Override
     public void sendBlockBreakProgress(int breakerId, BlockPos pos, int progress) {
         Entity breaker = world.getEntityByID(breakerId);
-        if(breaker != null && breaker instanceof EntityPlayer) {
-            EntityPlayer player = (EntityPlayer) breaker;
-            BlockPos lookPos = new BlockPos(player.getLookVec());
-            if(lookPos != null) {
-                ClaimArea claim = ClaimManager.getManager().getClaimAtLocation(world, lookPos);
-                if(claim != null) {
-                    if(!claim.canModify(player)) {
-                        for(EntityPlayerMP entityplayermp : this.server.getPlayerList().getPlayers()) {
-                            if(entityplayermp != null && entityplayermp.world == this.world && entityplayermp.getEntityId() != breakerId) {
-                                double d0 = (double)pos.getX() - entityplayermp.posX;
-                                double d1 = (double)pos.getY() - entityplayermp.posY;
-                                double d2 = (double)pos.getZ() - entityplayermp.posZ;
+        if(breaker != null && breaker instanceof EntityPlayerMP) {
+            EntityPlayerMP player = (EntityPlayerMP) breaker;
+            ClaimArea claim = ClaimManager.getManager().getClaimAtLocation(world, pos);
+            if(claim != null) {
+                if(!claim.canModify(player)) {
+                    for(EntityPlayerMP entityplayermp : this.server.getPlayerList().getPlayers()) {
+                        if(entityplayermp != null && entityplayermp.world == this.world) {
+                            double d0 = (double)pos.getX() - entityplayermp.posX;
+                            double d1 = (double)pos.getY() - entityplayermp.posY;
+                            double d2 = (double)pos.getZ() - entityplayermp.posZ;
 
-                                if(d0 * d0 + d1 * d1 + d2 * d2 < 1024.0D) {
-                                    entityplayermp.connection.sendPacket(new SPacketBlockBreakAnim(breakerId, pos, -1));
-                                }
+                            if(d0 * d0 + d1 * d1 + d2 * d2 < 1024.0D) {
+                                entityplayermp.connection.sendPacket(new SPacketBlockBreakAnim(breakerId, pos, -1));
                             }
                         }
                     }

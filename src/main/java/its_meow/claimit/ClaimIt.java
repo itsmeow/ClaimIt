@@ -6,6 +6,7 @@ import its_meow.claimit.api.ClaimItAPI;
 import its_meow.claimit.api.claim.ClaimManager;
 import its_meow.claimit.command.CommandClaimIt;
 import its_meow.claimit.config.ClaimItConfig;
+import its_meow.claimit.permission.ClaimItPermissions;
 import its_meow.claimit.userconfig.UserConfigManager;
 import its_meow.claimit.userconfig.UserConfigTypeRegistry;
 import its_meow.claimit.userconfig.UserConfigs;
@@ -45,6 +46,7 @@ public class ClaimIt {
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent event) {
 	    UserConfigs.register();
+	    ClaimItPermissions.register();
 	}
 	
     @EventHandler

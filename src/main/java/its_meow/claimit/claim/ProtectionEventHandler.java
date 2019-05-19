@@ -13,8 +13,8 @@ import its_meow.claimit.ClaimIt;
 import its_meow.claimit.api.claim.ClaimArea;
 import its_meow.claimit.api.claim.ClaimManager;
 import its_meow.claimit.api.event.claim.ClaimCheckPermissionEvent;
-import its_meow.claimit.api.permission.ClaimPermissions;
 import its_meow.claimit.config.ClaimItConfig;
+import its_meow.claimit.permission.ClaimItPermissions;
 import its_meow.claimit.util.command.CommandUtils;
 import net.minecraft.block.BlockGrass;
 import net.minecraft.block.BlockTallGrass;
@@ -343,7 +343,7 @@ public class ProtectionEventHandler {
 		ClaimArea claim = cm.getClaimAtLocation(world, pos);
 		if(claim != null) {
 			if(!(e.getEntityLiving() instanceof EntityPlayer)) {
-				e.setCanceled(!claim.isPermissionToggled(ClaimPermissions.LIVING_MODIFY));
+				e.setCanceled(!claim.isPermissionToggled(ClaimItPermissions.LIVING_MODIFY));
 			} else if(e.getEntityLiving() instanceof EntityPlayer){
 				EntityPlayer player = (EntityPlayer) e.getEntityLiving();
 				e.setCanceled(!claim.canModify(player));
@@ -371,7 +371,7 @@ public class ProtectionEventHandler {
 		BlockPos pos = player.getPosition();
 		ClaimArea claim = ClaimManager.getManager().getClaimAtLocation(world, pos);
 		if(claim != null) {
-			if(!claim.isPermissionToggled(ClaimPermissions.DROP_ITEM)) {
+			if(!claim.isPermissionToggled(ClaimItPermissions.DROP_ITEM)) {
 				if(!claim.canUse(player)) {
 					e.setCanceled(true);
 					player.addItemStackToInventory(e.getEntityItem().getItem()); // Re-add items because canceling event deletes items
@@ -387,7 +387,7 @@ public class ProtectionEventHandler {
 		BlockPos pos = e.getItem().getPosition();
 		ClaimArea claim = ClaimManager.getManager().getClaimAtLocation(world, pos);
 		if(claim != null) {
-			if(!claim.isPermissionToggled(ClaimPermissions.PICKUP_ITEM)) {
+			if(!claim.isPermissionToggled(ClaimItPermissions.PICKUP_ITEM)) {
 				if(!claim.canUse(player)) {
 					e.setCanceled(true);
 				}
@@ -486,7 +486,7 @@ public class ProtectionEventHandler {
 			EntityLiving el = (EntityLiving) entity;
 			ClaimArea claim = ClaimManager.getManager().getClaimAtLocation(el.world, el.getPosition());
 			if(claim != null) {
-				if(!claim.isPermissionToggled(ClaimPermissions.ALLOW_PROJECTILES)) {
+				if(!claim.isPermissionToggled(ClaimItPermissions.ALLOW_PROJECTILES)) {
 					e.setCanceled(true);
 				}
 			}
@@ -497,7 +497,7 @@ public class ProtectionEventHandler {
 	public static void onEntitySpawn(LivingSpawnEvent.CheckSpawn e) {
 		ClaimArea claim = ClaimManager.getManager().getClaimAtLocation(e.getWorld(), new BlockPos(e.getX(), e.getY(), e.getZ()));
 		if(claim != null) {
-			if(!claim.isPermissionToggled(ClaimPermissions.ENTITY_SPAWN)) {
+			if(!claim.isPermissionToggled(ClaimItPermissions.ENTITY_SPAWN)) {
 				e.setResult(Result.DENY);
 			}
 		}
