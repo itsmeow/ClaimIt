@@ -39,6 +39,22 @@ public class ClaimPermissionRegistry {
 		togglePermissions.put(permission.parsedName, permission);
 	}
 	
+	/** Add a list of toggle permissions to the registry to be used in claims 
+     * @param permissions - The toggle permissions to add **/
+    public static void addPermission(ClaimPermissionToggle... permissions) {
+        for(ClaimPermissionToggle permission : permissions) {
+            addPermission(permission);
+        }
+    }
+    
+    /** Add a list of member permissions to the registry to be used in claims 
+     * @param permissions - The member permissions to add **/
+    public static void addPermission(ClaimPermissionMember... permissions) {
+        for(ClaimPermissionMember permission : permissions) {
+            addPermission(permission);
+        }
+    }
+	
 	/** Add a member permission with a corresponding toggle to override it.
 	 * @param permission - The member permission to add 
 	 * @param toggle - The toggle permission that overrides this if true **/
