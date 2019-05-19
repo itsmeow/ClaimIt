@@ -24,6 +24,7 @@ import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
+import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ActionResult;
@@ -32,12 +33,14 @@ import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.BlockSnapshot;
 import net.minecraftforge.event.entity.EntityMountEvent;
 import net.minecraftforge.event.entity.ProjectileImpactEvent;
 import net.minecraftforge.event.entity.item.ItemTossEvent;
 import net.minecraftforge.event.entity.living.LivingDestroyBlockEvent;
+import net.minecraftforge.event.entity.living.LivingEquipmentChangeEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.living.LivingSpawnEvent;
 import net.minecraftforge.event.entity.player.ArrowNockEvent;
@@ -60,6 +63,23 @@ public class ProtectionEventHandler {
     public static void onPermissionCheck(ClaimCheckPermissionEvent event) {
         if(CommandUtils.isAdminNoded(event.getCheckedPlayer(), "claimit.claim.manage.others")) {
             event.setResult(Result.ALLOW);
+        }
+    }
+    
+    @SubscribeEvent
+    public static void onEquipChange(LivingEquipmentChangeEvent e) {
+        ItemStack old = e.getTo();
+        if(e.getEntityLiving() instanceof EntityPlayer && e.getFrom().getItem() != ClaimIt.claiming_item && old.getItem() == ClaimIt.claiming_item && (e.getSlot() == EntityEquipmentSlot.MAINHAND || e.getSlot() == EntityEquipmentSlot.OFFHAND)) {
+            EntityPlayer player = (EntityPlayer) e.getEntityLiving();
+            int slot = player.inventory.getSlotFor(old);
+            if(old.hasTagCompound()) {
+                // Remove corner tag when item moves from hands
+                if(old.getTagCompound().hasKey("Corner1")) {
+                    old.getTagCompound().removeTag("Corner1");
+                    player.replaceItemInInventory(slot, old);
+                    e.getEntity().sendMessage(new TextComponentString(TextFormatting.RED + "Claiming item moved, canceling claim creation."));
+                }
+            }
         }
     }
     
