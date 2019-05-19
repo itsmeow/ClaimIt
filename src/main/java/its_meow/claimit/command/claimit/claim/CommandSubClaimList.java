@@ -111,7 +111,7 @@ public class CommandSubClaimList extends CommandCIBase {
             EntityPlayer player = (EntityPlayer) sender;
             if(!admin) {
                 final Set<ClaimArea> claims = ClaimManager.getManager().getClaimsOwnedByPlayer(player.getGameProfile().getId());
-                if(claims != null) {
+                if(claims != null && claims.size() > 0) {
                     int i = 0;
                     for(ClaimArea claim : claims) {
                         i++;

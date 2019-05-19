@@ -1,7 +1,9 @@
 package its_meow.claimit.api.claim;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
@@ -31,7 +33,7 @@ public class ClaimManager {
 	private static ClaimManager instance = null;
 	private ArrayList<ClaimArea> claims = new ArrayList<ClaimArea>();
 	private BiMultiMap<UUID, ClaimArea> ownedClaims = new BiMultiMap<UUID, ClaimArea>();
-	private BiMultiMap<ClaimChunk, ClaimArea> chunks = new BiMultiMap<ClaimChunk, ClaimArea>();
+	private Map<Integer, BiMultiMap<ClaimChunk, ClaimArea>> chunks = new HashMap<Integer, BiMultiMap<ClaimChunk, ClaimArea>>();
 
 	private ClaimManager() {}
 
@@ -49,7 +51,9 @@ public class ClaimManager {
 	public boolean deleteClaim(ClaimArea claim) {
 	    if(!MinecraftForge.EVENT_BUS.post(new ClaimRemovedEvent(claim))) {
 	        if(claims.remove(claim)) {
-	            chunks.removeValueFromAll(claim);
+	            if(chunks.containsKey(claim.getDimensionID())) {
+	                chunks.get(claim.getDimensionID()).removeValueFromAll(claim);
+	            }
 	            ownedClaims.removeValueFromAll(claim);
 	            return true;
 	        }
@@ -72,7 +76,9 @@ public class ClaimManager {
 	        return null;
 	    }
 	    ClaimChunk chunk = ClaimChunkUtil.getChunk(pos);
-	    Set<ClaimArea> claimsInChunk = chunks.getValues(chunk);
+	    int dimID = world.provider.getDimension();
+	    chunks.putIfAbsent(dimID, new BiMultiMap<ClaimChunk, ClaimArea>());
+	    Set<ClaimArea> claimsInChunk = chunks.get(dimID).getValues(chunk);
 	    if(claimsInChunk != null && claimsInChunk.size() > 0) {
 	        for(ClaimArea claim : claimsInChunk) {
 	            if(claim.getWorld() == world && claim.isBlockPosInClaim(pos)) {
@@ -82,7 +88,7 @@ public class ClaimManager {
 	    } else {
 	        for(ClaimArea claim : claims) {
 	            if(claim.getWorld() == world && claim.isBlockPosInClaim(pos)) {
-	                chunks.put(chunk, claim); // Cache this for faster retrieval
+	                chunks.get(dimID).put(chunk, claim); // Cache this for faster retrieval
 	                return claim;
 	            }
 	        }
@@ -190,7 +196,8 @@ public class ClaimManager {
 		claims.add(claim);
 		ownedClaims.put(claim.getOwner(), claim);
 		for(ClaimChunk c : claim.getOverlappingChunks()) {
-		    chunks.put(c, claim);
+		    chunks.putIfAbsent(claim.getDimensionID(), new BiMultiMap<ClaimChunk, ClaimArea>());
+		    chunks.get(claim.getDimensionID()).put(c, claim);
 		}
 	}
 

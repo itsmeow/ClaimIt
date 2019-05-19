@@ -30,6 +30,7 @@ import its_meow.claimit.util.command.CommandHelpRegistry;
 import its_meow.claimit.util.text.AutoFillHelpChatStyle;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.server.MinecraftServer;
+import net.minecraftforge.fml.common.Loader;
 
 public class CommandClaimIt extends CommandCITreeBase {
 
@@ -89,12 +90,12 @@ public class CommandClaimIt extends CommandCITreeBase {
 
     @Override
     public String getPermissionString() {
-        return this.getName();
+        return "claimit";
     }
     
     @Override
     public boolean checkPermission(MinecraftServer server, ICommandSender sender) {
-        return sender.canUseCommand(getRequiredPermissionLevel(), this.getPermissionString());
+        return sender.canUseCommand(0, "claimit") || !Loader.isModLoaded("sponge");
     }
 
 }

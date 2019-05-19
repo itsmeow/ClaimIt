@@ -9,12 +9,13 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraftforge.fml.common.Loader;
 
 public abstract class CommandCIBase extends CommandBase implements ICommandHelp {
 
     @Override
     public boolean checkPermission(MinecraftServer server, ICommandSender sender) {
-        return sender.canUseCommand(getRequiredPermissionLevel(), "claimit.command." + this.getPermissionString());
+        return sender.canUseCommand(getRequiredPermissionLevel(), "claimit.command." + this.getPermissionString()) || !Loader.isModLoaded("sponge");
     }
     
     public abstract String getPermissionString();
