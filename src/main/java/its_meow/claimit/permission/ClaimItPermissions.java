@@ -12,10 +12,11 @@ public class ClaimItPermissions {
     public static final ClaimPermissionToggle ENTITY_SPAWN = new ClaimPermissionToggle("entity_spawn", false, "Turning on allows mobs and animals to spawn.");
     public static final ClaimPermissionToggle PRESSURE_PLATE = new ClaimPermissionToggle("pressure_plate", true, "Disabling blocks pressure plates all reasons except players with USE. Having on still prevents players without USE from using them, but allows mobs to use them.");
     public static final ClaimPermissionToggle EXPLOSION = new ClaimPermissionToggle("explosion", false, "Enabling allows explosions to damage entities and blocks inside the claim.");
-    
+    public static final ClaimPermissionToggle FIRE_CREATE = new ClaimPermissionToggle("fire_create", false, "Enabling allows fire to be created and spread inside the claim.");
+
     public static void register() {
         // Toggles
-        ClaimPermissionRegistry.addPermission(LIVING_MODIFY, DROP_ITEM, PICKUP_ITEM, ALLOW_PROJECTILES, ENTITY_SPAWN, PRESSURE_PLATE, EXPLOSION);
+        ClaimPermissionRegistry.addPermission(LIVING_MODIFY, DROP_ITEM, PICKUP_ITEM, ALLOW_PROJECTILES, ENTITY_SPAWN, PRESSURE_PLATE, EXPLOSION, FIRE_CREATE);
     }
     
 }

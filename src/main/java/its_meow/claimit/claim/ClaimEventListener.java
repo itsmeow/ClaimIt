@@ -1,19 +1,24 @@
 package its_meow.claimit.claim;
 
+import java.util.HashMap;
 import java.util.List;
 
 import its_meow.claimit.ClaimIt;
 import its_meow.claimit.api.claim.ClaimArea;
 import its_meow.claimit.api.claim.ClaimManager;
 import its_meow.claimit.api.event.claim.ClaimAddedEvent;
+import its_meow.claimit.api.event.claim.ClaimRemovedEvent;
+import its_meow.claimit.api.event.claim.ClaimsClearedEvent;
 import its_meow.claimit.permission.ClaimItPermissions;
 import net.minecraft.block.BlockPressurePlate;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.init.Blocks;
 import net.minecraft.network.play.server.SPacketBlockBreakAnim;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -25,7 +30,9 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 @Mod.EventBusSubscriber(modid = ClaimIt.MOD_ID)
 public class ClaimEventListener implements IWorldEventListener {
-
+    
+    public static HashMap<World, ClaimEventListener> listeners = new HashMap<World, ClaimEventListener>();
+    
     protected final MinecraftServer server;
     protected final World world;
 
@@ -37,7 +44,24 @@ public class ClaimEventListener implements IWorldEventListener {
     @SubscribeEvent
     public static void onClaimAdded(ClaimAddedEvent event) {
         World world = event.getClaim().getWorld();
-        world.addEventListener(new ClaimEventListener(world.getMinecraftServer(), world));
+        ClaimEventListener listener = new ClaimEventListener(world.getMinecraftServer(), world);
+        world.addEventListener(listener);
+        listeners.put(world, listener);
+    }
+    
+    @SubscribeEvent
+    public static void onClaimRemoved(ClaimRemovedEvent event) {
+        World world = event.getClaim().getWorld();
+        if(listeners.containsKey(world)) {
+            world.removeEventListener(listeners.remove(world));
+        }
+    }
+    
+    @SubscribeEvent
+    public static void onClaimsCleared(ClaimsClearedEvent.Pre event) {
+        for(ClaimArea claim : ClaimManager.getManager().getClaimsList()) {
+            onClaimRemoved(new ClaimRemovedEvent(claim));
+        }
     }
 
     @Override
@@ -60,6 +84,15 @@ public class ClaimEventListener implements IWorldEventListener {
                             world.setBlockState(pos, oldState);
                         }
                     }
+                }
+            }
+        }
+        if(newState.getBlock() == Blocks.FIRE) {
+            for(EnumFacing facing : EnumFacing.VALUES) {
+                BlockPos posF = pos.offset(facing);
+                ClaimArea claim = ClaimManager.getManager().getClaimAtLocation(world, posF);
+                if(claim != null && !claim.isPermissionToggled(ClaimItPermissions.FIRE_CREATE)) {
+                    world.setBlockState(pos, oldState);
                 }
             }
         }
