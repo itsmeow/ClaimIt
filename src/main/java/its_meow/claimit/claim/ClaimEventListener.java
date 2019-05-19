@@ -1,9 +1,13 @@
 package its_meow.claimit.claim;
 
+import java.util.List;
+
 import its_meow.claimit.ClaimIt;
 import its_meow.claimit.api.claim.ClaimArea;
 import its_meow.claimit.api.claim.ClaimManager;
 import its_meow.claimit.api.event.claim.ClaimAddedEvent;
+import its_meow.claimit.permission.ClaimItPermissions;
+import net.minecraft.block.BlockPressurePlate;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
@@ -12,6 +16,7 @@ import net.minecraft.network.play.server.SPacketBlockBreakAnim;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IWorldEventListener;
 import net.minecraft.world.World;
@@ -36,8 +41,28 @@ public class ClaimEventListener implements IWorldEventListener {
     }
 
     @Override
-    public void notifyBlockUpdate(World worldIn, BlockPos pos, IBlockState oldState, IBlockState newState, int flags) {
-        
+    public void notifyBlockUpdate(World world, BlockPos pos, IBlockState oldState, IBlockState newState, int flags) {
+        if(oldState.getBlock() instanceof BlockPressurePlate && newState.getBlock() instanceof BlockPressurePlate) {
+            boolean oldPower = oldState.getValue(BlockPressurePlate.POWERED);
+            boolean newPower = newState.getValue(BlockPressurePlate.POWERED);
+            if(!oldPower && newPower) {
+                ClaimArea claim = ClaimManager.getManager().getClaimAtLocation(world, pos);
+                if(claim != null) {
+                    AxisAlignedBB box = new AxisAlignedBB(pos.add(-1, -1, -1), pos.add(1, 2, 1));
+                    List<EntityPlayer> players = world.getEntitiesWithinAABB(EntityPlayer.class, box);
+                    if(players != null && players.size() > 0) {
+                        int amountWithPerms = (int) players.stream().filter(player -> claim.canUse(player)).count();
+                        if(amountWithPerms < 1) {
+                            world.setBlockState(pos, oldState);
+                        }
+                    } else {
+                        if(!claim.isPermissionToggled(ClaimItPermissions.PRESSURE_PLATE)) {
+                            world.setBlockState(pos, oldState);
+                        }
+                    }
+                }
+            }
+        }
     }
 
     @Override
