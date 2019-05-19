@@ -314,14 +314,16 @@ public class ProtectionEventHandler {
 		ClaimManager cm = ClaimManager.getManager();
 		Set<BlockPos> removeList = new HashSet<BlockPos>();
 		for(BlockPos pos : e.getAffectedBlocks()) {
-			if(cm.getClaimAtLocation(world, pos) != null) {
+		    ClaimArea claim = cm.getClaimAtLocation(world, pos);
+			if(claim != null && !claim.isPermissionToggled(ClaimItPermissions.EXPLOSION)) {
 				removeList.add(pos);
 			}
 		}
 		Set<Entity> removeListE = new HashSet<Entity>();
 		for(Entity ent : e.getAffectedEntities()) {
 			BlockPos pos = ent.getPosition();
-			if(cm.getClaimAtLocation(world, pos) != null) {
+			ClaimArea claim = cm.getClaimAtLocation(world, pos);
+            if(claim != null && !claim.isPermissionToggled(ClaimItPermissions.EXPLOSION)) {
 				removeListE.add(ent);
 			}
 		}
