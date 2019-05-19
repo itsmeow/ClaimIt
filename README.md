@@ -7,13 +7,64 @@
 ### Why is this mod special?
 This mod is built with the idea of creating easy compatibility that allows mods to integrate properly with the claiming system to avoid the need for banning items.
 
+### Do my users need to download ClaimIt?
+No. It's server side only, but loads on integrated servers (singleplayer/LAN) just fine.
+
+### I have questions/need support! Where can I get help?
+Your options are the ingame help command, this article, and my [Discord server](https://discord.gg/zrjXjP5).
+
 ### API
 ClaimIt has an expansive API for integration and addition. You can view its documentation via clicking the docs badge or looking at the `docs/` directory.
 
 ### Using the base mod
-ClaimIt API handles claims and their management, but via what? The answer is the base mod, ClaimIt.<br>
+ClaimIt is the base mod, which the API is completely independent of. ClaimIt handles protections and hooks/commands.<br>
 ClaimIt includes an expansive ingame help command, accessed with `/claimit help`.
 
+## Commands
+ClaimIt includes an abundance of commands both for player use and admin use.
+
+### Base Commands
+
+   * `/claimit admin`
+   * `/claimit cancel`
+   * `/claimit claim [subcommand]`
+   * `/claimit claimblocks [subcommand]`
+   * `/claimit config [config) (value]`
+   * `/claimit confirm`
+   * `/claimit group [subcommand]`
+   * `/claimit help [subcommand]`
+
+### Claim Commands
+
+   * `/claimit claim delete [claimname]`
+   * `/claimit claim deleteall`
+   * `/claimit claim info [claimname]`
+   * `/claimit claim list`
+   * `/claimit claim manage [claimname] [member] [playername]`
+   * `/claimit claim permission <add/remove> <permission> <playername> [claimname]`
+   * `/claimit claim permission list [claimname]`
+   * `/claimit claim setname [newname]`
+   * `/claimit claim toggle [togglename] [claimname]`
+
+### Group Commands
+
+   * `/claimit group claim <add/remove> <groupname> [claimname]`
+   * `/claimit group create <groupname>`
+   * `/claimit group delete <groupname>`
+   * `/claimit group info <groupname>`
+   * `/claimit group list`
+   * `/claimit group permission <add/remove> <permission> <playername> <groupname>`
+   * `/claimit group setname <groupname> <newname>`
+
+### Help Commands
+
+   * `/claimit help command <command string>`
+   * `/claimit help permission <member/toglge> [permission]`
+   * `/claimit help topic [topicname]`
+   * `/claimit help userconfig [configname]`
+
+### Claim Blocks
+   * `/claimit claimblocks view`
 
 ## Permissions
 ClaimIt has basic Sponge/Spigot integration (yes, LuckPerms included!)<br>
@@ -78,3 +129,8 @@ The list of default admin permissions (these require one of the above, but are d
 
 I'll say it again.<br>
 **You will need to give users access to** `claimit.claim.create` **when using Sponge!**
+
+### Administration
+ClaimIt provides an abundance of administration tools, namely the ability to bypass protections and modify claim toggles, members, etc. Read the admin permissions above for a general idea of what you'll need.
+In order to use ANY admin features you will need admin enabled. To do so, run `/claimit admin`. So long as this is enabled and you have `claimit.claim.manage.others`, you can bypass protections.
+Setting block limits is very easy, and can be done via the `/claimit claimblocks` command, so long as you have permission.

@@ -69,7 +69,7 @@ public class CommandSubClaimToggle extends CommandCIBase {
 		
 		// Argh, if they don't have edit others and admin on, they aren't the owner, and they cannot manage
 		if(!CommandUtils.isAdminNoded(sender, "claimit.command.claimit.claim.toggle.others") && sender instanceof EntityPlayer && !claim.isOwner((EntityPlayer) sender) && !claim.inPermissionList(ClaimPermissions.MANAGE_PERMS, ((EntityPlayer) sender).getGameProfile().getId())) {
-		    throw new CommandException("You cannot modify toggles of thid claim!");
+		    throw new CommandException("You cannot modify toggles of this claim!");
 		}
 		
 		if(CommandUtils.canManagePerms(sender, claim)) {
@@ -80,7 +80,7 @@ public class CommandSubClaimToggle extends CommandCIBase {
 			claim.flipPermissionToggle(perm);
 			boolean toggled = claim.isPermissionToggled(perm);
 			String toggledStr = toggled ? "ON" : "OFF";
-			sendMessage(sender, GREEN + "Set " + YELLOW + perm.parsedName + GREEN + " to " + BLUE + toggledStr);
+			sendSMessage(sender, GREEN + "Set " + YELLOW + perm.parsedName + GREEN + " to " + BLUE + toggledStr, new CommandChatStyle("/claimit claim toggle " + perm.parsedName, true, "Click to toggle"));
 		} else {
 			sendMessage(sender, RED + "You cannot modify toggles of this claim!");
 		}
