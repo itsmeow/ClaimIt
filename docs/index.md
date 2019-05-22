@@ -21,7 +21,7 @@ The benefits of integration:
 ### Adding it to the project
 
 Once you've figured out which one you want to do, you'll need to add ClaimIt API to your buildscript.<br>
-This is fairly simple. First, add the CurseForge maven to your repositories.<br>
+This is fairly simple. First, add the maven to your repositories.<br>
 In your `build.gradle`:
 
 ```
