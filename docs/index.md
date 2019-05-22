@@ -27,16 +27,17 @@ In your `build.gradle`:
 ```
 repositories {
 	maven {
-		url = "https://minecraft.curseforge.com/api/maven/"
-	}
+        name = "ClaimIt"
+        url = "https://dl.bintray.com/itsmeow/maven"
+   }
 }
 ```
 
-Now, you need to add the dependency on ClaimIt API. Inside the `dependencies` block, put this: (Note the mod is not on curse, so this is inaccurate)
+Now, you need to add the dependency on ClaimIt API. Inside the `dependencies` block, put this:
 
 ```
 dependencies {
-	deobfCompile 'claimitapi:claimitapi:1.12.2-1.0.0'
+	deobfCompile 'its_meow.claimit:claimit:1.12.2-latest.version.here:api'
 }
 ```
 
