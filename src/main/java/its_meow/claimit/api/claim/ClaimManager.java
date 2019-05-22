@@ -35,7 +35,7 @@ public class ClaimManager {
 	private BiMultiMap<UUID, ClaimArea> ownedClaims = new BiMultiMap<UUID, ClaimArea>();
 	private Map<Integer, BiMultiMap<ClaimChunk, ClaimArea>> chunks = new HashMap<Integer, BiMultiMap<ClaimChunk, ClaimArea>>();
 
-	private ClaimManager() {}
+	protected ClaimManager() {}
 
 	public static ClaimManager getManager() {
 		if(instance == null) {
