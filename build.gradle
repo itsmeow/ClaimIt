@@ -41,7 +41,6 @@ task apiJar(type: Jar) {
         project.hasProperty("api_package")
     }
     version = "${project.mc_version}-${project.api_version}"
-    from sourceSets.main.allSource
     from sourceSets.main.output
     include String.valueOf(findProperty("api_package")).replace(".", "/") + "/**"
     from "LICENSE"
@@ -52,17 +51,30 @@ task apiJar(type: Jar) {
             "Maven-Artifact": "${project.group}:${project.archivesBaseName}:${project.mc_version}-${project.api_version}:api",
             "Built-On": "${mc_version}-${forge_version}"
     )
-    classifier = 'api'
+    baseName = "claimitapi"
+    classifier ''
 }
 
 task srcJar(type: Jar) {
     from sourceSets.main.allJava
-	
+
 	extension = 'jar'
 	classifier = 'sources'
 	if (project.hasProperty('api_package')) {
         exclude String.valueOf(findProperty('api_package')).replace(".", "/") + "/**"
     }
+}
+
+task apiSrcJar(type: Jar) {
+    onlyIf {
+        project.hasProperty("api_package")
+    }
+    from sourceSets.main.allJava
+    include String.valueOf(findProperty("api_package")).replace(".", "/") + "/**"
+
+	extension = 'jar'
+	classifier = 'sources'
+	baseName = "claimitapi"
 }
 
 reobf {
@@ -71,7 +83,7 @@ reobf {
 }
 
 artifacts {
-    archives srcJar, apiJar
+    archives srcJar, apiJar, apiSrcJar
 }
 
 jar {
@@ -90,13 +102,20 @@ jar {
 
 publishing {
     publications {
-        publish(MavenPublication) {
+        publishBaseJar(MavenPublication) {
 			from components.java
             artifact srcJar
-			artifact apiJar
             groupId project.maven_group
             artifactId project.mod_id
             version project.version
+        }
+
+        publishApiJar(MavenPublication) {
+            artifact apiSrcJar
+            artifact apiJar
+            groupId project.maven_group
+            artifactId "claimitapi"
+            version "${project.mc_version}-${api_version}"
         }
     }
 }
@@ -104,7 +123,7 @@ publishing {
 bintray {
 	user = project.hasProperty('bintrayUser') ? project.property('bintrayUser') : ''
 	key = project.hasProperty('bintrayApiKey') ? project.property('bintrayApiKey') : ''
-	publications = ['publish']
+	publications = ['publishBaseJar', 'publishApiJar']
 	pkg {
         repo = 'maven'
         name = 'ClaimIt'

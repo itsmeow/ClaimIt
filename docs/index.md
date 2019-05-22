@@ -37,7 +37,7 @@ Now, you need to add the dependency on ClaimIt API. Inside the `dependencies` bl
 
 ```
 dependencies {
-	deobfCompile 'its_meow.claimit:claimit:1.12.2-latest.version.here:api'
+	deobfCompile 'its_meow.claimit:claimitapi:1.12.2-latest.version.here'
 }
 ```
 
