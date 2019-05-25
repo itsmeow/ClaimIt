@@ -120,8 +120,10 @@ public class ProtectionEventHandler {
 			                ClaimManager.ClaimAddResult result = ClaimManager.getManager().addClaim(newClaim); // Add claim
 			                if(result == ClaimManager.ClaimAddResult.ADDED) {
 			                    player.sendMessage(new TextComponentString(GREEN + "Claim added successfully!"));
-			                } else if (result == ClaimManager.ClaimAddResult.OVERLAP) {
+			                } else if(result == ClaimManager.ClaimAddResult.OVERLAP) {
 			                    player.sendMessage(new TextComponentString(RED + "This claim overlaps another claim!"));
+			                } else if(result == ClaimManager.ClaimAddResult.TOO_LARGE) {
+			                    player.sendMessage(new TextComponentString(RED + "This claim exceeds the maximum possible size!"));
 			                } else {
 			                    player.sendMessage(new TextComponentString(RED + "This claim could not be added!"));
 			                }

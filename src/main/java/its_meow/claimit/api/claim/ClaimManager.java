@@ -163,6 +163,9 @@ public class ClaimManager {
 	 * @param claim - The claim to be added 
 	 * @param fireEvent - If true, will fire a Claim Added event **/
 	private ClaimAddResult addClaim(ClaimArea claim, boolean fireEvent) {
+	    if(claim.getArea() > 1000 * 1000 || claim.getArea() < 4) {
+	        return ClaimAddResult.TOO_LARGE;
+	    }
 		if(claims.size() != 0) {
 			for(ClaimArea claimI : claims) {
 				if(claimI.getDimensionID() == claim.getDimensionID()) {
@@ -286,7 +289,8 @@ public class ClaimManager {
 	public static enum ClaimAddResult {
 	    ADDED,
 	    OVERLAP,
-	    CANCELLED;
+	    CANCELLED,
+	    TOO_LARGE;
 	}
 	
 }

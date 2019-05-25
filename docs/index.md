@@ -22,7 +22,7 @@ The benefits of integration:
 
 Once you've figured out which one you want to do, you'll need to add ClaimIt API to your buildscript.<br>
 This is fairly simple. First, add the maven to your repositories.<br>
-By default all Forge build scripts already included jcenter, but if needed in your `build.gradle`:
+By default all Forge build scripts already include jcenter, but if needed in your `build.gradle`:
 
 ```
 repositories {

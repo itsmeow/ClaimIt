@@ -36,8 +36,8 @@ public class CommandSubClaimBlocksSetAllowed extends CommandCIBaseAdminOnly {
             throw new CommandException("Invalid argument count! Usage: " + this.getUsage(sender));
         }
         UUID uuid = CommandUtils.getUUIDForName(args[0], server);
-        int amount = CommandBase.parseInt(args[1], 0, Integer.MAX_VALUE);
-        if(uuid != null) { 
+        if(uuid != null) {
+            int amount = CommandBase.parseInt(args[1], UserClaimBlocks.getClaimBlocksUsed(uuid), Integer.MAX_VALUE);
             UserClaimBlocks.setAllowedClaimBlocks(uuid, amount);
             sendMessage(sender, GREEN + "Set " + YELLOW + args[0] + GREEN + "'s allowed claim blocks to " + AQUA + amount + GREEN + ". They now have " + AQUA + UserClaimBlocks.getClaimBlocksRemaining(uuid) + GREEN + " blocks remaining.");
         } else {

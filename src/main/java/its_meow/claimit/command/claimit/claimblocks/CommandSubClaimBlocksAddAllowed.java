@@ -38,8 +38,8 @@ public class CommandSubClaimBlocksAddAllowed extends CommandCIBaseAdminOnly {
         UUID uuid = CommandUtils.getUUIDForName(args[0], server);
         int oldAllowed = UserClaimBlocks.getClaimBlocksAllowed(uuid);
         int amount = CommandBase.parseInt(args[1]);
-        if(oldAllowed + amount < 0) {
-            throw new CommandException("Adding this amount would make the allowed amount less than 0!");
+        if(UserClaimBlocks.getClaimBlocksRemaining(uuid) + amount < 0) {
+            throw new CommandException("Adding this amount would make the remaining amount less than 0!");
         }
         if(uuid != null) { 
             UserClaimBlocks.setAllowedClaimBlocks(uuid, oldAllowed + amount);
