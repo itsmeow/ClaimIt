@@ -58,14 +58,14 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 @Mod.EventBusSubscriber(modid = ClaimIt.MOD_ID)
 public class ProtectionEventHandler {
-    
+
     @SubscribeEvent(priority = EventPriority.LOW)
     public static void onPermissionCheck(ClaimCheckPermissionEvent event) {
         if(CommandUtils.isAdminNoded(event.getCheckedPlayer(), "claimit.claim.manage.others")) {
             event.setResult(Result.ALLOW);
         }
     }
-    
+
     @SubscribeEvent
     public static void onEquipChange(LivingEquipmentChangeEvent e) {
         ItemStack old = e.getTo();
@@ -82,344 +82,344 @@ public class ProtectionEventHandler {
             }
         }
     }
-    
-	@SubscribeEvent(priority = EventPriority.HIGHEST)
-	public static void onBlockRightClicked(PlayerInteractEvent.RightClickBlock e) {
-		World world = e.getEntity().getEntityWorld();
-		BlockPos pos = e.getPos();
-		ClaimManager cm = ClaimManager.getManager();
-		ClaimArea claim = cm.getClaimAtLocation(world, pos);
-		if(claim != null) {
-			EntityPlayer player = e.getEntityPlayer();
-			e.setCanceled(!claim.canUse(player));
-		} else if(claim == null && ClaimIt.claiming_item != null && e.getItemStack().getItem() == ClaimIt.claiming_item && !world.isRemote) { // Add a claim with shears
-			EntityPlayer player = e.getEntityPlayer();
-			if(player.canUseCommand(0, "claimit.claim.create")) {
-			    EnumHand hand = e.getHand();
-			    ItemStack stack = player.getHeldItem(hand);
-			    NBTTagCompound data = stack.getTagCompound();
-			    if(data == null) {
-			        NBTTagCompound newTag = new NBTTagCompound();
-			        data = newTag;
-			        stack.setTagCompound(newTag);
-			    }
-			    boolean isInClaim = ClaimManager.getManager().isBlockInAnyClaim(world, pos);
-			    if(!isInClaim) {
-			        int[] posArray = {pos.getX(), pos.getZ()};
-			        if(data.hasKey("Corner1")) {
-			            player.sendMessage(new TextComponentString(BLUE + "Added corner 2 at " + AQUA + posArray[0] + BLUE + ", " + AQUA + posArray[1]));
-			            int[] corner1 = data.getIntArray("Corner1");
-			            int[] corner2 = posArray;
-			            BlockPos c1 = new BlockPos(corner1[0], 0, corner1[1]);
-			            BlockPos c2 = new BlockPos(corner2[0], 0, corner2[1]);
-			            BlockPos sideL = c2.subtract(c1); // Subtract to get side lengths
-			            // Claim corners are automatically corrected to proper values by constructor
-			            ClaimArea newClaim;
-			            newClaim = new ClaimArea(player.dimension, c1.getX(), c1.getZ(), sideL.getX(), sideL.getZ(), player);
-			            if(newClaim.getSideLengthX() >= 1 && newClaim.getSideLengthZ() >= 1) {
-			                ClaimManager.ClaimAddResult result = ClaimManager.getManager().addClaim(newClaim); // Add claim
-			                if(result == ClaimManager.ClaimAddResult.ADDED) {
-			                    player.sendMessage(new TextComponentString(GREEN + "Claim added successfully!"));
-			                } else if(result == ClaimManager.ClaimAddResult.OVERLAP) {
-			                    player.sendMessage(new TextComponentString(RED + "This claim overlaps another claim!"));
-			                } else if(result == ClaimManager.ClaimAddResult.TOO_LARGE) {
-			                    player.sendMessage(new TextComponentString(RED + "This claim exceeds the maximum possible size!"));
-			                } else {
-			                    player.sendMessage(new TextComponentString(RED + "This claim could not be added!"));
-			                }
-			            } else {
-			                player.sendMessage(new TextComponentString(RED + "Your claim must have a length of at least 2 in both directions!"));
-			            }
-			            // Remove data so a new claim can be made.
-			            data.removeTag("Corner1");
-			        } else {
-			            data.setIntArray("Corner1", posArray);
-			            player.sendMessage(new TextComponentString(BLUE + "Added corner 1 at " + AQUA + posArray[0] + BLUE + ", " + AQUA + posArray[1]));
-			        }
-			    } else {
-			        data.removeTag("Corner1");
-			        player.sendMessage(new TextComponentString(RED + "You cannot set a corner inside an existing claim!"));
-			    }
-			} else {
-			    player.sendMessage(new TextComponentString(RED + "You do not have permission to make claims!"));
-			}
 
-		}
-	}
+    @SubscribeEvent(priority = EventPriority.HIGHEST)
+    public static void onBlockRightClicked(PlayerInteractEvent.RightClickBlock e) {
+        World world = e.getEntity().getEntityWorld();
+        BlockPos pos = e.getPos();
+        ClaimManager cm = ClaimManager.getManager();
+        ClaimArea claim = cm.getClaimAtLocation(world, pos);
+        if(claim != null) {
+            EntityPlayer player = e.getEntityPlayer();
+            e.setCanceled(!claim.canUse(player));
+        } else if(claim == null && ClaimIt.claiming_item != null && e.getItemStack().getItem() == ClaimIt.claiming_item && !world.isRemote) { // Add a claim with shears
+            EntityPlayer player = e.getEntityPlayer();
+            if(player.canUseCommand(0, "claimit.claim.create")) {
+                EnumHand hand = e.getHand();
+                ItemStack stack = player.getHeldItem(hand);
+                NBTTagCompound data = stack.getTagCompound();
+                if(data == null) {
+                    NBTTagCompound newTag = new NBTTagCompound();
+                    data = newTag;
+                    stack.setTagCompound(newTag);
+                }
+                boolean isInClaim = ClaimManager.getManager().isBlockInAnyClaim(world, pos);
+                if(!isInClaim) {
+                    int[] posArray = {pos.getX(), pos.getZ()};
+                    if(data.hasKey("Corner1")) {
+                        player.sendMessage(new TextComponentString(BLUE + "Added corner 2 at " + AQUA + posArray[0] + BLUE + ", " + AQUA + posArray[1]));
+                        int[] corner1 = data.getIntArray("Corner1");
+                        int[] corner2 = posArray;
+                        BlockPos c1 = new BlockPos(corner1[0], 0, corner1[1]);
+                        BlockPos c2 = new BlockPos(corner2[0], 0, corner2[1]);
+                        BlockPos sideL = c2.subtract(c1); // Subtract to get side lengths
+                        // Claim corners are automatically corrected to proper values by constructor
+                        ClaimArea newClaim;
+                        newClaim = new ClaimArea(player.dimension, c1.getX(), c1.getZ(), sideL.getX(), sideL.getZ(), player);
+                        if(newClaim.getSideLengthX() >= 1 && newClaim.getSideLengthZ() >= 1) {
+                            ClaimManager.ClaimAddResult result = ClaimManager.getManager().addClaim(newClaim); // Add claim
+                            if(result == ClaimManager.ClaimAddResult.ADDED) {
+                                player.sendMessage(new TextComponentString(GREEN + "Claim added successfully!"));
+                            } else if(result == ClaimManager.ClaimAddResult.OVERLAP) {
+                                player.sendMessage(new TextComponentString(RED + "This claim overlaps another claim!"));
+                            } else if(result == ClaimManager.ClaimAddResult.TOO_LARGE) {
+                                player.sendMessage(new TextComponentString(RED + "This claim exceeds the maximum possible size!"));
+                            } else {
+                                player.sendMessage(new TextComponentString(RED + "This claim could not be added!"));
+                            }
+                        } else {
+                            player.sendMessage(new TextComponentString(RED + "Your claim must have a length of at least 2 in both directions!"));
+                        }
+                        // Remove data so a new claim can be made.
+                        data.removeTag("Corner1");
+                    } else {
+                        data.setIntArray("Corner1", posArray);
+                        player.sendMessage(new TextComponentString(BLUE + "Added corner 1 at " + AQUA + posArray[0] + BLUE + ", " + AQUA + posArray[1]));
+                    }
+                } else {
+                    data.removeTag("Corner1");
+                    player.sendMessage(new TextComponentString(RED + "You cannot set a corner inside an existing claim!"));
+                }
+            } else {
+                player.sendMessage(new TextComponentString(RED + "You do not have permission to make claims!"));
+            }
 
-	@SubscribeEvent(priority = EventPriority.HIGHEST)
-	public static void onBlockBroken(BlockEvent.BreakEvent e) {
-		World world = e.getWorld();
-		BlockPos pos = e.getPos();
-		ClaimManager cm = ClaimManager.getManager();
-		ClaimArea claim = cm.getClaimAtLocation(world, pos);
-		if(claim != null) {
-			EntityPlayer player = e.getPlayer();
-			e.setCanceled(!claim.canModify(player));
-		}
-	}
+        }
+    }
 
-	@SubscribeEvent(priority = EventPriority.HIGHEST)
-	public static void onBlockPlaced(BlockEvent.PlaceEvent e) {
-		World world = e.getWorld();
-		BlockPos pos = e.getPos();
-		ClaimManager cm = ClaimManager.getManager();
-		ClaimArea claim = cm.getClaimAtLocation(world, pos);
-		if(claim != null) {
-			EntityPlayer player = e.getPlayer();
-			if(!claim.canModify(player)) {
-				e.setCanceled(true);
-			}
-		}
-	}
+    @SubscribeEvent(priority = EventPriority.HIGHEST)
+    public static void onBlockBroken(BlockEvent.BreakEvent e) {
+        World world = e.getWorld();
+        BlockPos pos = e.getPos();
+        ClaimManager cm = ClaimManager.getManager();
+        ClaimArea claim = cm.getClaimAtLocation(world, pos);
+        if(claim != null) {
+            EntityPlayer player = e.getPlayer();
+            e.setCanceled(!claim.canModify(player));
+        }
+    }
 
-	@SubscribeEvent(priority = EventPriority.HIGHEST)
-	public static void onFarmTrample(BlockEvent.FarmlandTrampleEvent e) {
-		World world = e.getWorld();
-		BlockPos pos = e.getPos();
-		ClaimManager cm = ClaimManager.getManager();
-		ClaimArea claim = cm.getClaimAtLocation(world, pos);
-		if(claim != null) {
-			Entity ent = e.getEntity();
-			if(ent instanceof EntityPlayer) {
-				EntityPlayer player = (EntityPlayer) ent;
-				e.setCanceled(!claim.canModify(player));
-			} else {
-				e.setCanceled(true);
-			}
-		}
-	}
+    @SubscribeEvent(priority = EventPriority.HIGHEST)
+    public static void onBlockPlaced(BlockEvent.PlaceEvent e) {
+        World world = e.getWorld();
+        BlockPos pos = e.getPos();
+        ClaimManager cm = ClaimManager.getManager();
+        ClaimArea claim = cm.getClaimAtLocation(world, pos);
+        if(claim != null) {
+            EntityPlayer player = e.getPlayer();
+            if(!claim.canModify(player)) {
+                e.setCanceled(true);
+            }
+        }
+    }
 
-	@SubscribeEvent(priority = EventPriority.HIGHEST)
-	public static void onPlayerAttackAnimal(AttackEntityEvent e) {
-		World world = e.getEntityPlayer().getEntityWorld();
-		BlockPos pos = e.getEntityPlayer().getPosition();
-		ClaimManager cm = ClaimManager.getManager();
-		ClaimArea claim = cm.getClaimAtLocation(world, pos);
-		if(claim != null) {
-			EntityPlayer player = e.getEntityPlayer();
-			if(e.getTarget() instanceof EntityPlayer) {
-				e.setCanceled(!claim.canPVP(player)  || ClaimItConfig.forceNoPVPInClaim);
-			} else {
-				e.setCanceled(!claim.canEntity(player));
-			}
-		}
-		ClaimArea claim2 = cm.getClaimAtLocation(world, e.getTarget().getPosition());
-		if(claim2 != null) {
-			if(e.getTarget() instanceof EntityPlayer) {
-				e.setCanceled(!claim2.canPVP(e.getEntityPlayer()) || e.isCanceled()  || ClaimItConfig.forceNoPVPInClaim);
-			} else {
-				e.setCanceled(!claim2.canEntity(e.getEntityPlayer()) || e.isCanceled());
-			}
-		}
-	}
+    @SubscribeEvent(priority = EventPriority.HIGHEST)
+    public static void onFarmTrample(BlockEvent.FarmlandTrampleEvent e) {
+        World world = e.getWorld();
+        BlockPos pos = e.getPos();
+        ClaimManager cm = ClaimManager.getManager();
+        ClaimArea claim = cm.getClaimAtLocation(world, pos);
+        if(claim != null) {
+            Entity ent = e.getEntity();
+            if(ent instanceof EntityPlayer) {
+                EntityPlayer player = (EntityPlayer) ent;
+                e.setCanceled(!claim.canModify(player));
+            } else {
+                e.setCanceled(true);
+            }
+        }
+    }
 
-	@SubscribeEvent(priority = EventPriority.HIGHEST)
-	public static void onEntityRightClicked(PlayerInteractEvent.EntityInteract e) {
-		World world = e.getEntity().getEntityWorld();
-		BlockPos pos = e.getEntity().getPosition();
-		BlockPos pos2 = e.getPos();
-		ClaimManager cm = ClaimManager.getManager();
-		EntityPlayer player = e.getEntityPlayer();
-		ClaimArea claim = cm.getClaimAtLocation(world, pos);
-		ClaimArea claim2 = cm.getClaimAtLocation(world, pos2);
-		if(claim != null) {
-			e.setCanceled(!claim.canEntity(player) || !claim.canUse(player));
-		}
-		if(claim2 != null) {
-			e.setCanceled(!claim2.canEntity(player) || !claim2.canUse(player) || e.isCanceled());
-		}
-	}
+    @SubscribeEvent(priority = EventPriority.HIGHEST)
+    public static void onPlayerAttackAnimal(AttackEntityEvent e) {
+        World world = e.getEntityPlayer().getEntityWorld();
+        BlockPos pos = e.getEntityPlayer().getPosition();
+        ClaimManager cm = ClaimManager.getManager();
+        ClaimArea claim = cm.getClaimAtLocation(world, pos);
+        if(claim != null) {
+            EntityPlayer player = e.getEntityPlayer();
+            if(e.getTarget() instanceof EntityPlayer) {
+                e.setCanceled(!claim.canPVP(player)  || ClaimItConfig.forceNoPVPInClaim);
+            } else {
+                e.setCanceled(!claim.canEntity(player));
+            }
+        }
+        ClaimArea claim2 = cm.getClaimAtLocation(world, e.getTarget().getPosition());
+        if(claim2 != null) {
+            if(e.getTarget() instanceof EntityPlayer) {
+                e.setCanceled(!claim2.canPVP(e.getEntityPlayer()) || e.isCanceled()  || ClaimItConfig.forceNoPVPInClaim);
+            } else {
+                e.setCanceled(!claim2.canEntity(e.getEntityPlayer()) || e.isCanceled());
+            }
+        }
+    }
 
-	@SubscribeEvent(priority = EventPriority.HIGHEST)
-	public static void onPlayerUse(PlayerInteractEvent.RightClickEmpty e) {
-		World world = e.getEntity().getEntityWorld();
-		BlockPos pos = e.getPos();
-		ClaimManager cm = ClaimManager.getManager();
-		ClaimArea claim = cm.getClaimAtLocation(world, pos);
-		if(claim != null) {
-			EntityPlayer player = e.getEntityPlayer();
-			e.setCanceled(!claim.canUse(player));
-		}
-	}
+    @SubscribeEvent(priority = EventPriority.HIGHEST)
+    public static void onEntityRightClicked(PlayerInteractEvent.EntityInteract e) {
+        World world = e.getEntity().getEntityWorld();
+        BlockPos pos = e.getEntity().getPosition();
+        BlockPos pos2 = e.getPos();
+        ClaimManager cm = ClaimManager.getManager();
+        EntityPlayer player = e.getEntityPlayer();
+        ClaimArea claim = cm.getClaimAtLocation(world, pos);
+        ClaimArea claim2 = cm.getClaimAtLocation(world, pos2);
+        if(claim != null) {
+            e.setCanceled(!claim.canEntity(player) || !claim.canUse(player));
+        }
+        if(claim2 != null) {
+            e.setCanceled(!claim2.canEntity(player) || !claim2.canUse(player) || e.isCanceled());
+        }
+    }
 
-	@SubscribeEvent(priority = EventPriority.HIGHEST)
-	public static void onPlayerUse(PlayerInteractEvent.RightClickItem e) {
-		World world = e.getEntity().getEntityWorld();
-		BlockPos pos = e.getPos();
-		ClaimManager cm = ClaimManager.getManager();
-		ClaimArea claim = cm.getClaimAtLocation(world, pos);
-		if(claim != null) {
-			EntityPlayer player = e.getEntityPlayer();
-			e.setCanceled(!claim.canUse(player));
-		}
-	}
+    @SubscribeEvent(priority = EventPriority.HIGHEST)
+    public static void onPlayerUse(PlayerInteractEvent.RightClickEmpty e) {
+        World world = e.getEntity().getEntityWorld();
+        BlockPos pos = e.getPos();
+        ClaimManager cm = ClaimManager.getManager();
+        ClaimArea claim = cm.getClaimAtLocation(world, pos);
+        if(claim != null) {
+            EntityPlayer player = e.getEntityPlayer();
+            e.setCanceled(!claim.canUse(player));
+        }
+    }
 
-	@SubscribeEvent(priority = EventPriority.HIGHEST)
-	public void onPlayerUse(PlayerInteractEvent.LeftClickEmpty e) {
-		World world = e.getEntity().getEntityWorld();
-		BlockPos pos = e.getPos();
-		ClaimManager cm = ClaimManager.getManager();
-		ClaimArea claim = cm.getClaimAtLocation(world, pos);
-		if(claim != null) {
-			EntityPlayer player = e.getEntityPlayer();
-			e.setCanceled(!claim.canUse(player));
-		}
-	}
+    @SubscribeEvent(priority = EventPriority.HIGHEST)
+    public static void onPlayerUse(PlayerInteractEvent.RightClickItem e) {
+        World world = e.getEntity().getEntityWorld();
+        BlockPos pos = e.getPos();
+        ClaimManager cm = ClaimManager.getManager();
+        ClaimArea claim = cm.getClaimAtLocation(world, pos);
+        if(claim != null) {
+            EntityPlayer player = e.getEntityPlayer();
+            e.setCanceled(!claim.canUse(player));
+        }
+    }
 
-	@SubscribeEvent(priority = EventPriority.HIGHEST)
-	public static void onMobGrief(net.minecraftforge.event.entity.EntityMobGriefingEvent e) {
-		if(e.getEntity() != null && e.getEntity().getEntityWorld() != null) {
-			World world = e.getEntity().getEntityWorld();
-			BlockPos pos = e.getEntity().getPosition();
-			ClaimManager cm = ClaimManager.getManager();
-			ClaimArea claim = cm.getClaimAtLocation(world, pos);
-			if(claim != null) {
-				e.setResult(Result.DENY);
-			}
-		}
-	}
+    @SubscribeEvent(priority = EventPriority.HIGHEST)
+    public void onPlayerUse(PlayerInteractEvent.LeftClickEmpty e) {
+        World world = e.getEntity().getEntityWorld();
+        BlockPos pos = e.getPos();
+        ClaimManager cm = ClaimManager.getManager();
+        ClaimArea claim = cm.getClaimAtLocation(world, pos);
+        if(claim != null) {
+            EntityPlayer player = e.getEntityPlayer();
+            e.setCanceled(!claim.canUse(player));
+        }
+    }
 
-	@SubscribeEvent(priority = EventPriority.HIGHEST)
-	public static void onPlayerAttack(net.minecraftforge.event.entity.player.AttackEntityEvent e) {
-		World world = e.getEntity().getEntityWorld();
-		BlockPos pos = e.getEntity().getPosition();
-		ClaimManager cm = ClaimManager.getManager();
-		ClaimArea claim = cm.getClaimAtLocation(world, pos);
-		if(claim != null || cm.getClaimAtLocation(world, e.getEntityPlayer().getPosition()) != null) {
-			EntityPlayer player = e.getEntityPlayer();
-			if(e.getTarget() instanceof EntityPlayer) {
-				e.setCanceled(!claim.canPVP(player)  || ClaimItConfig.forceNoPVPInClaim);
-			} else {
-				e.setCanceled(!claim.canEntity(player));
-			}
-		}
-	}
+    @SubscribeEvent(priority = EventPriority.HIGHEST)
+    public static void onMobGrief(net.minecraftforge.event.entity.EntityMobGriefingEvent e) {
+        if(e.getEntity() != null && e.getEntity().getEntityWorld() != null) {
+            World world = e.getEntity().getEntityWorld();
+            BlockPos pos = e.getEntity().getPosition();
+            ClaimManager cm = ClaimManager.getManager();
+            ClaimArea claim = cm.getClaimAtLocation(world, pos);
+            if(claim != null) {
+                e.setResult(Result.DENY);
+            }
+        }
+    }
 
-	@SubscribeEvent(priority = EventPriority.HIGHEST)
-	public static void onHurtEvent(LivingHurtEvent e) {
-		EntityLivingBase entity = e.getEntityLiving();
-		DamageSource source = e.getSource();
-		if(entity != null && source != null) { // There is an actual damage happening
-			if(source.getTrueSource() instanceof EntityPlayer || source.getImmediateSource() instanceof EntityPlayer) { // Damage is caused by a player either indirectly or directly
-				EntityPlayer player = (EntityPlayer) source.getTrueSource(); // Get the player
-				ClaimArea claim = ClaimManager.getManager().getClaimAtLocation(entity.getEntityWorld(), player.getPosition()); // Claim the damage-doer is in
-				ClaimArea claim2 = ClaimManager.getManager().getClaimAtLocation(entity.getEntityWorld(), entity.getPosition()); // Claim the damaged is in
-				if(entity instanceof EntityPlayer) { // whether the damaged is a player or not
-					e.setCanceled((claim != null && !claim.canPVP(player)) || (claim2 != null && !claim2.canPVP(player))  || ClaimItConfig.forceNoPVPInClaim); // if either one disallows PVP block it
-				} else {
-					e.setCanceled((claim != null && !claim.canEntity(player)) || (claim2 != null && !claim2.canEntity(player))); // if either one disallows entity block it
-				}
-			}
-			ClaimArea claim = ClaimManager.getManager().getClaimAtLocation(entity.getEntityWorld(), entity.getPosition());
-			if(source == DamageSource.MAGIC && claim != null) {
-				e.setCanceled(true);
-			}
-		}
-	}
+    @SubscribeEvent(priority = EventPriority.HIGHEST)
+    public static void onPlayerAttack(net.minecraftforge.event.entity.player.AttackEntityEvent e) {
+        World world = e.getEntity().getEntityWorld();
+        BlockPos pos = e.getEntity().getPosition();
+        ClaimManager cm = ClaimManager.getManager();
+        ClaimArea claim = cm.getClaimAtLocation(world, pos);
+        if(claim != null || cm.getClaimAtLocation(world, e.getEntityPlayer().getPosition()) != null) {
+            EntityPlayer player = e.getEntityPlayer();
+            if(e.getTarget() instanceof EntityPlayer) {
+                e.setCanceled(!claim.canPVP(player)  || ClaimItConfig.forceNoPVPInClaim);
+            } else {
+                e.setCanceled(!claim.canEntity(player));
+            }
+        }
+    }
 
-	@SubscribeEvent(priority = EventPriority.HIGHEST)
-	public static void onPlayerPickupXp(PlayerPickupXpEvent e) {
-		World world = e.getEntity().getEntityWorld();
-		BlockPos pos = e.getEntity().getPosition();
-		ClaimManager cm = ClaimManager.getManager();
-		ClaimArea claim = cm.getClaimAtLocation(world, pos);
-		if(claim != null) {
-			EntityPlayer player = e.getEntityPlayer();
-			e.setCanceled(!claim.canEntity(player));
-		}
-	}
+    @SubscribeEvent(priority = EventPriority.HIGHEST)
+    public static void onHurtEvent(LivingHurtEvent e) {
+        EntityLivingBase entity = e.getEntityLiving();
+        DamageSource source = e.getSource();
+        if(entity != null && source != null) { // There is an actual damage happening
+            if(source.getTrueSource() instanceof EntityPlayer || source.getImmediateSource() instanceof EntityPlayer) { // Damage is caused by a player either indirectly or directly
+                EntityPlayer player = (EntityPlayer) source.getTrueSource(); // Get the player
+                ClaimArea claim = ClaimManager.getManager().getClaimAtLocation(entity.getEntityWorld(), player.getPosition()); // Claim the damage-doer is in
+                ClaimArea claim2 = ClaimManager.getManager().getClaimAtLocation(entity.getEntityWorld(), entity.getPosition()); // Claim the damaged is in
+                if(entity instanceof EntityPlayer) { // whether the damaged is a player or not
+                    e.setCanceled((claim != null && !claim.canPVP(player)) || (claim2 != null && !claim2.canPVP(player))  || ClaimItConfig.forceNoPVPInClaim); // if either one disallows PVP block it
+                } else {
+                    e.setCanceled((claim != null && !claim.canEntity(player)) || (claim2 != null && !claim2.canEntity(player))); // if either one disallows entity block it
+                }
+            }
+            ClaimArea claim = ClaimManager.getManager().getClaimAtLocation(entity.getEntityWorld(), entity.getPosition());
+            if(source == DamageSource.MAGIC && claim != null) {
+                e.setCanceled(true);
+            }
+        }
+    }
 
-	@SubscribeEvent(priority = EventPriority.HIGHEST)
-	public static void onExplode(ExplosionEvent.Detonate e) {
-		World world = e.getWorld();
-		ClaimManager cm = ClaimManager.getManager();
-		Set<BlockPos> removeList = new HashSet<BlockPos>();
-		for(BlockPos pos : e.getAffectedBlocks()) {
-		    ClaimArea claim = cm.getClaimAtLocation(world, pos);
-			if(claim != null && !claim.isPermissionToggled(ClaimItPermissions.EXPLOSION)) {
-				removeList.add(pos);
-			}
-		}
-		Set<Entity> removeListE = new HashSet<Entity>();
-		for(Entity ent : e.getAffectedEntities()) {
-			BlockPos pos = ent.getPosition();
-			ClaimArea claim = cm.getClaimAtLocation(world, pos);
+    @SubscribeEvent(priority = EventPriority.HIGHEST)
+    public static void onPlayerPickupXp(PlayerPickupXpEvent e) {
+        World world = e.getEntity().getEntityWorld();
+        BlockPos pos = e.getEntity().getPosition();
+        ClaimManager cm = ClaimManager.getManager();
+        ClaimArea claim = cm.getClaimAtLocation(world, pos);
+        if(claim != null) {
+            EntityPlayer player = e.getEntityPlayer();
+            e.setCanceled(!claim.canEntity(player));
+        }
+    }
+
+    @SubscribeEvent(priority = EventPriority.HIGHEST)
+    public static void onExplode(ExplosionEvent.Detonate e) {
+        World world = e.getWorld();
+        ClaimManager cm = ClaimManager.getManager();
+        Set<BlockPos> removeList = new HashSet<BlockPos>();
+        for(BlockPos pos : e.getAffectedBlocks()) {
+            ClaimArea claim = cm.getClaimAtLocation(world, pos);
             if(claim != null && !claim.isPermissionToggled(ClaimItPermissions.EXPLOSION)) {
-				removeListE.add(ent);
-			}
-		}
-		// Avoid concurrent modification by seperating tasks
-		for(BlockPos pos : removeList) {
-			e.getAffectedBlocks().remove(pos);
-		}
+                removeList.add(pos);
+            }
+        }
+        Set<Entity> removeListE = new HashSet<Entity>();
+        for(Entity ent : e.getAffectedEntities()) {
+            BlockPos pos = ent.getPosition();
+            ClaimArea claim = cm.getClaimAtLocation(world, pos);
+            if(claim != null && !claim.isPermissionToggled(ClaimItPermissions.EXPLOSION)) {
+                removeListE.add(ent);
+            }
+        }
+        // Avoid concurrent modification by seperating tasks
+        for(BlockPos pos : removeList) {
+            e.getAffectedBlocks().remove(pos);
+        }
 
-		for(Entity ent : removeListE) {
-			e.getAffectedEntities().remove(ent);
-		}
-	}
+        for(Entity ent : removeListE) {
+            e.getAffectedEntities().remove(ent);
+        }
+    }
 
-	@SubscribeEvent(priority = EventPriority.HIGHEST)
-	public static void onBlockBrokenLiving(LivingDestroyBlockEvent e) {
-		World world = e.getEntityLiving().getEntityWorld();
-		BlockPos pos = e.getPos();
-		ClaimManager cm = ClaimManager.getManager();
-		ClaimArea claim = cm.getClaimAtLocation(world, pos);
-		if(claim != null) {
-			if(!(e.getEntityLiving() instanceof EntityPlayer)) {
-				e.setCanceled(!claim.isPermissionToggled(ClaimItPermissions.LIVING_MODIFY));
-			} else if(e.getEntityLiving() instanceof EntityPlayer){
-				EntityPlayer player = (EntityPlayer) e.getEntityLiving();
-				e.setCanceled(!claim.canModify(player));
-			}
-		}
-	}
+    @SubscribeEvent(priority = EventPriority.HIGHEST)
+    public static void onBlockBrokenLiving(LivingDestroyBlockEvent e) {
+        World world = e.getEntityLiving().getEntityWorld();
+        BlockPos pos = e.getPos();
+        ClaimManager cm = ClaimManager.getManager();
+        ClaimArea claim = cm.getClaimAtLocation(world, pos);
+        if(claim != null) {
+            if(!(e.getEntityLiving() instanceof EntityPlayer)) {
+                e.setCanceled(!claim.isPermissionToggled(ClaimItPermissions.LIVING_MODIFY));
+            } else if(e.getEntityLiving() instanceof EntityPlayer){
+                EntityPlayer player = (EntityPlayer) e.getEntityLiving();
+                e.setCanceled(!claim.canModify(player));
+            }
+        }
+    }
 
-	@SubscribeEvent(priority = EventPriority.HIGHEST)
-	public static void onEntityMount(EntityMountEvent e) {
-		if(e.isMounting()) {
-			if(e.getEntityMounting() instanceof EntityPlayer) {
-				EntityPlayer player = (EntityPlayer) e.getEntityMounting();
-				ClaimArea claim = ClaimManager.getManager().getClaimAtLocation(e.getWorldObj(), e.getEntityBeingMounted().getPosition());
-				if(claim != null) {
-					e.setCanceled(!claim.canEntity(player));
-				}
-			}
-		}
-	}
+    @SubscribeEvent(priority = EventPriority.HIGHEST)
+    public static void onEntityMount(EntityMountEvent e) {
+        if(e.isMounting()) {
+            if(e.getEntityMounting() instanceof EntityPlayer) {
+                EntityPlayer player = (EntityPlayer) e.getEntityMounting();
+                ClaimArea claim = ClaimManager.getManager().getClaimAtLocation(e.getWorldObj(), e.getEntityBeingMounted().getPosition());
+                if(claim != null) {
+                    e.setCanceled(!claim.canEntity(player));
+                }
+            }
+        }
+    }
 
-	@SubscribeEvent(priority = EventPriority.HIGHEST)
-	public static void onItemThrow(ItemTossEvent e) {
-		World world = e.getPlayer().world;
-		EntityPlayer player = e.getPlayer();
-		BlockPos pos = player.getPosition();
-		ClaimArea claim = ClaimManager.getManager().getClaimAtLocation(world, pos);
-		if(claim != null) {
-			if(!claim.isPermissionToggled(ClaimItPermissions.DROP_ITEM)) {
-				if(!claim.canUse(player)) {
-					e.setCanceled(true);
-					player.addItemStackToInventory(e.getEntityItem().getItem()); // Re-add items because canceling event deletes items
-				}
-			}
-		}
-	}
+    @SubscribeEvent(priority = EventPriority.HIGHEST)
+    public static void onItemThrow(ItemTossEvent e) {
+        World world = e.getPlayer().world;
+        EntityPlayer player = e.getPlayer();
+        BlockPos pos = player.getPosition();
+        ClaimArea claim = ClaimManager.getManager().getClaimAtLocation(world, pos);
+        if(claim != null) {
+            if(!claim.isPermissionToggled(ClaimItPermissions.DROP_ITEM)) {
+                if(!claim.canUse(player)) {
+                    e.setCanceled(true);
+                    player.addItemStackToInventory(e.getEntityItem().getItem()); // Re-add items because canceling event deletes items
+                }
+            }
+        }
+    }
 
-	@SubscribeEvent(priority = EventPriority.HIGHEST)
-	public static void onItemPickup(EntityItemPickupEvent e) {
-		World world = e.getEntityPlayer().world;
-		EntityPlayer player = e.getEntityPlayer();
-		BlockPos pos = e.getItem().getPosition();
-		ClaimArea claim = ClaimManager.getManager().getClaimAtLocation(world, pos);
-		if(claim != null) {
-			if(!claim.isPermissionToggled(ClaimItPermissions.PICKUP_ITEM)) {
-				if(!claim.canUse(player)) {
-					e.setCanceled(true);
-				}
-			}
-		}
-	}
+    @SubscribeEvent(priority = EventPriority.HIGHEST)
+    public static void onItemPickup(EntityItemPickupEvent e) {
+        World world = e.getEntityPlayer().world;
+        EntityPlayer player = e.getEntityPlayer();
+        BlockPos pos = e.getItem().getPosition();
+        ClaimArea claim = ClaimManager.getManager().getClaimAtLocation(world, pos);
+        if(claim != null) {
+            if(!claim.isPermissionToggled(ClaimItPermissions.PICKUP_ITEM)) {
+                if(!claim.canUse(player)) {
+                    e.setCanceled(true);
+                }
+            }
+        }
+    }
 
-	@SubscribeEvent(priority = EventPriority.HIGHEST)
+    @SubscribeEvent(priority = EventPriority.HIGHEST)
     public static void onBonemeal(BonemealEvent e) {
         if(e.getBlock() instanceof BlockGrass) {
             int nearby = 0;
@@ -477,54 +477,54 @@ public class ProtectionEventHandler {
         }
     }
 
-	@SubscribeEvent(priority = EventPriority.HIGHEST)
-	public static void onMultiPlace(BlockEvent.MultiPlaceEvent e) {
-		World world = e.getWorld();
-		EntityPlayer player = e.getPlayer();
-		for(BlockSnapshot snap : e.getReplacedBlockSnapshots()) {
-			BlockPos pos = snap.getPos();
-			ClaimArea claim = ClaimManager.getManager().getClaimAtLocation(world, pos);
-			if(claim != null) {
-				e.setCanceled(!claim.canModify(player) || e.isCanceled());
-			}
-		}
-	}
+    @SubscribeEvent(priority = EventPriority.HIGHEST)
+    public static void onMultiPlace(BlockEvent.MultiPlaceEvent e) {
+        World world = e.getWorld();
+        EntityPlayer player = e.getPlayer();
+        for(BlockSnapshot snap : e.getReplacedBlockSnapshots()) {
+            BlockPos pos = snap.getPos();
+            ClaimArea claim = ClaimManager.getManager().getClaimAtLocation(world, pos);
+            if(claim != null) {
+                e.setCanceled(!claim.canModify(player) || e.isCanceled());
+            }
+        }
+    }
 
-	@SubscribeEvent(priority = EventPriority.HIGHEST)
-	public static void onBowUse(ArrowNockEvent e) {
-		World world = e.getWorld();
-		EntityPlayer player = e.getEntityPlayer();
-		BlockPos pos = player.getPosition();
-		ClaimArea claim = ClaimManager.getManager().getClaimAtLocation(world, pos);
-		if(claim != null) {
-			if(!claim.canUse(player) || ClaimItConfig.forceNoPVPInClaim) { 
-				e.setAction(new ActionResult<ItemStack>(EnumActionResult.FAIL, e.getBow()));
-			}
-		}
-	}
+    @SubscribeEvent(priority = EventPriority.HIGHEST)
+    public static void onBowUse(ArrowNockEvent e) {
+        World world = e.getWorld();
+        EntityPlayer player = e.getEntityPlayer();
+        BlockPos pos = player.getPosition();
+        ClaimArea claim = ClaimManager.getManager().getClaimAtLocation(world, pos);
+        if(claim != null) {
+            if(!claim.canUse(player) || ClaimItConfig.forceNoPVPInClaim) { 
+                e.setAction(new ActionResult<ItemStack>(EnumActionResult.FAIL, e.getBow()));
+            }
+        }
+    }
 
-	@SubscribeEvent(priority = EventPriority.HIGHEST)
-	public static void onProjectileImpact(ProjectileImpactEvent e) {
-		Entity entity = e.getRayTraceResult().entityHit;
-		if(entity instanceof EntityLiving) {
-			EntityLiving el = (EntityLiving) entity;
-			ClaimArea claim = ClaimManager.getManager().getClaimAtLocation(el.world, el.getPosition());
-			if(claim != null) {
-				if(!claim.isPermissionToggled(ClaimItPermissions.ALLOW_PROJECTILES)) {
-					e.setCanceled(true);
-				}
-			}
-		}
-	}
+    @SubscribeEvent(priority = EventPriority.HIGHEST)
+    public static void onProjectileImpact(ProjectileImpactEvent e) {
+        Entity entity = e.getRayTraceResult().entityHit;
+        if(entity instanceof EntityLiving) {
+            EntityLiving el = (EntityLiving) entity;
+            ClaimArea claim = ClaimManager.getManager().getClaimAtLocation(el.world, el.getPosition());
+            if(claim != null) {
+                if(!claim.isPermissionToggled(ClaimItPermissions.ALLOW_PROJECTILES)) {
+                    e.setCanceled(true);
+                }
+            }
+        }
+    }
 
-	@SubscribeEvent(priority = EventPriority.HIGHEST)
-	public static void onEntitySpawn(LivingSpawnEvent.CheckSpawn e) {
-		ClaimArea claim = ClaimManager.getManager().getClaimAtLocation(e.getWorld(), new BlockPos(e.getX(), e.getY(), e.getZ()));
-		if(claim != null) {
-			if(!claim.isPermissionToggled(ClaimItPermissions.ENTITY_SPAWN)) {
-				e.setResult(Result.DENY);
-			}
-		}
-	}
+    @SubscribeEvent(priority = EventPriority.HIGHEST)
+    public static void onEntitySpawn(LivingSpawnEvent.CheckSpawn e) {
+        ClaimArea claim = ClaimManager.getManager().getClaimAtLocation(e.getWorld(), new BlockPos(e.getX(), e.getY(), e.getZ()));
+        if(claim != null) {
+            if(!claim.isPermissionToggled(ClaimItPermissions.ENTITY_SPAWN)) {
+                e.setResult(Result.DENY);
+            }
+        }
+    }
 
 }
