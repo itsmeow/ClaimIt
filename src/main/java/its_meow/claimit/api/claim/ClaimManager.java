@@ -242,7 +242,7 @@ public class ClaimManager {
 			}
 		}
 		for(ClaimArea claim : claims) {
-	        String serialName = claim.getSerialName();
+	        String serialName = String.valueOf(claim.hashCode());
 	        NBTTagCompound data = claim.serialize();
 	        
 			ClaimSerializationEvent event = new ClaimSerializationEvent(data);

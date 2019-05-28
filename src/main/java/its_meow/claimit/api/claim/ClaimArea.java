@@ -3,6 +3,7 @@ package its_meow.claimit.api.claim;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 
@@ -42,8 +43,6 @@ public class ClaimArea extends MemberContainer {
     protected int sideLengthX;
     /** Length of the side in the Z direction extending from +1 of posZ **/
     protected int sideLengthZ;
-    /** The name used to serialize the ClaimArea **/
-    protected String name;
     /** The name used to refer to this ClaimArea by the player 
      * defaults to {@link name}**/
     protected String viewName;
@@ -77,7 +76,6 @@ public class ClaimArea extends MemberContainer {
                 this.sideLengthZ = Math.abs(this.sideLengthZ);
             }
         }
-        this.name = ownerUUID.toString() + dimID + posX + posZ + sideLengthX + sideLengthZ;
         this.viewName = ownerUUID.toString() + "_" + Math.abs(posX) + Math.abs(posZ) + dimID + Math.round(Math.random() * 100);
     }
 
@@ -287,11 +285,6 @@ public class ClaimArea extends MemberContainer {
         return s;
     }
 
-    /** @return Name used for serialization. Also a Unique ID as it contains all the claim data concatenated.**/
-    public String getSerialName() {
-        return name;
-    }
-
     /** @return The view name of this claim. Starts with the UUID of the owner, an underscore, and then whatever name was set/generated **/
     public String getTrueViewName() {
         return viewName;
@@ -366,5 +359,10 @@ public class ClaimArea extends MemberContainer {
             ClaimItAPI.logger.log(Level.FATAL, "Detected version that doesn't exist yet! Mod was downgraded? Claim cannot be loaded.");
             throw new RuntimeException("Canceled loading to prevent loss of claim data. If you recently downgraded versions, please upgrade or contact author.");
         }
+    }
+    
+    @Override
+    public int hashCode() {
+        return Objects.hash(this.dimID, this.posX, this.posZ, this.ownerUUID, this.sideLengthX, this.sideLengthZ);
     }
 }
