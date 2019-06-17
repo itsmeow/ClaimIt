@@ -1,6 +1,8 @@
 package its_meow.claimit.api.serialization;
 
 import its_meow.claimit.api.ClaimItAPI;
+import net.minecraft.world.World;
+import net.minecraftforge.common.DimensionManager;
 
 public class GlobalDataSerializer extends BaseSaveData {
 
@@ -15,6 +17,12 @@ public class GlobalDataSerializer extends BaseSaveData {
     }
 
     public static GlobalDataSerializer get() {
-        return BaseSaveData.get(GlobalDataSerializer.class, DATA_NAME);
+        World world = DimensionManager.getWorld(0);
+        GlobalDataSerializer save = (GlobalDataSerializer) world.getMapStorage().getOrLoadData(GlobalDataSerializer.class, DATA_NAME);
+        if(save == null) {
+            save = new GlobalDataSerializer();
+            world.getMapStorage().setData(DATA_NAME, save);
+        }
+        return save;
     }
 }
