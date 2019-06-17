@@ -71,7 +71,7 @@ public class ProtectionEventHandler {
         ItemStack old = e.getTo();
         if(e.getEntityLiving() instanceof EntityPlayer && e.getFrom().getItem() != ClaimIt.claiming_item && old.getItem() == ClaimIt.claiming_item && (e.getSlot() == EntityEquipmentSlot.MAINHAND || e.getSlot() == EntityEquipmentSlot.OFFHAND)) {
             EntityPlayer player = (EntityPlayer) e.getEntityLiving();
-            int slot = player.inventory.getSlotFor(old);
+            int slot = player.inventory.findSlotMatchingUnusedItem(old);
             if(old.hasTagCompound()) {
                 // Remove corner tag when item moves from hands
                 if(old.getTagCompound().hasKey("Corner1")) {
