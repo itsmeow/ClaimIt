@@ -19,7 +19,7 @@ import java.util.UUID;
 
 import com.mojang.authlib.GameProfile;
 
-import its_meow.claimit.AdminManager;
+import its_meow.claimit.api.AdminManager;
 import its_meow.claimit.api.claim.ClaimArea;
 import its_meow.claimit.api.claim.ClaimManager;
 import its_meow.claimit.command.CommandCIBase;

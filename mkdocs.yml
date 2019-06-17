@@ -12,6 +12,8 @@ nav:
   - Events:
     - Claim Events: 'events/claim_events.md'
     - Group Events: 'events/group_events.md'
+  - Admins:
+    - Checking Admins: 'admins/admins.md'
 
 site_name: ClaimIt API
 theme:

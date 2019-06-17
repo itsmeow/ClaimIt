@@ -1,4 +1,4 @@
-package its_meow.claimit;
+package its_meow.claimit.api;
 
 import java.util.HashSet;
 import java.util.Set;

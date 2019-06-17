@@ -2,6 +2,7 @@ package its_meow.claimit;
 
 import java.util.HashMap;
 
+import its_meow.claimit.api.AdminManager;
 import its_meow.claimit.api.ClaimItAPI;
 import its_meow.claimit.api.claim.ClaimManager;
 import its_meow.claimit.command.CommandClaimIt;

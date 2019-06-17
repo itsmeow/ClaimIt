@@ -3,7 +3,7 @@ package its_meow.claimit.command.claimit;
 import static net.minecraft.util.text.TextFormatting.GREEN;
 import static net.minecraft.util.text.TextFormatting.RED;
 
-import its_meow.claimit.AdminManager;
+import its_meow.claimit.api.AdminManager;
 import its_meow.claimit.command.CommandCIBase;
 import its_meow.claimit.util.TeleportUtils;
 import net.minecraft.command.CommandException;
