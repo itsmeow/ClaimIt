@@ -11,6 +11,7 @@ import its_meow.claimit.api.group.Group;
 import its_meow.claimit.api.group.GroupManager;
 import its_meow.claimit.command.CommandCIBase;
 import its_meow.claimit.util.command.CommandUtils;
+import its_meow.claimit.util.text.FTC;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
@@ -44,12 +45,12 @@ public class CommandSubGroupDelete extends CommandCIBase {
             if(group != null) {
                 if(CommandUtils.isAdminNoded(sender, "claimit.command.claimit.group.delete.others") || (sender instanceof EntityPlayer && group.isOwner((EntityPlayer)sender))) {
                     GroupManager.removeGroup(group);
-                    sendMessage(sender, AQUA + "Deleted group: " + GREEN + groupname);
+                    sendMessage(sender, new FTC(AQUA, "Deleted group: "), new FTC(GREEN, groupname));
                 } else {
-                    sendMessage(sender, RED + "You do not own this group!");
+                    sendMessage(sender, RED, "You do not own this group!");
                 }
             } else {
-                sendMessage(sender, RED + "No such group: " + groupname);
+                sendMessage(sender, RED, "No such group: " + groupname);
             }
         } else {
             throw new SyntaxErrorException("Invalid syntax. Usage: " + this.getUsage(sender));

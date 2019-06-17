@@ -1,11 +1,8 @@
 package its_meow.claimit.command.claimit.claim;
 
 import static net.minecraft.util.text.TextFormatting.BLUE;
-import static net.minecraft.util.text.TextFormatting.BOLD;
 import static net.minecraft.util.text.TextFormatting.GREEN;
-import static net.minecraft.util.text.TextFormatting.ITALIC;
 import static net.minecraft.util.text.TextFormatting.RED;
-import static net.minecraft.util.text.TextFormatting.UNDERLINE;
 import static net.minecraft.util.text.TextFormatting.YELLOW;
 
 import java.util.List;
@@ -21,10 +18,15 @@ import its_meow.claimit.command.CommandCIBase;
 import its_meow.claimit.util.command.CommandUtils;
 import its_meow.claimit.util.text.ClaimInfoChatStyle;
 import its_meow.claimit.util.text.CommandChatStyle;
+import its_meow.claimit.util.text.FTC;
+import its_meow.claimit.util.text.FTC.Form;
+import its_meow.claimit.util.text.TextComponentStyled;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.Style;
+import net.minecraft.util.text.TextComponentString;
 
 public class CommandSubClaimManage extends CommandCIBase {
 
@@ -54,46 +56,46 @@ public class CommandSubClaimManage extends CommandCIBase {
             if(CommandUtils.isAdminWithNodeOrManage(sender, claim, "claimit.command.claimit.claim.manage.others")) {
                 String fName = (CommandUtils.isAdmin(sender) ? claim.getTrueViewName() : claim.getDisplayedViewName());
                 if(args.length < 1) {
-                    sendMessage(sender, BLUE + "" + BOLD + "Management for " + GREEN + claim.getDisplayedViewName() + BLUE + ":");
-                    sendSMessage(sender, ITALIC + "" + UNDERLINE + "" + YELLOW + "View Info", new ClaimInfoChatStyle(fName));
+                    sendMessage(sender, new FTC(BLUE, Form.BOLD, "Management for "), new FTC(GREEN, claim.getDisplayedViewName()), new FTC(BLUE, ":"));
+                    sendSMessage(sender, "View Info", new ClaimInfoChatStyle(fName).setColor(YELLOW).setItalic(true).setUnderlined(true));
                     if(CommandUtils.isAdminWithNodeOrOwner(sender, claim, "claimit.command.claimit.claim.delete.others")) {
-                        sendSMessage(sender, ITALIC + "" + UNDERLINE + "" + RED + "Delete", new CommandChatStyle("/claimit claim delete " + fName, true, "Click to delete"));
+                        sendSMessage(sender, "Delete", new CommandChatStyle("/claimit claim delete " + fName, true, "Click to delete").setColor(RED).setItalic(true).setUnderlined(true));
                     }
                     if(claim.getMembers().keySet().size() > 0) {
-                        sendMessage(sender, BLUE + "Members (click to manage):");
+                        sendMessage(sender, BLUE, "Members (click to manage):");
                         claim.getMembers().keySet().forEach(uuid -> {
                             String pName = CommandUtils.getNameForUUID(uuid, server);
-                            sendSMessage(sender, ITALIC + "" + UNDERLINE + "" + YELLOW + pName, new CommandChatStyle("/claimit claim manage " + fName + " member " + pName, true, "Click to manage permissions"));
+                            sendSMessage(sender, pName, new CommandChatStyle("/claimit claim manage " + fName + " member " + pName, true, "Click to manage permissions").setColor(YELLOW).setItalic(true).setUnderlined(true));
                         });
                     }
                     Set<Group> groups = GroupManager.getGroupsForClaim(claim);
                     if(groups.size() > 0) {
-                        sendMessage(sender, BLUE + "Groups (click to remove):");
+                        sendMessage(sender, BLUE, "Groups (click to remove):");
                         groups.forEach(group -> {
-                            sendSMessage(sender, ITALIC + "" + UNDERLINE + "" + YELLOW + group.getName(), new CommandChatStyle("/claimit group claim remove " + group.getName() + " " + fName, true, "Click to remove from group"));
+                            sendSMessage(sender, group.getName(), new CommandChatStyle("/claimit group claim remove " + group.getName() + " " + fName, true, "Click to remove from group").setColor(YELLOW).setItalic(true).setUnderlined(true));
                         });
                     }
                 } else if(args.length >= 3 && args[1].equals("member") && CommandUtils.getUUIDForName(args[2], server) != null) {
-                    sendMessage(sender, BLUE + "" + BOLD + "Member management for " + YELLOW + args[2] + BLUE + " in " + GREEN + claim.getDisplayedViewName() + BLUE + ":");
+                    sendMessage(sender, new FTC(BLUE, Form.BOLD, "Member management for "), new FTC(YELLOW, args[2]), new FTC(BLUE, " in "), new FTC(GREEN, claim.getDisplayedViewName()), new FTC(BLUE, ":"));
                     if(args.length == 3) {
-                        sendSMessage(sender, ITALIC + "" + UNDERLINE + "" + GREEN + "Add Permission", new CommandChatStyle("/claimit claim manage " + fName + " member " + args[2] + " add", true, "Click to add permission"));
-                        sendSMessage(sender, ITALIC + "" + UNDERLINE + "" + RED + "Remove Permission", new CommandChatStyle("/claimit claim manage " + fName + " member " + args[2] + " remove", true, "Click to remove permission"));
+                        sendSMessage(sender, "Add Permission", new CommandChatStyle("/claimit claim manage " + fName + " member " + args[2] + " add", true, "Click to add permission").setColor(GREEN).setItalic(true).setUnderlined(true));
+                        sendSMessage(sender, "Remove Permission", new CommandChatStyle("/claimit claim manage " + fName + " member " + args[2] + " remove", true, "Click to remove permission").setColor(RED).setItalic(true).setUnderlined(true));
                     } else if(args.length == 4 && (args[3].equals("add") || args[3].equals("remove"))) {
-                        sendMessage(sender, BLUE + "" + ITALIC + "Choose permission to " + args[3] + ":");
+                        sendMessage(sender, new FTC(BLUE, Form.ITALIC, "Choose permission to " + args[3] + ":"));
                         UUID uuid = CommandUtils.getUUIDForName(args[2], server);
                         for(ClaimPermissionMember perm : ClaimPermissionRegistry.getMemberPermissions()) {
                             boolean isInList = claim.inPermissionList(perm, uuid);
                             if((args[3].equals("add") && !isInList) || (args[3].equals("remove") && isInList)) {
-                                sendSMessage(sender, BLUE + " - " + ITALIC + "" + UNDERLINE + "" + YELLOW + perm.parsedName, new CommandChatStyle("/claimit claim permission " + args[3] + " " + perm.parsedName + " " + args[2] + " " + fName, true, "Click to " + args[3]));
+                                sender.sendMessage(new TextComponentString(" - ").setStyle(new Style().setColor(BLUE)).appendSibling(new TextComponentStyled(perm.parsedName, new CommandChatStyle("/claimit claim permission " + args[3] + " " + perm.parsedName + " " + args[2] + " " + fName, true, "Click to " + args[3]).setColor(YELLOW).setItalic(true).setUnderlined(true))));
                             }
                         }
                     }
                 }
             } else {
-                sendMessage(sender, RED + "You do have permission to manage this claim!");
+                sendMessage(sender, RED, "You do have permission to manage this claim!");
             }
         } else {
-            sendMessage(sender, RED + (cName == null ? "No claim at your location!" : "No claim with this name!"));
+            sendMessage(sender, RED, (cName == null ? "No claim at your location!" : "No claim with this name!"));
         }
     }
 

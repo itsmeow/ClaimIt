@@ -1,7 +1,6 @@
 package its_meow.claimit.command.claimit.group;
 
 import static net.minecraft.util.text.TextFormatting.BLUE;
-import static net.minecraft.util.text.TextFormatting.BOLD;
 import static net.minecraft.util.text.TextFormatting.DARK_GREEN;
 import static net.minecraft.util.text.TextFormatting.GREEN;
 import static net.minecraft.util.text.TextFormatting.RED;
@@ -20,6 +19,8 @@ import its_meow.claimit.api.group.GroupManager;
 import its_meow.claimit.api.permission.ClaimPermissionMember;
 import its_meow.claimit.command.CommandCIBase;
 import its_meow.claimit.util.command.CommandUtils;
+import its_meow.claimit.util.text.FTC;
+import its_meow.claimit.util.text.FTC.Form;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
@@ -48,7 +49,7 @@ public class CommandSubGroupInfo extends CommandCIBase {
     @Override
     public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
         if(args.length != 1) {
-            sendMessage(sender, RED + "Invalid argument count. Specify a group name. Usage: " + this.getUsage(sender));
+            sendMessage(sender, RED, "Invalid argument count. Specify a group name. Usage: " + this.getUsage(sender));
         }
 
         if(args.length == 1) {
@@ -58,7 +59,7 @@ public class CommandSubGroupInfo extends CommandCIBase {
                 if(group != null) {
                     outputGroupInfo(group, player);
                 } else {
-                    sendMessage(sender, RED + "No group with this name!");
+                    sendMessage(sender, RED, "No group with this name!");
                 }
             }
         }
@@ -70,14 +71,14 @@ public class CommandSubGroupInfo extends CommandCIBase {
         World world = player.getEntityWorld();
         String ownerName = CommandUtils.getNameForUUID(group.getOwner(), world.getMinecraftServer());
 
-        sendMessage(player, BLUE + "" + BOLD + "Information for group owned by " + GREEN + "" + BOLD + ownerName + BLUE + "" + BOLD + ":");
-        sendMessage(player, BLUE + "Group Name: " + DARK_GREEN + group.getName());
+        sendMessage(player, new FTC(BLUE, Form.BOLD, "Information for group owned by "), new FTC(GREEN, Form.BOLD, ownerName), new FTC(BLUE, Form.BOLD, ":"));
+        sendMessage(player, new FTC(BLUE, "Group Name: "), new FTC(DARK_GREEN, group.getName()));
   
         ImmutableSetMultimap<UUID, ClaimPermissionMember> permMap = group.getMembers();
         if(permMap == null || permMap.isEmpty()) {
-            sendMessage(player, YELLOW + "No members.");
+            sendMessage(player, YELLOW, "No members.");
         } else {
-            sendMessage(player, YELLOW + "" + BOLD + "Members:");
+            sendMessage(player, YELLOW, Form.BOLD, "Members:");
             for(UUID member : permMap.keySet()) {
                 String permString = "";
                 ImmutableSet<ClaimPermissionMember> permSet = permMap.get(member);
@@ -86,15 +87,15 @@ public class CommandSubGroupInfo extends CommandCIBase {
                 }
                 int end = permString.lastIndexOf(',');
                 permString = permString.substring(0, end);
-                sendMessage(player, YELLOW + CommandUtils.getNameForUUID(member, player.getEntityWorld().getMinecraftServer()) + BLUE + ": " + GREEN + permString);
+                sendMessage(player, new FTC(YELLOW, CommandUtils.getNameForUUID(member, player.getEntityWorld().getMinecraftServer())), new FTC(BLUE, ": "), new FTC(GREEN, permString));
             }
         }
         if(group.getClaims().size() == 0 || group.getClaims().isEmpty()) {
-            sendMessage(player, YELLOW + "No claims.");
+            sendMessage(player, YELLOW, "No claims.");
         } else {
-            sendMessage(player, YELLOW + "" + BOLD + "Claims:");
+            sendMessage(player, YELLOW, Form.BOLD, "Claims:");
             for(ClaimArea claim : group.getClaims()) {
-                sendMessage(player, BLUE + " + " + YELLOW + claim.getDisplayedViewName() + BLUE + " of " + GREEN + CommandUtils.getNameForUUID(claim.getOwner(), world.getMinecraftServer()));
+                sendMessage(player, new FTC(BLUE, " + "), new FTC(YELLOW, claim.getDisplayedViewName()), new FTC(BLUE, " of ") , new FTC(GREEN, CommandUtils.getNameForUUID(claim.getOwner(), world.getMinecraftServer())));
             }
         }
     }

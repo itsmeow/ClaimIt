@@ -11,6 +11,7 @@ import java.util.UUID;
 import its_meow.claimit.command.CommandCIBaseAdminOnly;
 import its_meow.claimit.util.UserClaimBlocks;
 import its_meow.claimit.util.command.CommandUtils;
+import its_meow.claimit.util.text.FTC;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
@@ -43,7 +44,7 @@ public class CommandSubClaimBlocksAddAllowed extends CommandCIBaseAdminOnly {
         }
         if(uuid != null) { 
             UserClaimBlocks.setAllowedClaimBlocks(uuid, oldAllowed + amount);
-            sendMessage(sender, GREEN + "Added " + amount + " to " + YELLOW + args[0] + GREEN + "'s allowed claim blocks. They are now allowed " + (oldAllowed + amount) + " claim blocks. They now have " + AQUA + UserClaimBlocks.getClaimBlocksRemaining(uuid) + GREEN + " blocks remaining.");
+            sendMessage(sender, new FTC(GREEN, "Added " + amount + " to "), new FTC(YELLOW, args[0]), new FTC(GREEN, "'s allowed claim blocks. They are now allowed " + (oldAllowed + amount) + " claim blocks. They now have "), new FTC(AQUA, UserClaimBlocks.getClaimBlocksRemaining(uuid) + ""), new FTC(GREEN, " blocks remaining."));
         } else {
             throw new PlayerNotFoundException("Invalid player: " + args[0]);
         }

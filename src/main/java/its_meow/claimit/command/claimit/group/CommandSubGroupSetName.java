@@ -8,6 +8,7 @@ import its_meow.claimit.api.group.Group;
 import its_meow.claimit.api.group.GroupManager;
 import its_meow.claimit.command.CommandCIBase;
 import its_meow.claimit.util.command.CommandUtils;
+import its_meow.claimit.util.text.FTC;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.command.SyntaxErrorException;
@@ -41,15 +42,15 @@ public class CommandSubGroupSetName extends CommandCIBase {
                 if(CommandUtils.isAdminNoded(sender, "claimit.command.claimit.group.setname.others") || (sender instanceof EntityPlayer && group.isOwner((EntityPlayer)sender))) {
                     boolean pass = GroupManager.renameGroup(groupname, name);
                     if(pass) {
-                        sendMessage(sender, AQUA + "Set this group's name to: " + GREEN + group.getName());
+                        sendMessage(sender, new FTC(AQUA, "Set this group's name to: "), new FTC(GREEN, group.getName()));
                     } else {
-                        sendMessage(sender, RED + "Failed to set name. There is another group with this name.");
+                        sendMessage(sender, RED, "Failed to set name. There is another group with this name.");
                     }
                 } else {
-                    sendMessage(sender, RED + "You do not own this group!");
+                    sendMessage(sender, RED, "You do not own this group!");
                 }
             } else {
-                sendMessage(sender, RED + "There is no group with this name!");
+                sendMessage(sender, RED, "There is no group with this name!");
             }
         } else {
             throw new SyntaxErrorException("Invalid syntax. Usage: " + this.getUsage(sender));

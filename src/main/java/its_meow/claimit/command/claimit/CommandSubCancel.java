@@ -6,6 +6,7 @@ import its_meow.claimit.util.command.IConfirmable;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.text.TextFormatting;
 
 public class CommandSubCancel extends CommandCIBase {
 
@@ -29,10 +30,10 @@ public class CommandSubCancel extends CommandCIBase {
 		ConfirmationManager mgr = ConfirmationManager.getManager();
 		if(mgr.needsConfirm(sender)) {
 			IConfirmable action = mgr.getAction(sender);
-			sendMessage(sender, "Cancelled action: " + action.getConfirmName());
+			sendMessage(sender, TextFormatting.GREEN, "Cancelled action: " + action.getConfirmName());
 			mgr.removeConfirm(sender);
 		} else {
-			sendMessage(sender, "You have no action to cancel!");
+			sendMessage(sender, TextFormatting.RED, "You have no action to cancel!");
 		}
 	}
 

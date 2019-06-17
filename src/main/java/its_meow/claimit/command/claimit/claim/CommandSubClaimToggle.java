@@ -82,7 +82,7 @@ public class CommandSubClaimToggle extends CommandCIBase {
 			claim.flipPermissionToggle(perm);
 			sendSMessage(sender, BLUE + "Set " + YELLOW + perm.parsedName + BLUE + " to " + getStringFor(perm, claim.isPermissionToggled(perm)), new CommandChatStyle("/claimit claim toggle " + perm.parsedName, true, getHoverFor(perm, claim)));
 		} else {
-			sendMessage(sender, RED + "You cannot modify toggles of this claim!");
+			sendMessage(sender, RED, "You cannot modify toggles of this claim!");
 		}
 
 	}

@@ -1,6 +1,9 @@
 package its_meow.claimit.command.claimit.claimblocks;
 
-import static net.minecraft.util.text.TextFormatting.*;
+import static net.minecraft.util.text.TextFormatting.AQUA;
+import static net.minecraft.util.text.TextFormatting.BLUE;
+import static net.minecraft.util.text.TextFormatting.GREEN;
+import static net.minecraft.util.text.TextFormatting.YELLOW;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,6 +12,7 @@ import java.util.UUID;
 import its_meow.claimit.command.CommandCIBase;
 import its_meow.claimit.util.UserClaimBlocks;
 import its_meow.claimit.util.command.CommandUtils;
+import its_meow.claimit.util.text.FTC;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
@@ -48,10 +52,10 @@ public class CommandSubClaimBlocksView extends CommandCIBase {
         } else {
             throw new CommandException("Invalid argument count! Usage: " + this.getUsage(sender));
         }
-        sendMessage(sender, AQUA + "Claim Blocks for " + YELLOW + name + AQUA + ":");
-        sendMessage(sender, GREEN + "Allowed: " + BLUE + UserClaimBlocks.getClaimBlocksAllowed(uuid));
-        sendMessage(sender, GREEN + "Used: " + BLUE + UserClaimBlocks.getClaimBlocksUsed(uuid));
-        sendMessage(sender, GREEN + "Remaining: " + BLUE + UserClaimBlocks.getClaimBlocksRemaining(uuid));
+        sendMessage(sender, new FTC(AQUA, "Claim Blocks for "), new FTC(YELLOW, name), new FTC(AQUA, ":"));
+        sendMessage(sender, new FTC(GREEN, "Allowed: "), new FTC(BLUE, UserClaimBlocks.getClaimBlocksAllowed(uuid) + ""));
+        sendMessage(sender, new FTC(GREEN, "Used: "), new FTC(BLUE, UserClaimBlocks.getClaimBlocksUsed(uuid) + ""));
+        sendMessage(sender, new FTC(GREEN, "Remaining: "), new FTC(BLUE, UserClaimBlocks.getClaimBlocksRemaining(uuid) + ""));
     }
 
     @Override

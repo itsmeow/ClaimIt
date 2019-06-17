@@ -8,9 +8,9 @@ import its_meow.claimit.api.claim.ClaimManager;
 import its_meow.claimit.api.event.claim.ClaimCreatedEvent;
 import its_meow.claimit.config.ClaimItConfig;
 import its_meow.claimit.serialization.ClaimItGlobalDataSerializer;
+import its_meow.claimit.util.text.FTC;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.storage.WorldSavedData;
 import net.minecraftforge.common.util.Constants;
@@ -46,14 +46,14 @@ public class UserClaimBlocks {
         EntityPlayer player = e.getClaim().getWorld().getPlayerEntityByUUID(owner);
         if(allowed - area < 0) {
             if(player != null) {
-                player.sendMessage(new TextComponentString(TextFormatting.RED + "You need " + Math.abs(allowed - area) + " more claim blocks to create this claim!"));
-                player.sendMessage(new TextComponentString(TextFormatting.YELLOW + "Claim Blocks Required: " + area));
-                player.sendMessage(new TextComponentString(TextFormatting.YELLOW + "Claim Blocks Remaining: " + allowed));
+                player.sendMessage(new FTC("You need " + Math.abs(allowed - area) + " more claim blocks to create this claim!", TextFormatting.RED));
+                player.sendMessage(new FTC("Claim Blocks Required: " + area, TextFormatting.YELLOW));
+                player.sendMessage(new FTC("Claim Blocks Remaining: " + allowed, TextFormatting.YELLOW));
             }
             e.setCanceled(true);
         } else {
             if(player != null) {
-                player.sendMessage(new TextComponentString(TextFormatting.GREEN + "This claim is " + area + " claim blocks. You now have " + (allowed - area) + " claim blocks remaining."));
+                player.sendMessage(new FTC("This claim is " + area + " claim blocks. You now have " + (allowed - area) + " claim blocks remaining.", TextFormatting.GREEN));
             }
         }
     }

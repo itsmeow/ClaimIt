@@ -12,6 +12,7 @@ import its_meow.claimit.command.CommandCIBase;
 import its_meow.claimit.util.command.CommandUtils;
 import its_meow.claimit.util.text.CommandChatStyle;
 import its_meow.claimit.util.text.TextComponentStyled;
+import its_meow.claimit.util.text.FTC.Form;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.server.MinecraftServer;
@@ -52,12 +53,12 @@ public class CommandSubGroupList extends CommandCIBase {
         UUID uuid = CommandUtils.getUUIDForName(name, server);
         Group[] groups = (Group[]) GroupManager.getGroups().stream().filter(g -> (admin && uuid == null) || (uuid != null && (g.getMembers().keySet().contains(uuid) || g.isOwner(uuid)))).toArray(Group[]::new);
         if(groups.length > 0) {
-            sendMessage(sender, DARK_BLUE + "" + BOLD + "Group List:");
+            sendMessage(sender, DARK_BLUE, Form.BOLD, "Group List:");
             for(Group group : groups) {
                 sender.sendMessage(new TextComponentStyled(BLUE + "Group: " + DARK_GREEN + group.getName(), new CommandChatStyle("/ci group info " + group.getName(), true, "Click for info")));
             }
         } else {
-            sendMessage(sender, RED + "No groups found!");
+            sendMessage(sender, RED, "No groups found!");
         }
     }
     

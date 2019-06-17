@@ -37,16 +37,16 @@ public class CommandSubAdmin extends CommandCIBase {
                 if(this.checkPermission(server, sender)) {
                     if(AdminManager.isAdmin((EntityPlayer) sender)) {
                         AdminManager.removeAdmin((EntityPlayer) sender);
-                        sendMessage(sender, GREEN + "Admin bypass disabled.");
+                        sendMessage(sender, GREEN, "Admin bypass disabled.");
                     } else {
                         AdminManager.addAdmin((EntityPlayer) sender);
-                        sendMessage(sender, GREEN + "Admin bypass enabled. You may now manage all claims.");
+                        sendMessage(sender, GREEN, "Admin bypass enabled. You may now manage all claims.");
                     }
                 } else {
-                    sendMessage(sender, RED + "You do not have permission to use this command!");
+                    sendMessage(sender, RED, "You do not have permission to use this command!");
                 }
             } else {
-                sendMessage(sender, "You must be a player to use this command!");
+                sendBMessage(sender, "You must be a player to use this command!");
             }
         } else if(args.length == 4 && args[0].equals("tpdimxz") && sender instanceof EntityPlayerMP && sender.canUseCommand(2, "minecraft.command.tp")) {
             try {
@@ -63,7 +63,7 @@ public class CommandSubAdmin extends CommandCIBase {
                 p.motionY = 0.0D;
                 p.motionZ = 0.0D;
             } catch(NullPointerException | NumberFormatException e) {
-                sendMessage(sender, "Invalid coordinates.");
+                sendBMessage(sender, "Invalid coordinates for teleportation.");
             }
         } else {
             throw new CommandException("You do not have permission to teleport!");

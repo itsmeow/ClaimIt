@@ -1,8 +1,6 @@
 package its_meow.claimit.util.command;
 
 import static net.minecraft.util.text.TextFormatting.AQUA;
-import static net.minecraft.util.text.TextFormatting.GREEN;
-import static net.minecraft.util.text.TextFormatting.RED;
 import static net.minecraft.util.text.TextFormatting.YELLOW;
 
 import java.util.ArrayList;
@@ -22,13 +20,13 @@ import its_meow.claimit.api.group.GroupManager;
 import its_meow.claimit.api.permission.ClaimPermissionMember;
 import its_meow.claimit.api.permission.ClaimPermissionRegistry;
 import its_meow.claimit.api.permission.ClaimPermissionToggle;
+import its_meow.claimit.command.CommandCIBase;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.command.PlayerNotFoundException;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.text.TextComponentString;
 
 public class CommandUtils {
 
@@ -40,12 +38,12 @@ public class CommandUtils {
             EntityPlayer player = ((EntityPlayer) sender);
             claim = mgr.getClaimByNameAndOwner(claimName, player.getUniqueID());
             if(claim == null && AdminManager.isAdmin(player)) {
-                sendMessage(sender, AQUA + "Using true name.");
+                CommandCIBase.sendMessage(sender, AQUA, "Using true name.");
                 claim = mgr.getClaimByTrueName(claimName);
             }
         } else { // sender is console/commandblock
             if(sender.canUseCommand(2, "")) {
-                sendMessage(sender, "You are console, using true name");
+                CommandCIBase.sendMessage(sender, YELLOW, "You are console, using true name");
                 claim = mgr.getClaimByTrueName(claimName);
             }
         }
@@ -74,10 +72,10 @@ public class CommandUtils {
         try {
             permission = ClaimPermissionRegistry.getPermissionMember(permName);
         } catch (IllegalArgumentException e) {
-            throw new CommandException("Invalid permission." + GREEN +" Valid Permissions: " + YELLOW + validPerms + RED + "\nUsage: " + YELLOW + usage);
+            throw new CommandException("Invalid permission. Valid Permissions: " + validPerms + "\nUsage: " + usage);
         }
         if(permission == null) {
-            throw new CommandException("Invalid permission." + GREEN +" Valid Permissions: " + YELLOW + validPerms + RED + "\nUsage: " + YELLOW + usage);
+            throw new CommandException("Invalid permission. Valid Permissions: " + validPerms + "\nUsage: " + usage);
         }
         return permission;
     }
@@ -105,10 +103,6 @@ public class CommandUtils {
             return true;
         }
         return false;
-    }
-
-    private static void sendMessage(ICommandSender sender, String message) {
-        sender.sendMessage(new TextComponentString(message));
     }
 
     public static UUID getUUIDForName(String username, MinecraftServer server) throws PlayerNotFoundException {

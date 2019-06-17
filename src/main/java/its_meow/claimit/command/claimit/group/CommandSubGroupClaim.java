@@ -13,6 +13,7 @@ import its_meow.claimit.api.group.Group;
 import its_meow.claimit.api.group.GroupManager;
 import its_meow.claimit.command.CommandCIBase;
 import its_meow.claimit.util.command.CommandUtils;
+import its_meow.claimit.util.text.FTC;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
@@ -65,37 +66,37 @@ public class CommandSubGroupClaim extends CommandCIBase {
                         if(CommandUtils.isAdminWithNodeOrOwner(sender, claim, "claimit.claim.manage.others")) {
                             if(CommandUtils.isAdminNoded(sender, "claimit.command.claimit.group.claim.others") || (sender instanceof EntityPlayer) && group.getMembers().containsKey(((EntityPlayer) sender).getGameProfile().getId())) {
                                 group.addClaim(claim);
-                                sendMessage(sender, GREEN + "Successfully added claim " + YELLOW + claim.getDisplayedViewName() + GREEN + " to group " + DARK_GREEN + groupName);
-                                sendMessage(sender, YELLOW + "Please make sure you trust " + CommandUtils.getNameForUUID(group.getOwner(), server) + " and the people they trust, as they will have full permission in this claim, as well as the ability to add more people!");
+                                sendMessage(sender, new FTC(GREEN, "Successfully added claim "), new FTC(YELLOW, claim.getDisplayedViewName()), new FTC(GREEN, " to group "), new FTC(DARK_GREEN, groupName));
+                                sendMessage(sender, new FTC(YELLOW, "Please make sure you trust " + CommandUtils.getNameForUUID(group.getOwner(), server) + " and the people they trust, as they will have full permission in this claim, as well as the ability to add more people!"));
                             } else {
-                                sendMessage(sender, RED + "You cannot add claims to a group you are not a member of!");
+                                sendMessage(sender, RED, "You cannot add claims to a group you are not a member of!");
                             }
                         } else {
-                            sendMessage(sender, RED + "You do not own this claim!");
+                            sendMessage(sender, RED, "You do not own this claim!");
                         }
                     } else {
-                        sendMessage(sender, YELLOW + "This claim is already present!");
+                        sendMessage(sender, YELLOW, "This claim is already present!");
                     }
                 } else if(action.equals("remove")) {
                     // Remove claim
                     if(group.hasClaim(claim)) {
                         if(CommandUtils.isAdminWithNodeOrOwner(sender, claim, "claimit.command.claimit.group.claim.others")) {
                             group.removeClaim(claim);
-                            sendMessage(sender, GREEN + "Successfully removed claim " + YELLOW + claim.getDisplayedViewName() + GREEN + " from group " + DARK_GREEN + groupName);
+                            sendMessage(sender, new FTC(GREEN, "Successfully removed claim "), new FTC(YELLOW, claim.getDisplayedViewName()), new FTC(GREEN, " from group "), new FTC(DARK_GREEN, groupName));
                         } else {
-                            sendMessage(sender, RED + "You do not own this claim!");
+                            sendMessage(sender, RED, "You do not own this claim!");
                         }
                     } else {
-                        sendMessage(sender, YELLOW + "This claim is not in this group!");
+                        sendMessage(sender, YELLOW, "This claim is not in this group!");
                     }
                 } else {
                     throw new WrongUsageException("Invalid action! Specify add or remove. Usage: " + this.getUsage(sender));
                 }
             } else {
-                sendMessage(sender, RED + "No claim " + (args.length == 3 ? "with this name that you own found!" : "at your location!"));
+                sendMessage(sender, RED, "No claim " + (args.length == 3 ? "with this name that you own found!" : "at your location!"));
             }
         } else {
-            sendMessage(sender, RED + "No such group: " + groupName);
+            sendMessage(sender, RED, "No such group: " + groupName);
         }
     }
 

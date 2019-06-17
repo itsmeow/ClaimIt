@@ -15,6 +15,7 @@ import its_meow.claimit.api.permission.ClaimPermissionMember;
 import its_meow.claimit.command.CommandCITreeBase;
 import its_meow.claimit.command.claimit.claim.permission.CommandSubClaimPermissionList;
 import its_meow.claimit.util.command.CommandUtils;
+import its_meow.claimit.util.text.FTC;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
@@ -80,25 +81,25 @@ public class CommandSubClaimPermission extends CommandCITreeBase {
             if(action.equals("add"))  {
                 // Add user
                 if(claim.addMember(id, permission)) {
-                    sendMessage(sender, GREEN + "Successfully added " + YELLOW + username + GREEN + " to claim " + DARK_GREEN + claim.getDisplayedViewName() + GREEN + " with permission " + AQUA + permission.parsedName);
+                    sendMessage(sender, new FTC(GREEN, "Successfully added "), new FTC(YELLOW, username), new FTC(GREEN, " to claim "), new FTC(DARK_GREEN, claim.getDisplayedViewName()), new FTC(GREEN, " with permission "), new FTC(AQUA, permission.parsedName));
                 } else {
-                    sendMessage(sender, YELLOW + "This player already has that permission!");
+                    sendMessage(sender, YELLOW, "This player already has that permission!");
                 }
             } else if(action.equals("remove")) {
                 // Remove user
                 if(claim.removeMember(id, permission)) {
-                        sendMessage(sender, GREEN + "Successfully removed permission " + AQUA + permission.parsedName + GREEN + " from user " + YELLOW + username + GREEN + " in claim " + DARK_GREEN + claim.getDisplayedViewName());
+                        sendMessage(sender, new FTC(GREEN, "Successfully removed permission "), new FTC(AQUA, permission.parsedName), new FTC(GREEN, " from user "), new FTC(YELLOW, username), new FTC(GREEN, " in claim "), new FTC(DARK_GREEN, claim.getDisplayedViewName()));
                 } else {
-                    sendMessage(sender, YELLOW + "This player does not have that permission!");
+                    sendMessage(sender, YELLOW, "This player does not have that permission!");
                 }
             } else {
                 throw new CommandException("Invalid action! Specify add or remove. Usage: \n" + YELLOW + this.getUsage(sender));
             }
         } else {
             if(claimName != null && !claimName.equals("")) {
-                sendMessage(sender, RED + "No claim with this name was found.");
+                sendMessage(sender, RED, "No claim with this name was found.");
             } else {
-                sendMessage(sender, RED + "There is no claim here! Specify a name to get a specific claim.");
+                sendMessage(sender, RED, "There is no claim here! Specify a name to get a specific claim.");
             }
         }
     }

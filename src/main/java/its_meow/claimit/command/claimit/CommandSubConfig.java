@@ -5,8 +5,9 @@ import java.util.List;
 
 import its_meow.claimit.command.CommandCIBase;
 import its_meow.claimit.userconfig.UserConfigType;
-import its_meow.claimit.userconfig.UserConfigTypeRegistry;
 import its_meow.claimit.userconfig.UserConfigType.UserConfig;
+import its_meow.claimit.userconfig.UserConfigTypeRegistry;
+import its_meow.claimit.util.text.FTC;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
@@ -14,6 +15,7 @@ import net.minecraft.command.WrongUsageException;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextFormatting;
 
 public class CommandSubConfig extends CommandCIBase {
 
@@ -48,7 +50,7 @@ public class CommandSubConfig extends CommandCIBase {
                         if(value == null) {
                             value = config.defaultValue;
                         }
-                        sendMessage(player, config.parsedName + ": " + value.toString());
+                        sendMessage(player, new FTC(TextFormatting.YELLOW, config.parsedName), new FTC(TextFormatting.BLUE, ": "), new FTC(TextFormatting.GREEN, value.toString()));
                     }
                 }
             } else if(args.length == 1) {
@@ -62,7 +64,7 @@ public class CommandSubConfig extends CommandCIBase {
                         if(value == null) {
                             value = config.defaultValue;
                         }
-                        sendMessage(player, config.parsedName + ": " + value.toString());
+                        sendMessage(player, new FTC(TextFormatting.YELLOW, config.parsedName), new FTC(TextFormatting.BLUE, ": "), new FTC(TextFormatting.GREEN, value.toString()));
                         hit = true;
                     }
                 }
@@ -79,7 +81,7 @@ public class CommandSubConfig extends CommandCIBase {
                     if(config != null) {
                         if(type.isValidValue(valueStr)) {
                             type.setValue((UserConfig) config, player.getGameProfile().getId(), valueStr);
-                            sendMessage(player, "Set " + parsedName + " to " + valueStr);
+                            sendMessage(player, TextFormatting.GREEN, "Set " + parsedName + " to " + valueStr);
                             hit = true;
                         } else {
                             throw new CommandException("Invalid value for config " + parsedName + " of " + valueStr + "!");

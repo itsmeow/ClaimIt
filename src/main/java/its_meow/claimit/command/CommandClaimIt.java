@@ -2,7 +2,6 @@ package its_meow.claimit.command;
 
 import static net.minecraft.util.text.TextFormatting.AQUA;
 import static net.minecraft.util.text.TextFormatting.BLUE;
-import static net.minecraft.util.text.TextFormatting.BOLD;
 import static net.minecraft.util.text.TextFormatting.DARK_PURPLE;
 import static net.minecraft.util.text.TextFormatting.DARK_RED;
 import static net.minecraft.util.text.TextFormatting.GRAY;
@@ -29,8 +28,11 @@ import its_meow.claimit.command.claimit.CommandSubShowBorders;
 import its_meow.claimit.config.ClaimItConfig;
 import its_meow.claimit.util.command.CommandHelpRegistry;
 import its_meow.claimit.util.text.AutoFillHelpChatStyle;
+import its_meow.claimit.util.text.FTC;
+import its_meow.claimit.util.text.FTC.Form;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.text.TextComponentString;
 import net.minecraftforge.fml.common.Loader;
 
 public class CommandClaimIt extends CommandCITreeBase {
@@ -77,17 +79,17 @@ public class CommandClaimIt extends CommandCITreeBase {
 
     @Override
     public void executeBaseCommand(MinecraftServer server, ICommandSender sender, String[] args) {
-        sendMessage(sender, GRAY + "" + BOLD + ClaimIt.NAME + RESET + "" + DARK_PURPLE + " Version " + YELLOW + ClaimIt.VERSION + DARK_PURPLE + " by " + DARK_RED + "" + BOLD + "its_meow");
-        sendMessage(sender, GRAY + "" + BOLD + ClaimItAPI.NAME + RESET + "" + DARK_PURPLE + " Version " + YELLOW + ClaimItAPI.VERSION);
-        sendMessage(sender, BLUE + "Claiming item is " + RESET + GREEN + ITALIC + ClaimItConfig.claim_create_item_display);
-        sendMessage(sender, AQUA + "" + BOLD + "Subcommands: ");
+        sendMessage(sender, new FTC(GRAY, Form.BOLD, ClaimIt.NAME), new FTC(" Version ", DARK_PURPLE, false), new FTC(ClaimIt.VERSION, YELLOW, false), new FTC(" by ", DARK_PURPLE, false), new FTC(DARK_RED, Form.BOLD, "its_meow"));
+        sendMessage(sender, new FTC(GRAY, Form.BOLD, ClaimItAPI.NAME), new FTC(" Version ", DARK_PURPLE, false), new FTC(ClaimItAPI.VERSION, YELLOW, false));
+        sendMessage(sender, new FTC(BLUE, "Claiming item is "), new TextComponentString("" + RESET + GREEN + ITALIC + ClaimItConfig.claim_create_item_display));
+        sendMessage(sender, AQUA, Form.BOLD, "Subcommands: ");
         List<String> subCommands = Arrays.asList(new String[] {"claim", "group", "config", "claimblocks", "showborders", "admin", "help"});
         for(String cmdT : subCommands) {
             String cmd = "/claimit " + cmdT;
             CommandCIBase subCmd = this.getSubCommand(cmdT);
             sendSMessage(sender, YELLOW + cmd, new AutoFillHelpChatStyle(cmd, subCmd, sender));
         }
-        sendMessage(sender, AQUA + "Alias(es): " + YELLOW + aliasList);
+        sendMessage(sender, new FTC(AQUA, "Alias(es): "), new FTC(YELLOW, aliasList));
     }
 
     @Override

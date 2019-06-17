@@ -17,6 +17,7 @@ import its_meow.claimit.command.CommandCIBase;
 import its_meow.claimit.util.command.CommandUtils;
 import its_meow.claimit.util.command.ConfirmationManager;
 import its_meow.claimit.util.command.IConfirmable;
+import its_meow.claimit.util.text.FTC;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.command.PlayerNotFoundException;
@@ -54,13 +55,13 @@ public class CommandSubClaimDeleteAll extends CommandCIBase implements IConfirma
             if(ownedClaims != null) {
                 if(!ConfirmationManager.getManager().needsConfirm(sender)) {
                     ConfirmationManager.getManager().addConfirm(sender, this, new String[] {player.getName()});
-                    sendMessage(sender, DARK_RED + "This will delete ALL of your claims. Are you sure you want to do this? Run " + AQUA + "'/claimit confirm'" + DARK_RED + " to confirm. If you do not want to do this, run " + AQUA + "'/claimit cancel'" + DARK_RED + ".");
+                    sendMessage(sender, new FTC(DARK_RED, "This will delete ALL of your claims. Are you sure you want to do this? Run "), new FTC(AQUA, "'/claimit confirm'"), new FTC(DARK_RED, " to confirm. If you do not want to do this, run "), new FTC(AQUA, "'/claimit cancel'"), new FTC(DARK_RED, "."));
                 } else {
-                    sendMessage(sender, RED + "Canceling preexisting action. Run this command again to delete all claims.");
+                    sendMessage(sender, RED, "Canceling preexisting action. Run this command again to delete all claims.");
                     ConfirmationManager.getManager().removeConfirm(sender);
                 }
             } else {
-                sendMessage(sender, RED + "You don't own any claims!");
+                sendMessage(sender, RED, "You don't own any claims!");
             }
         } else if(args.length == 1 && CommandUtils.isAdminNoded(sender, "claimit.command.claimit.claim.deleteall.others")) {
             String name = args[0];
@@ -72,9 +73,9 @@ public class CommandSubClaimDeleteAll extends CommandCIBase implements IConfirma
                 }
                 if(!ConfirmationManager.getManager().needsConfirm(sender)) {
                     ConfirmationManager.getManager().addConfirm(sender, this, new String[] {name});
-                    sendMessage(sender, DARK_RED + "This will delete ALL of " + name + "'s claims. Are you sure you want to do this? Run " + AQUA + "'/claimit confirm'" + DARK_RED + " to confirm. If you do not want to do this, run " + AQUA + "'/claimit cancel'" + DARK_RED + ".");
+                    sendMessage(sender, new FTC(DARK_RED, "This will delete ALL of " + name + "'s claims. Are you sure you want to do this? Run "), new FTC(AQUA, "'/claimit confirm'"), new FTC(DARK_RED, " to confirm. If you do not want to do this, run "), new FTC(AQUA, "'/claimit cancel'"), new FTC(DARK_RED, "."));
                 } else {
-                    sendMessage(sender, RED + "Canceling preexisting action. Run this command again to delete all claims.");
+                    sendMessage(sender, RED, "Canceling preexisting action. Run this command again to delete all claims.");
                     ConfirmationManager.getManager().removeConfirm(sender);
                 }
             } else {
@@ -108,7 +109,7 @@ public class CommandSubClaimDeleteAll extends CommandCIBase implements IConfirma
                     boolean s = ClaimManager.getManager().deleteClaim(claim);
                     if(!s) failed = true;
                 }
-                sendMessage(sender, "Removed " + player + "'s claims." + (failed ? " Something prevented some claims from being removed." : ""));
+                sendBMessage(sender, "Removed " + player + "'s claims." + (failed ? " Something prevented some claims from being removed." : ""));
             } else {
                 throw new RuntimeException("A deletion was confirmed, but the player supplied does not exist! What did you do !?!?");
             }

@@ -1,7 +1,6 @@
 package its_meow.claimit.command.claimit.claim.permission;
 
 import static net.minecraft.util.text.TextFormatting.BLUE;
-import static net.minecraft.util.text.TextFormatting.BOLD;
 import static net.minecraft.util.text.TextFormatting.GREEN;
 import static net.minecraft.util.text.TextFormatting.RED;
 import static net.minecraft.util.text.TextFormatting.YELLOW;
@@ -23,6 +22,8 @@ import its_meow.claimit.api.permission.ClaimPermissionMember;
 import its_meow.claimit.api.permission.ClaimPermissionRegistry;
 import its_meow.claimit.command.CommandCIBase;
 import its_meow.claimit.util.command.CommandUtils;
+import its_meow.claimit.util.text.FTC;
+import its_meow.claimit.util.text.FTC.Form;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
@@ -80,10 +81,10 @@ public class CommandSubClaimPermissionList extends CommandCIBase {
             throw new CommandException("You cannot view the members of this claim!");
         }
         if((permMap == null || permMap.isEmpty())) {
-            sendMessage(sender, RED + "This claim has no members.");
+            sendMessage(sender, RED, "This claim has no members.");
         } else {
             for(UUID uuid : permMap.keySet()) {
-                sendMessage(sender, YELLOW + CommandUtils.getNameForUUID(uuid, sender.getEntityWorld().getMinecraftServer()) + BLUE + " - " + GREEN + getMemberLine(uuid, permMap.get(uuid)));
+                sendMessage(sender, new FTC(YELLOW, CommandUtils.getNameForUUID(uuid, sender.getEntityWorld().getMinecraftServer())), new FTC(BLUE, " - "), new FTC(GREEN, getMemberLine(uuid, permMap.get(uuid))));
             }
         }
         if(groups != null && groups.size() > 0) {
@@ -94,16 +95,16 @@ public class CommandSubClaimPermissionList extends CommandCIBase {
                 ImmutableSetMultimap<UUID, ClaimPermissionMember> groupPermMap = ImmutableSetMultimap.copyOf(singletonMap);
 
                 if(groupPermMap.size() > 0) {
-                    sendMessage(sender, YELLOW + "" + BOLD + "Members from: " + GREEN + group.getName());
+                    sendMessage(sender, new FTC(YELLOW, Form.BOLD, "Members from: "), new FTC(GREEN, group.getName()));
                     groupPermMap.keySet().forEach((uuid) -> {
-                        sendMessage(sender, YELLOW + " -- " + CommandUtils.getNameForUUID(uuid, sender.getEntityWorld().getMinecraftServer()) + BLUE + " - " + GREEN + getMemberLine(uuid, groupPermMap.get(uuid)));
+                        sendMessage(sender, new FTC(YELLOW, " -- " + CommandUtils.getNameForUUID(uuid, sender.getEntityWorld().getMinecraftServer())), new FTC(BLUE, " - "), new FTC(GREEN, getMemberLine(uuid, groupPermMap.get(uuid))));
                     });
                 } else {
-                    sendMessage(sender, "This is a bad, bad bug. Report this. A group is marked for this claim, but it does contain any members");
+                    sendMessage(sender, Form.BOLD, "This is a bad, bad bug. Report this. A group is marked for this claim, but it does contain any members");
                 }
             }
         } else {
-            sendMessage(sender, RED + "This claim has no group members.");
+            sendMessage(sender, RED, "This claim has no group members.");
         }
     }
 

@@ -1,7 +1,6 @@
 package its_meow.claimit.command.claimit;
 
 import static net.minecraft.util.text.TextFormatting.AQUA;
-import static net.minecraft.util.text.TextFormatting.BOLD;
 import static net.minecraft.util.text.TextFormatting.YELLOW;
 
 import its_meow.claimit.command.CommandCIBase;
@@ -11,6 +10,7 @@ import its_meow.claimit.command.claimit.help.CommandSubHelpPermission;
 import its_meow.claimit.command.claimit.help.CommandSubHelpTopic;
 import its_meow.claimit.command.claimit.help.CommandSubHelpUserConfig;
 import its_meow.claimit.util.text.CommandChatStyle;
+import its_meow.claimit.util.text.FTC.Form;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.server.MinecraftServer;
@@ -42,10 +42,10 @@ public class CommandSubHelp extends CommandCITreeBase {
     }
 
     public void displaySubCommands(MinecraftServer server, ICommandSender sender) throws CommandException {
-        sendMessage(sender, AQUA + "" + BOLD + "Subcommands: ");
+        sendMessage(sender, AQUA, Form.BOLD, "Subcommands: ");
         for(CommandCIBase subCmd : this.getSubCommands()) {
             String cmd = this.getUsage(sender).substring(0, this.getUsage(sender).indexOf(this.getName() + " ") + this.getName().length()) + " " + subCmd.getName();
-            sendSMessage(sender, YELLOW + cmd, new CommandChatStyle(cmd, true, "Click to run"));
+            sendSMessage(sender, cmd, new CommandChatStyle(cmd, true, "Click to run").setColor(YELLOW));
         }
     }
 

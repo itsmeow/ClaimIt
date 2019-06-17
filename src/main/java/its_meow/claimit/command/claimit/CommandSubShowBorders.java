@@ -57,16 +57,16 @@ public class CommandSubShowBorders extends CommandCIBase {
                 long oldtime = borderTime.get(uuid);
                 long time = Math.abs(player.ticksExisted - oldtime);
                 if(time < ClaimItConfig.max_show_borders_seconds * 20L) {
-                    sendMessage(sender, TextFormatting.RED + "You are already viewing claim borders.");
+                    sendMessage(sender, TextFormatting.RED, "You are already viewing claim borders.");
                 } else if(time < (ClaimItConfig.show_borders_cooldown * 20L) + (ClaimItConfig.max_show_borders_seconds * 20L)) {
-                    sendMessage(sender, TextFormatting.RED + "You cannot view members for the next " + ClaimItConfig.show_borders_cooldown + " seconds.");
+                    sendMessage(sender, TextFormatting.RED, "You cannot view members for the next " + ClaimItConfig.show_borders_cooldown + " seconds.");
                 } else {
                     borderTime.put(uuid, (long) player.ticksExisted);
-                    sendMessage(sender, TextFormatting.GREEN + "Viewing claim borders for " + ClaimItConfig.max_show_borders_seconds + " seconds.");
+                    sendMessage(sender, TextFormatting.GREEN, "Viewing claim borders for " + ClaimItConfig.max_show_borders_seconds + " seconds.");
                 }
             } else {
                 borderTime.put(uuid, (long) player.ticksExisted);
-                sendMessage(sender, TextFormatting.GREEN + "Viewing claim borders for " + ClaimItConfig.max_show_borders_seconds + " seconds.");
+                sendMessage(sender, TextFormatting.GREEN, "Viewing claim borders for " + ClaimItConfig.max_show_borders_seconds + " seconds.");
             }
         } else {
             throw new CommandException("You must be a player to use this command!");

@@ -1,7 +1,6 @@
 package its_meow.claimit.command.claimit.claim;
 
 import static net.minecraft.util.text.TextFormatting.BLUE;
-import static net.minecraft.util.text.TextFormatting.BOLD;
 import static net.minecraft.util.text.TextFormatting.DARK_BLUE;
 import static net.minecraft.util.text.TextFormatting.DARK_GREEN;
 import static net.minecraft.util.text.TextFormatting.DARK_PURPLE;
@@ -27,6 +26,8 @@ import its_meow.claimit.util.ClaimPage;
 import its_meow.claimit.util.ClaimPageTracker;
 import its_meow.claimit.util.command.CommandUtils;
 import its_meow.claimit.util.text.ClaimInfoChatStyle;
+import its_meow.claimit.util.text.FTC;
+import its_meow.claimit.util.text.FTC.Form;
 import its_meow.claimit.util.text.PageChatStyle;
 import its_meow.claimit.util.text.TeleportXYChatStyle;
 import its_meow.claimit.util.text.TextComponentStyled;
@@ -116,12 +117,12 @@ public class CommandSubClaimList extends CommandCIBase {
                     for(ClaimArea claim : claims) {
                         i++;
                         if(i == 1) {
-                            sendMessage(sender, DARK_BLUE + "Claim List for " + GREEN + player.getName() + DARK_BLUE + ":");
+                            sendMessage(sender, new FTC(DARK_BLUE, "Claim List for "), new FTC(GREEN, player.getName()), new FTC(DARK_BLUE, ":"));
                         }
                         sender.sendMessage(new TextComponentStyled(BLUE + "Name: " + DARK_GREEN + claim.getDisplayedViewName(), new ClaimInfoChatStyle(claim.getDisplayedViewName())));
                     }
                 } else {
-                    sendMessage(sender, RED + "You don't own any claims!");
+                    sendMessage(sender, RED, "You don't own any claims!");
                 }
             } else {
                 if(filter == null) {
@@ -135,13 +136,13 @@ public class CommandSubClaimList extends CommandCIBase {
                 if(cPage == null || cPage.getPageSize() == 0) {
                     throw new CommandException("Empty page: " + pg);
                 }
-                sendMessage(sender, DARK_PURPLE + "" + BOLD + "-----Page " + pg + " of " + ClaimPageTracker.getMaxPage(filter) +"-----");
+                sendMessage(sender, new FTC(DARK_PURPLE, Form.BOLD, "-----Page " + pg + " of " + ClaimPageTracker.getMaxPage(filter) + "-----"));
                 int i = (pg - 1) * 3;
                 for(ClaimArea claim : cPage.getClaimsInPage()) {
-                    sendMessage(sender, DARK_RED  + "" + UNDERLINE + "Claim " + (i + 1));
-                    sendMessage(sender, BLUE + "Owner: " + GREEN + CommandUtils.getNameForUUID(claim.getOwner(), server));
+                    sendMessage(sender, DARK_RED, Form.UNDERLINE, "Claim " + (i + 1));
+                    sendMessage(sender, new FTC(BLUE, "Owner: "), new FTC(GREEN, CommandUtils.getNameForUUID(claim.getOwner(), server)));
                     sender.sendMessage(new TextComponentStyled(BLUE + "Claim True Name: " + YELLOW + claim.getTrueViewName(), new ClaimInfoChatStyle(claim.getTrueViewName())));
-                    sendMessage(sender, BLUE + "Dimension: " + DARK_PURPLE + claim.getDimensionID());
+                    sendMessage(sender, new FTC(BLUE, "Dimension: "), new FTC(DARK_PURPLE, claim.getDimensionID() + ""));
                     sender.sendMessage(new TextComponentStyled(BLUE + "Location: " + DARK_PURPLE + (claim.getMainPosition().getX()) + BLUE + ", " + DARK_PURPLE + (claim.getMainPosition().getZ()), new TeleportXYChatStyle(claim.getDimensionID(), claim.getMainPosition().getX(), claim.getMainPosition().getZ())));
                     i++;
                 }
@@ -150,25 +151,25 @@ public class CommandSubClaimList extends CommandCIBase {
                 }
             }
         } else if(sender.canUseCommand(4, "claimit.claim.list.others")) {
-            sendMessage(sender, "Detected server console. Getting all claims. Specify a name to get only their claims.");
+            sendBMessage(sender, "Detected server console. Getting all claims. Specify a name to get only their claims.");
             int i = 0;
             for(ClaimArea claim : ClaimManager.getManager().getClaimsList()) {
                 if(filter == null || claim.isOwner(filter)) {
                     i++;
-                    sendMessage(sender, "####CLAIM INFO####");
-                    sendMessage(sender, "Claim #" + i + ", owned by: " + CommandUtils.getNameForUUID(claim.getOwner(), server));
-                    sendMessage(sender, "Claim True Name: " + claim.getTrueViewName());
-                    sendMessage(sender, "Dimension: " + claim.getDimensionID());
-                    sendMessage(sender, "Location: " + (claim.getMainPosition().getX()) + ", " + (claim.getMainPosition().getZ()));
+                    sendBMessage(sender, "####CLAIM INFO####");
+                    sendBMessage(sender, "Claim #" + i + ", owned by: " + CommandUtils.getNameForUUID(claim.getOwner(), server));
+                    sendBMessage(sender, "Claim True Name: " + claim.getTrueViewName());
+                    sendBMessage(sender, "Dimension: " + claim.getDimensionID());
+                    sendBMessage(sender, "Location: " + (claim.getMainPosition().getX()) + ", " + (claim.getMainPosition().getZ()));
                 }
             }
             if(i == 0) {
-                sendMessage(sender, "No claims found.");
+                sendBMessage(sender, "No claims found.");
             }
         }
 
         if(args.length > 2) {
-            sendMessage(sender, "Invalid amount of arguments. Usage: " + this.getUsage(sender));
+            sendMessage(sender, RED, "Invalid amount of arguments. Usage: " + this.getUsage(sender));
         }
     }
     

@@ -7,6 +7,7 @@ import static net.minecraft.util.text.TextFormatting.RED;
 import its_meow.claimit.api.group.Group;
 import its_meow.claimit.api.group.GroupManager;
 import its_meow.claimit.command.CommandCIBase;
+import its_meow.claimit.util.text.FTC;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.command.SyntaxErrorException;
@@ -43,12 +44,12 @@ public class CommandSubGroupCreate extends CommandCIBase {
                 EntityPlayer player = (EntityPlayer) sender;
                 boolean pass = GroupManager.addGroup(new Group(groupname, player.getGameProfile().getId()));
                 if(pass) {
-                    sendMessage(sender, AQUA + "Created group: " + GREEN + groupname);
+                    sendMessage(sender, new FTC(AQUA, "Created group: "), new FTC(GREEN, groupname));
                 } else {
-                    sendMessage(sender, RED + "Failed to create group. There is another group with this name.");
+                    sendMessage(sender, RED, "Failed to create group. There is another group with this name.");
                 }
             } else {
-                sendMessage(sender, "You must be a player to use this command!");
+                sendMessage(sender, RED, "You must be a player to use this command!");
             }
         } else {
             throw new SyntaxErrorException("Invalid syntax. Usage: " + this.getUsage(sender));

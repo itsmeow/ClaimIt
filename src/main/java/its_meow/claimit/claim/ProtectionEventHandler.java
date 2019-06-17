@@ -16,6 +16,7 @@ import its_meow.claimit.api.event.claim.ClaimCheckPermissionEvent;
 import its_meow.claimit.config.ClaimItConfig;
 import its_meow.claimit.permission.ClaimItPermissions;
 import its_meow.claimit.util.command.CommandUtils;
+import its_meow.claimit.util.text.FTC;
 import net.minecraft.block.BlockGrass;
 import net.minecraft.block.BlockTallGrass;
 import net.minecraft.block.state.IBlockState;
@@ -119,29 +120,29 @@ public class ProtectionEventHandler {
                         if(newClaim.getSideLengthX() >= 1 && newClaim.getSideLengthZ() >= 1) {
                             ClaimManager.ClaimAddResult result = ClaimManager.getManager().addClaim(newClaim); // Add claim
                             if(result == ClaimManager.ClaimAddResult.ADDED) {
-                                player.sendMessage(new TextComponentString(GREEN + "Claim added successfully!"));
+                                player.sendMessage(new FTC("Claim added successfully!", GREEN));
                             } else if(result == ClaimManager.ClaimAddResult.OVERLAP) {
-                                player.sendMessage(new TextComponentString(RED + "This claim overlaps another claim!"));
+                                player.sendMessage(new FTC("This claim overlaps another claim!", RED));
                             } else if(result == ClaimManager.ClaimAddResult.TOO_LARGE) {
-                                player.sendMessage(new TextComponentString(RED + "This claim exceeds the maximum possible size!"));
+                                player.sendMessage(new FTC("This claim exceeds the maximum possible size!", RED));
                             } else {
-                                player.sendMessage(new TextComponentString(RED + "This claim could not be added!"));
+                                player.sendMessage(new FTC("This claim could not be added!", RED));
                             }
                         } else {
-                            player.sendMessage(new TextComponentString(RED + "Your claim must have a length of at least 2 in both directions!"));
+                            player.sendMessage(new FTC("Your claim must have a length of at least 2 in both directions!", RED));
                         }
                         // Remove data so a new claim can be made.
                         data.removeTag("Corner1");
                     } else {
                         data.setIntArray("Corner1", posArray);
-                        player.sendMessage(new TextComponentString(BLUE + "Added corner 1 at " + AQUA + posArray[0] + BLUE + ", " + AQUA + posArray[1]));
+                        player.sendMessage(new FTC("Added corner 1 at " + AQUA + posArray[0] + BLUE + ", " + AQUA + posArray[1], BLUE));
                     }
                 } else {
                     data.removeTag("Corner1");
-                    player.sendMessage(new TextComponentString(RED + "You cannot set a corner inside an existing claim!"));
+                    player.sendMessage(new FTC("You cannot set a corner inside an existing claim!", RED));
                 }
             } else {
-                player.sendMessage(new TextComponentString(RED + "You do not have permission to make claims!"));
+                player.sendMessage(new FTC("You do not have permission to make claims!", RED));
             }
 
         }

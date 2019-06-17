@@ -1,7 +1,6 @@
 package its_meow.claimit.command;
 
 import static net.minecraft.util.text.TextFormatting.AQUA;
-import static net.minecraft.util.text.TextFormatting.BOLD;
 import static net.minecraft.util.text.TextFormatting.YELLOW;
 
 import java.util.ArrayList;
@@ -17,6 +16,7 @@ import org.apache.commons.lang3.tuple.Pair;
 
 import its_meow.claimit.util.command.CommandHelpRegistry;
 import its_meow.claimit.util.text.AutoFillHelpChatStyle;
+import its_meow.claimit.util.text.FTC.Form;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.server.MinecraftServer;
@@ -90,10 +90,10 @@ public abstract class CommandCITreeBase extends CommandCIBase {
     }
 
     public void displaySubCommands(MinecraftServer server, ICommandSender sender) throws CommandException {
-        sendMessage(sender, AQUA + "" + BOLD + "Subcommands: ");
+        sendMessage(sender, AQUA, Form.BOLD, "Subcommands: ");
         for(CommandCIBase subCmd : this.getSubCommands()) {
             String cmd = this.getUsage(sender).substring(0, this.getUsage(sender).indexOf(this.getName() + " ") + this.getName().length()) + " " + subCmd.getName();
-            sendSMessage(sender, YELLOW + cmd, new AutoFillHelpChatStyle(cmd, subCmd, sender));
+            sendSMessage(sender, cmd, new AutoFillHelpChatStyle(cmd, subCmd, sender).setColor(YELLOW));
         }
     }
 

@@ -9,6 +9,7 @@ import its_meow.claimit.api.claim.ClaimArea;
 import its_meow.claimit.api.claim.ClaimManager;
 import its_meow.claimit.command.CommandCIBase;
 import its_meow.claimit.util.command.CommandUtils;
+import its_meow.claimit.util.text.FTC;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.command.SyntaxErrorException;
@@ -42,21 +43,21 @@ public class CommandSubClaimSetName extends CommandCIBase {
 					if(CommandUtils.isAdminWithNodeOrOwner(sender, claim, "claimit.command.claimit.claim.setname.others")) {
 						boolean pass = claim.setViewName(args[0]);
 						if(pass) {
-							sendMessage(sender, AQUA + "Set this claim's name to: " + GREEN + claim.getDisplayedViewName());
+						    sendMessage(sender, new FTC(AQUA, "Set this claim's name to: "), new FTC(GREEN, claim.getDisplayedViewName()));
 							if(AdminManager.isAdmin(player)) {
-								sendMessage(sender, AQUA + "Set this claim's true name to: " + GREEN + claim.getTrueViewName());
+								sendMessage(sender, new FTC(AQUA, "Set this claim's true name to: "), new FTC(GREEN, claim.getTrueViewName()));
 							}
 						} else {
-							sendMessage(sender, RED + "Failed to set name. There is another claim " + (AdminManager.isAdmin(player) ? "this player owns" : "you own") + " with this name.");
+							sendMessage(sender, RED, "Failed to set name. There is another claim " + (AdminManager.isAdmin(player) ? "this player owns" : "you own") + " with this name.");
 						}
 					} else {
-						sendMessage(sender, RED + "You cannot rename this claim!");
+						sendMessage(sender, RED, "You cannot rename this claim!");
 					}
 				} else {
-					sendMessage(sender, RED + "No claim there or you don't own the claim!");
+					sendMessage(sender, RED, "No claim there or you don't own the claim!");
 				}
 			} else {
-				sendMessage(sender, "You must be a player to use this command!");
+				sendMessage(sender, RED, "You must be a player to use this command!");
 			}
 		} else {
 			throw new SyntaxErrorException("Specify a name with no spaces. Usage: " + this.getUsage(sender));

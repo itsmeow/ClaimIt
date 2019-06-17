@@ -15,6 +15,7 @@ import its_meow.claimit.api.group.GroupManager;
 import its_meow.claimit.api.permission.ClaimPermissionMember;
 import its_meow.claimit.command.CommandCIBase;
 import its_meow.claimit.util.command.CommandUtils;
+import its_meow.claimit.util.text.FTC;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
@@ -72,33 +73,33 @@ public class CommandSubGroupPermission extends CommandCIBase {
                     if(!group.inPermissionList(permission, id) || group.isOwner(id)) {
                         if(CommandUtils.isAdminNoded(sender, "claimit.command.claimit.group.permission.others") || (sender instanceof EntityPlayer && group.isOwner((EntityPlayer) sender))) {
                             group.addMember(id, permission);
-                            sendMessage(sender, GREEN + "Successfully added " + YELLOW + username + GREEN + " to group " + DARK_GREEN + groupname + GREEN + " with permission " + AQUA + permission.parsedName);
+                            sendMessage(sender, new FTC(GREEN, "Successfully added "), new FTC(YELLOW, username), new FTC(GREEN, " to group "), new FTC(DARK_GREEN, groupname), new FTC(GREEN, " with permission "), new FTC(AQUA, permission.parsedName));
                         } else {
-                            sendMessage(sender, RED + "You do not own this group!");
+                            sendMessage(sender, RED, "You do not own this group!");
                         }
                     } else {
-                        sendMessage(sender, YELLOW + "This player already has that permission!");
+                        sendMessage(sender, YELLOW, "This player already has that permission!");
                     }
                 } else if(action.equals("remove")) {
                     // Remove user
                     if(group.inPermissionList(permission, id)) {
                         if(CommandUtils.isAdminNoded(sender, "claimit.command.claimit.group.permission.others") || (sender instanceof EntityPlayer && group.isOwner((EntityPlayer) sender))) {
                             group.removeMember(id, permission);
-                            sendMessage(sender, GREEN + "Successfully removed permission " + AQUA + permission.parsedName + GREEN + " from user " + YELLOW + username + GREEN + " in group " + DARK_GREEN + groupname);
+                            sendMessage(sender, new FTC(GREEN, "Successfully removed permission "), new FTC(AQUA, permission.parsedName), new FTC(GREEN, " from user "), new FTC(YELLOW, username), new FTC(GREEN, " in group "), new FTC(DARK_GREEN, groupname));
                         } else {
-                            sendMessage(sender, RED + "You do not own this group!");
+                            sendMessage(sender, RED, "You do not own this group!");
                         }
                     } else {
-                        sendMessage(sender, YELLOW + "This player does not have that permission!");
+                        sendMessage(sender, YELLOW, "This player does not have that permission!");
                     }
                 } else {
                     throw new WrongUsageException("Invalid action! Specify add or remove. Usage: " + this.getUsage(sender));
                 }
             } else {
-                sendMessage(sender, RED + "You do not own this group!");
+                sendMessage(sender, RED, "You do not own this group!");
             }
         } else {
-            sendMessage(sender, RED + "No such group: " + groupname);
+            sendMessage(sender, RED, "No such group: " + groupname);
         }
     }
     

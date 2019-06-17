@@ -55,7 +55,7 @@ public class CommandSubClaimDelete extends CommandCIBase {
         }
 
         boolean success = ClaimManager.getManager().deleteClaim(claim);
-        sendMessage(sender, YELLOW + (success ? "Claim deleted." : "Claim was not deleted, something canceled it."));
+        sendMessage(sender, YELLOW, (success ? "Claim deleted." : "Claim was not deleted, something canceled it."));
     }
 
     @Override
