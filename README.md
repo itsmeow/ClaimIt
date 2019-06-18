@@ -20,6 +20,30 @@ ClaimIt has an expansive API for integration and addition. You can view its docu
 ClaimIt is the base mod, which the API is completely independent of. ClaimIt handles protections and hooks/commands.<br>
 ClaimIt includes an expansive ingame help command, accessed with `/claimit help`.
 
+## Member Permissions
+Member permissions are a subclass of permission that can be assigned to a player in a group or claim. Different member permissions grant different permissions and abilities.
+
+ - `modify`: Allows modification of blocks - placing and breaking.
+ - `use`: Allows use of items (flint and steel, buckets, etc), interactions with blocks (chests, furnaces, doors, levers), and some interactions with entities (shearing sheep, milking cows, etc, which also require `entity`).
+ - `entity`: Allows damaging entities and interactions with entities (shearing sheep, milking cows, etc, which also require `use`)
+ - `pvp`: Allows damaging other players. Can be disabled by server admin in the config.
+ - `manage_perms`: Allows use of toggle commands as well as adding or removing members in a claim
+
+## Toggle Permissions
+Toggle permissions are a subclass of permission that can be enabled or disabled per claim, and are stored per claim. They can control certain global protections for claims, such as explosions.
+
+ - `living_modify` <sub>(Default OFF)</sub>: Turning on allows zombies to break doors, enderman to take blocks, and other entity interactions that break blocks.
+ - `drop_item` <sub>(Default ON)</sub>: Turning on allows players to drop items.
+ - `pickup_item` <sub>(Default ON)</sub>: Turning on allows players to pick up items.
+ - `allow_projectiles` <sub>(Default OFF)</sub>: Turning on allows projectiles to impact - this may make animals vulnerable to enchantments like Flame, since they ignore damage events!
+ - `entity_spawn` <sub>(Default OFF)</sub>: Turning on allows mobs and animals to spawn.
+ - `pressure_plate` <sub>(Default ON)</sub>: Disabling blocks pressure plates for all reasons except players with USE. Having on still prevents players without USE from using them, but allows mobs to use them. Be aware dropping items to put plates down works while this is on.
+ - `explosion` <sub>(Default OFF)</sub>: Enabling allows explosions to damage entities and blocks inside the claim.
+ - `fire_create` <sub>(Default OFF)</sub>: Enabling allows fire to be created and spread inside/on the border of the claim.
+
+## Member Toggle Permissions
+There can also be toggle perms sharing names with member perms. Toggling these "member toggles" to ON makes that member permission publicly available. E.g. toggling the `modify` toggle will allow anyone to place and break blocks in that claim. Not all member permissions have a toggle.
+
 ## Commands
 ClaimIt includes an abundance of commands both for player use and admin use.
 
