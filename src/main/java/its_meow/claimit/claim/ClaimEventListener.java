@@ -92,7 +92,9 @@ public class ClaimEventListener implements IWorldEventListener {
                 BlockPos posF = pos.offset(facing);
                 ClaimArea claim = ClaimManager.getManager().getClaimAtLocation(world, posF);
                 if(claim != null && !claim.isPermissionToggled(ClaimItPermissions.FIRE_CREATE)) {
-                    world.setBlockState(pos, oldState);
+                    if(!(world.getBlockState(pos.down()).getBlock() == Blocks.OBSIDIAN && claim.isPermissionToggled(ClaimItPermissions.FIRE_CREATE_ON_OBSIDIAN))) {
+                        world.setBlockState(pos, oldState);
+                    }
                 }
             }
         }

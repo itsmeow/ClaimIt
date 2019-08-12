@@ -13,10 +13,11 @@ public class ClaimItPermissions {
     public static final ClaimPermissionToggle PRESSURE_PLATE = new ClaimPermissionToggle("pressure_plate", true, "Disabling blocks pressure plates for all reasons except players with USE. Having on still prevents players without USE from using them, but allows mobs to use them.");
     public static final ClaimPermissionToggle EXPLOSION = new ClaimPermissionToggle("explosion", false, "Enabling allows explosions to damage entities and blocks inside the claim.");
     public static final ClaimPermissionToggle FIRE_CREATE = new ClaimPermissionToggle("fire_create", false, "Enabling allows fire to be created and spread inside the claim.");
+    public static final ClaimPermissionToggle FIRE_CREATE_ON_OBSIDIAN = new ClaimPermissionToggle("fire_create_on_obsidian", true, "Allows creation of fire on obsidian blocks, mostly for nether portals.");
 
     public static void register() {
         // Toggles
-        ClaimPermissionRegistry.addPermission(LIVING_MODIFY, DROP_ITEM, PICKUP_ITEM, ALLOW_PROJECTILES, ENTITY_SPAWN, PRESSURE_PLATE, EXPLOSION, FIRE_CREATE);
+        ClaimPermissionRegistry.addPermission(LIVING_MODIFY, DROP_ITEM, PICKUP_ITEM, ALLOW_PROJECTILES, ENTITY_SPAWN, PRESSURE_PLATE, EXPLOSION, FIRE_CREATE, FIRE_CREATE_ON_OBSIDIAN);
     }
     
 }

@@ -1,6 +1,6 @@
-package its_meow.claimit.userconfig;
+package its_meow.claimit.api.userconfig;
 
-import its_meow.claimit.userconfig.UserConfigType.UserConfig;
+import its_meow.claimit.api.userconfig.UserConfigType.UserConfig;
 
 public class UserConfigs {
 	

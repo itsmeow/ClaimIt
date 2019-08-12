@@ -5,10 +5,10 @@ import static net.minecraft.util.text.TextFormatting.GOLD;
 import static net.minecraft.util.text.TextFormatting.GREEN;
 import static net.minecraft.util.text.TextFormatting.YELLOW;
 
+import its_meow.claimit.api.userconfig.UserConfigType;
+import its_meow.claimit.api.userconfig.UserConfigTypeRegistry;
+import its_meow.claimit.api.userconfig.UserConfigType.UserConfig;
 import its_meow.claimit.command.CommandCIBase;
-import its_meow.claimit.userconfig.UserConfigType;
-import its_meow.claimit.userconfig.UserConfigType.UserConfig;
-import its_meow.claimit.userconfig.UserConfigTypeRegistry;
 import its_meow.claimit.util.text.FTC;
 import its_meow.claimit.util.text.FTC.Form;
 import net.minecraft.command.CommandException;

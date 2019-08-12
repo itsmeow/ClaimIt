@@ -40,6 +40,8 @@ Toggle permissions are a subclass of permission that can be enabled or disabled 
  - `pressure_plate` <sub>(Default ON)</sub>: Disabling blocks pressure plates for all reasons except players with USE. Having on still prevents players without USE from using them, but allows mobs to use them. Be aware dropping items to put plates down works while this is on.
  - `explosion` <sub>(Default OFF)</sub>: Enabling allows explosions to damage entities and blocks inside the claim.
  - `fire_create` <sub>(Default OFF)</sub>: Enabling allows fire to be created and spread inside/on the border of the claim.
+ - `fire_create_on_obsidian` <sub>(Default ON)</sub>: Allows creation of fire on obsidian blocks, mostly for nether portals.
+ - `allow_fake_player_bypass` <sub>(Default ON)</sub>: Grants fake players permissions in the claim. This applies to things like BC Quarries or "Block Breakers"
 
 ## Member Toggle Permissions
 There can also be toggle perms sharing names with member perms. Toggling these "member toggles" to ON makes that member permission publicly available. E.g. toggling the `modify` toggle will allow anyone to place and break blocks in that claim. Not all member permissions have a toggle.

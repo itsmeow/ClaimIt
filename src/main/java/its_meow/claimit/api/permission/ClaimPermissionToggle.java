@@ -2,7 +2,7 @@ package its_meow.claimit.api.permission;
 
 public class ClaimPermissionToggle extends ClaimPermission {
 	
-	public final boolean defaultValue;
+	public boolean defaultValue;
 	protected boolean force;
 	protected boolean toForce;
 
@@ -28,6 +28,9 @@ public class ClaimPermissionToggle extends ClaimPermission {
      */
     public void setForceValue(boolean force) {
         this.force = force;
+        if(this.getForceEnabled()) {
+            this.defaultValue = force;
+        }
     }
     
     /**

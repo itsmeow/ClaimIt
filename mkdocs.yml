@@ -14,6 +14,8 @@ nav:
     - Group Events: 'events/group_events.md'
   - Admins:
     - Checking Admins: 'admins/admins.md'
+  - User Configs:
+    - About User Configs: 'userconfigs/index.md'
 
 site_name: ClaimIt API
 theme:

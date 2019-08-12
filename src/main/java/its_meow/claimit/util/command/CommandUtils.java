@@ -27,6 +27,7 @@ import net.minecraft.command.ICommandSender;
 import net.minecraft.command.PlayerNotFoundException;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
+import net.minecraftforge.fml.common.Loader;
 
 public class CommandUtils {
 
@@ -209,6 +210,10 @@ public class CommandUtils {
             list.add(perm.parsedName);
         }
         return list;
+    }
+    
+    public static boolean checkDefaultNode(EntityPlayer player, int permLevel, String node) {
+        return player.canUseCommand(permLevel, node) || !Loader.isModLoaded("sponge");
     }
 
 }

@@ -3,10 +3,10 @@ package its_meow.claimit.command.claimit;
 import java.util.ArrayList;
 import java.util.List;
 
+import its_meow.claimit.api.userconfig.UserConfigType;
+import its_meow.claimit.api.userconfig.UserConfigTypeRegistry;
+import its_meow.claimit.api.userconfig.UserConfigType.UserConfig;
 import its_meow.claimit.command.CommandCIBase;
-import its_meow.claimit.userconfig.UserConfigType;
-import its_meow.claimit.userconfig.UserConfigType.UserConfig;
-import its_meow.claimit.userconfig.UserConfigTypeRegistry;
 import its_meow.claimit.util.text.FTC;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;

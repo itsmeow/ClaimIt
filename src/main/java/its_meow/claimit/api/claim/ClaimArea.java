@@ -29,6 +29,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.fml.common.eventhandler.Event.Result;
 
 public class ClaimArea extends MemberContainer {
@@ -117,6 +118,9 @@ public class ClaimArea extends MemberContainer {
         } else if(event.getResult() == Result.DENY) {
             return false;
         } else {
+            if(player instanceof FakePlayer) {
+                return this.isPermissionToggled(ClaimPermissions.ALLOW_FAKE_PLAYER_BYPASS);
+            }
             return (this.isOwner(player) || isMemberPermissionToggled(permission) || this.memberLists.getValues(permission).contains(player.getGameProfile().getId()) || hasPermissionFromGroup(permission, player));
         }
     }
@@ -156,6 +160,9 @@ public class ClaimArea extends MemberContainer {
      *  @param perm - The permission to check
      *  @return The toggle status (on = true) **/
     public boolean isPermissionToggled(ClaimPermissionToggle perm) {
+        if(perm.getForceEnabled()) {
+            return perm.getForceValue();
+        }
         if(!toggles.containsKey(perm)) {
             return perm.defaultValue;
         }
@@ -304,7 +311,7 @@ public class ClaimArea extends MemberContainer {
     public boolean setViewName(String nameIn) {
         boolean pass = true;
         for(ClaimArea claim : ClaimManager.getManager().getClaimsOwnedByPlayer(this.getOwner())) {
-            if(claim.getTrueViewName().equals(nameIn) && claim != this) { // Claim has the same name, is not this claim, and is owned by the same player
+            if(claim.getTrueViewName().equals(this.ownerUUID + "_" + nameIn) && claim != this) { // Claim has the same name, is not this claim, and is owned by the same player
                 pass = false;
             }
         }

@@ -1,4 +1,4 @@
-package its_meow.claimit.userconfig;
+package its_meow.claimit.api.userconfig;
 
 import java.util.HashMap;
 import java.util.Map;

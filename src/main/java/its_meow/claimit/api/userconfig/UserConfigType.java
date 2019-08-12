@@ -1,4 +1,4 @@
-package its_meow.claimit.userconfig;
+package its_meow.claimit.api.userconfig;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -6,9 +6,9 @@ import java.util.UUID;
 
 import com.google.common.collect.ImmutableMap;
 
+import its_meow.claimit.api.userconfig.UserConfigValueStorage.UserConfigTypeStorage.UserConfigUUIDValue;
 import its_meow.claimit.api.util.nbt.NBTDeserializer;
 import its_meow.claimit.api.util.nbt.NBTSerializer;
-import its_meow.claimit.userconfig.UserConfigValueStorage.UserConfigTypeStorage.UserConfigUUIDValue;
 
 public abstract class UserConfigType<T> {
 	

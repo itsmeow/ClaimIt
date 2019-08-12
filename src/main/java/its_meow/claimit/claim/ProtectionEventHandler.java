@@ -95,7 +95,7 @@ public class ProtectionEventHandler {
             e.setCanceled(!claim.canUse(player));
         } else if(claim == null && ClaimIt.claiming_item != null && e.getItemStack().getItem() == ClaimIt.claiming_item && !world.isRemote) { // Add a claim with shears
             EntityPlayer player = e.getEntityPlayer();
-            if(player.canUseCommand(0, "claimit.claim.create")) {
+            if(CommandUtils.checkDefaultNode(player, 0, "claimit.claim.create")) {
                 EnumHand hand = e.getHand();
                 ItemStack stack = player.getHeldItem(hand);
                 NBTTagCompound data = stack.getTagCompound();

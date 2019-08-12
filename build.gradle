@@ -28,6 +28,7 @@ minecraft {
     mappings = project.mcp_mappings
     replace "@VERSION@", "${project.mc_version}-${project.mod_version}"
     replace "@APIVERSION@", "${project.mc_version}-${project.api_version}"
+    replace "after-required:claimitapi", "after-required:claimitapi@[${project.mc_version}-${project.api_version}]"
     makeObfSourceJar = false
 }
 
@@ -92,7 +93,7 @@ jar {
             "Implementation-Title": project.name,
             "Implementation-Version": "${project.version}",
             "Built-On": "${project.mc_version}-${project.forge_version}",
-            "Maven-Artifact": "${project.group}:${project.archivesBaseName}:${project.version}",
+            "Maven-Artifact": "${project.group}:${project.archivesBaseName}:${project.version}"
     )
     if (project.hasProperty('api_package')) {
         exclude String.valueOf(findProperty('api_package')).replace(".", "/") + "/**"

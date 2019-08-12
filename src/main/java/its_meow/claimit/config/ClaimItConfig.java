@@ -27,4 +27,11 @@ public class ClaimItConfig {
     @Config.Comment("Sets the cooldown in seconds between each use of show borders")
     public static int show_borders_cooldown = 60;
     
+    @Config.RangeInt(min = 0, max = Integer.MAX_VALUE)
+    @Config.Comment("The period, in ticks (1/20 of a second), at which \"claim_blocks_accrual_amount\" rewards will be seperated by. 0 to disable.")
+    public static int claim_blocks_accrual_period = 0;
+    
+    @Config.Comment("The amount of claim blocks to be rewarded to players every \"claim_blocks_accrual_period\" ticks")
+    public static int claim_blocks_accrual_amount = 0;
+    
 }

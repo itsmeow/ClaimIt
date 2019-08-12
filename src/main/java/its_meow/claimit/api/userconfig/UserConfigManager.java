@@ -1,11 +1,11 @@
-package its_meow.claimit.userconfig;
+package its_meow.claimit.api.userconfig;
 
 import java.util.UUID;
 
 import javax.annotation.Nullable;
 
-import its_meow.claimit.serialization.ClaimItGlobalDataSerializer;
-import its_meow.claimit.userconfig.UserConfigType.UserConfig;
+import its_meow.claimit.api.serialization.GlobalDataSerializer;
+import its_meow.claimit.api.userconfig.UserConfigType.UserConfig;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.storage.WorldSavedData;
 import net.minecraftforge.common.util.Constants;
@@ -18,7 +18,7 @@ public class UserConfigManager {
     }
 
     public static void serialize() {
-        NBTTagCompound data = ClaimItGlobalDataSerializer.get().data;
+        NBTTagCompound data = GlobalDataSerializer.get().data;
         NBTTagCompound configsData = new NBTTagCompound();
         for(Class<?> clazz : UserConfigTypeRegistry.getRegistries().keySet()) {
             UserConfigType<?> type = UserConfigTypeRegistry.getRegistries().get(clazz);
@@ -36,12 +36,12 @@ public class UserConfigManager {
             }
         }
         data.setTag("USERCONFIG", configsData);
-        WorldSavedData wsd = ClaimItGlobalDataSerializer.get();
+        WorldSavedData wsd = GlobalDataSerializer.get();
         wsd.markDirty();
     }
 
     public static void deserialize() {
-        NBTTagCompound data = ClaimItGlobalDataSerializer.get().data;
+        NBTTagCompound data = GlobalDataSerializer.get().data;
         NBTTagCompound configsData = data.getCompoundTag("USERCONFIG");
         for(String uuidStr : configsData.getKeySet()) {
             if(configsData.hasKey(uuidStr, Constants.NBT.TAG_COMPOUND)) {
