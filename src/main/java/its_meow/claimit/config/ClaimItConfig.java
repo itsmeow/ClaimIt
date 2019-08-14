@@ -34,4 +34,7 @@ public class ClaimItConfig {
     @Config.Comment("The amount of claim blocks to be rewarded to players every \"claim_blocks_accrual_period\" ticks")
     public static int claim_blocks_accrual_amount = 0;
     
+    @Config.Comment("Deletes chunks that do not have claims present when enabled. After all region data has been pruned, this option does nothing until the server is restarted. DO NOT USE THIS WITHOUT BACKUPS OR AN UNDERSTANDING OF WHAT YOU ARE DOING. THIS WILL DELETE ANYTHING THAT IS NOT WITHIN A CHUNK THAT HAS A CLAIM AND RETURN IT TO THE DEFAULT GENERATION. I AM NOT RESPONSIBLE FOR ANY LOSS OF DATA. DO NOT ASK ME IF YOU CAN UNDO THIS, YOU CANNOT.")
+    public static boolean prune_unclaimed_chunks = false;
+    
 }
