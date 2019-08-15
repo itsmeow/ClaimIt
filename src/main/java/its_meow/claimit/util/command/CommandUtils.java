@@ -16,6 +16,7 @@ import com.mojang.authlib.GameProfile;
 import its_meow.claimit.api.AdminManager;
 import its_meow.claimit.api.claim.ClaimArea;
 import its_meow.claimit.api.claim.ClaimManager;
+import its_meow.claimit.api.claim.SubClaimArea;
 import its_meow.claimit.api.group.GroupManager;
 import its_meow.claimit.api.permission.ClaimPermissionMember;
 import its_meow.claimit.api.permission.ClaimPermissionRegistry;
@@ -94,6 +95,46 @@ public class CommandUtils {
         }
         return permission;
     }
+    
+    @Nonnull
+    public static SubClaimArea getSubClaimWithNames(int startIndex, String[] args, ICommandSender sender) throws CommandException {
+        String claimName = null;
+        if(args.length >= 1) {
+            claimName = args[0];
+        }
+        ClaimArea claim = CommandUtils.getClaimWithNameOrLocation(claimName, sender);
+        if(claimName != null && claim == null) {
+            claim = ClaimManager.getManager().getClaimAtLocation(sender.getEntityWorld(), sender.getPosition());
+        }
+        SubClaimArea subClaim = null;
+        if(claimName == null && claim == null) {
+            throw new CommandException("There is no claim here!");
+        } else if(claim != null && claimName != null && args.length == 1) {
+            if(claim.getSubClaimWithName(claimName) != null) {
+                subClaim = claim.getSubClaimWithName(claimName);
+            } else {
+                throw new CommandException("There is no subclaim in this claim with that name!");
+            }
+        } else if(claim == null && claimName != null) {
+            throw new CommandException("No claim with this name!");
+        }
+
+        String subClaimName = null;
+        if(args.length == 2) {
+            subClaimName = args[1];
+            subClaim = claim.getSubClaimWithName(subClaimName);
+            if(subClaim == null) {
+                throw new CommandException("There is no subclaim with that name in that claim!");
+            }
+        }
+        if(args.length == 0 && claim != null) {
+            subClaim = claim.getSubClaimAtLocation(sender.getPosition());
+        }
+        if(subClaim == null || claim == null) {
+            throw new CommandException("Could not get subclaim!");
+        }
+        return subClaim;
+    }
 
     public static boolean canManagePerms(ICommandSender sender, ClaimArea claim) {
         if(sender instanceof EntityPlayer) {
@@ -170,6 +211,22 @@ public class CommandUtils {
             if(owned != null) {
                 for(ClaimArea claim : owned) {
                     list.add(claim.getDisplayedViewName());
+                }
+            }
+        }
+        return list;
+    }
+    
+    public static List<String> getSubclaimNames(@Nullable List<String> list, ICommandSender sender, ClaimArea parent) {
+        if(list == null) {
+            list = new ArrayList<String>();
+        }
+        if(sender instanceof EntityPlayer) {
+            EntityPlayer player = (EntityPlayer) sender;
+            Set<SubClaimArea> owned = parent.subclaims;
+            if(owned != null && owned.size() > 0) {
+                for(SubClaimArea subclaim : owned) {
+                    list.add(subclaim.getDisplayedViewName());
                 }
             }
         }

@@ -12,7 +12,10 @@ import java.util.Set;
 import its_meow.claimit.ClaimIt;
 import its_meow.claimit.api.claim.ClaimArea;
 import its_meow.claimit.api.claim.ClaimManager;
+import its_meow.claimit.api.claim.ClaimManager.ClaimAddResult;
+import its_meow.claimit.api.claim.SubClaimArea;
 import its_meow.claimit.api.event.claim.ClaimCheckPermissionEvent;
+import its_meow.claimit.api.permission.ClaimPermissions;
 import its_meow.claimit.config.ClaimItConfig;
 import its_meow.claimit.permission.ClaimItPermissions;
 import its_meow.claimit.util.command.CommandUtils;
@@ -24,6 +27,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
@@ -52,6 +56,7 @@ import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.entity.player.PlayerPickupXpEvent;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.event.world.ExplosionEvent;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.Event.Result;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
@@ -62,7 +67,8 @@ public class ProtectionEventHandler {
 
     @SubscribeEvent(priority = EventPriority.LOW)
     public static void onPermissionCheck(ClaimCheckPermissionEvent event) {
-        if(CommandUtils.isAdminNoded(event.getCheckedPlayer(), "claimit.claim.manage.others")) {
+        EntityPlayerMP player = FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerList().getPlayerByUUID(event.getUUID());
+        if(player != null && CommandUtils.isAdminNoded(player, "claimit.claim.manage.others")) {
             event.setResult(Result.ALLOW);
         }
     }
@@ -80,6 +86,11 @@ public class ProtectionEventHandler {
                     player.replaceItemInInventory(slot, old);
                     e.getEntity().sendMessage(new TextComponentString(TextFormatting.RED + "Claiming item moved, canceling claim creation."));
                 }
+                if(old.getTagCompound().hasKey("SubCorner1")) {
+                    old.getTagCompound().removeTag("SubCorner1");
+                    player.replaceItemInInventory(slot, old);
+                    e.getEntity().sendMessage(new TextComponentString(TextFormatting.RED + "Claiming item moved, canceling subclaim creation."));
+                }
             }
         }
     }
@@ -93,6 +104,58 @@ public class ProtectionEventHandler {
         if(claim != null) {
             EntityPlayer player = e.getEntityPlayer();
             e.setCanceled(!claim.canUse(player));
+            if(!(claim instanceof SubClaimArea) && ClaimIt.claiming_item != null && e.getItemStack().getItem() == ClaimIt.claiming_item && !world.isRemote && claim.hasPermission(e.getEntityPlayer(), ClaimPermissions.MANAGE_PERMS)) {
+                if(CommandUtils.checkDefaultNode(player, 0, "claimit.claim.create")) {
+                    EnumHand hand = e.getHand();
+                    ItemStack stack = player.getHeldItem(hand);
+                    NBTTagCompound data = stack.getTagCompound();
+                    if(data == null) {
+                        NBTTagCompound newTag = new NBTTagCompound();
+                        data = newTag;
+                        stack.setTagCompound(newTag);
+                    }
+                    data.removeTag("Corner1");
+                    int[] posArray = {pos.getX(), pos.getZ()};
+                    if(data.hasKey("SubCorner1")) {
+                        player.sendMessage(new TextComponentString(BLUE + "Added subclaim corner 2 at " + AQUA + posArray[0] + BLUE + ", " + AQUA + posArray[1]));
+                        int[] corner1 = data.getIntArray("SubCorner1");
+                        int[] corner2 = posArray;
+                        BlockPos c1 = new BlockPos(corner1[0], 0, corner1[1]);
+                        BlockPos c2 = new BlockPos(corner2[0], 0, corner2[1]);
+                        BlockPos sideL = c2.subtract(c1); // Subtract to get side lengths
+                        // Claim corners are automatically corrected to proper values by constructor
+                        SubClaimArea newClaim;
+                        newClaim = new SubClaimArea(claim, c1.getX(), c1.getZ(), sideL.getX(), sideL.getZ());
+                        if(newClaim.getSideLengthX() >= 1 && newClaim.getSideLengthZ() >= 1) {
+                            ClaimManager.ClaimAddResult result = claim.addSubClaim(newClaim); // Add claim
+                            if(result == ClaimManager.ClaimAddResult.ADDED) {
+                                player.sendMessage(new FTC("Subclaim added successfully!", GREEN));
+                            } else if(result == ClaimManager.ClaimAddResult.OVERLAP) {
+                                player.sendMessage(new FTC("This subclaim overlaps another subclaim!", RED));
+                            } else if(result == ClaimManager.ClaimAddResult.TOO_LARGE) {
+                                player.sendMessage(new FTC("This subclaim fills the parent claim!", RED));
+                            } else if(result == ClaimAddResult.ALREADY_EXISTS) {
+                                player.sendMessage(new FTC("This subclaim already exists!", RED));
+                            } else if(result == ClaimAddResult.OUT_OF_BOUNDS) {
+                                player.sendMessage(new FTC("This subclaim extends outside of the parent claim!", RED));
+                            } else if(result == ClaimAddResult.SAME_NAME) {
+                                player.sendMessage(new FTC("This subclaim has the same name as another subclaim!", RED));
+                            } else {
+                                player.sendMessage(new FTC("This subclaim could not be added!", RED));
+                            }
+                        } else {
+                            player.sendMessage(new FTC("Your subclaim must have a length of at least 2 in both directions!", RED));
+                        }
+                        // Remove data so a new claim can be made.
+                        data.removeTag("SubCorner1");
+                    } else {
+                        data.setIntArray("SubCorner1", posArray);
+                        player.sendMessage(new FTC("Added subclaim corner 1 at " + AQUA + posArray[0] + BLUE + ", " + AQUA + posArray[1], BLUE));
+                    }
+                } else {
+                    player.sendMessage(new FTC("You do not have permission to make subclaims!", RED));
+                }
+            }
         } else if(claim == null && ClaimIt.claiming_item != null && e.getItemStack().getItem() == ClaimIt.claiming_item && !world.isRemote) { // Add a claim with shears
             EntityPlayer player = e.getEntityPlayer();
             if(CommandUtils.checkDefaultNode(player, 0, "claimit.claim.create")) {
@@ -104,6 +167,7 @@ public class ProtectionEventHandler {
                     data = newTag;
                     stack.setTagCompound(newTag);
                 }
+                data.removeTag("SubCorner1");
                 boolean isInClaim = ClaimManager.getManager().isBlockInAnyClaim(world, pos);
                 if(!isInClaim) {
                     int[] posArray = {pos.getX(), pos.getZ()};

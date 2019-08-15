@@ -10,7 +10,6 @@ import static net.minecraft.util.text.TextFormatting.ITALIC;
 import static net.minecraft.util.text.TextFormatting.RESET;
 import static net.minecraft.util.text.TextFormatting.YELLOW;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -25,6 +24,7 @@ import its_meow.claimit.command.claimit.CommandSubConfirm;
 import its_meow.claimit.command.claimit.CommandSubGroup;
 import its_meow.claimit.command.claimit.CommandSubHelp;
 import its_meow.claimit.command.claimit.CommandSubShowBorders;
+import its_meow.claimit.command.claimit.CommandSubSubClaim;
 import its_meow.claimit.config.ClaimItConfig;
 import its_meow.claimit.util.command.CommandHelpRegistry;
 import its_meow.claimit.util.text.AutoFillHelpChatStyle;
@@ -41,6 +41,7 @@ public class CommandClaimIt extends CommandCITreeBase {
 	    super(
 	        new CommandSubClaim(),
 		    new CommandSubGroup(),
+		    new CommandSubSubClaim(),
 		    new CommandSubAdmin(),
 		    new CommandSubConfirm(),
 		    new CommandSubCancel(),
@@ -67,14 +68,9 @@ public class CommandClaimIt extends CommandCITreeBase {
         return "Base command for all of ClaimIt. Click on subcommands/run them to do stuff. Provides version of mod as well.";
     }
 
-	private String aliasList = "";
-
 	@Override
 	public List<String> getAliases() {
-		List<String> aliases = new ArrayList<String>();
-		aliases.add("ci");
-		aliases.iterator().forEachRemaining(s -> aliasList += "/" + s + " ");
-		return aliases;
+		return Arrays.asList("ci");
 	}
 
     @Override
@@ -83,13 +79,13 @@ public class CommandClaimIt extends CommandCITreeBase {
         sendMessage(sender, new FTC(GRAY, Form.BOLD, ClaimItAPI.NAME), new FTC(" Version ", DARK_PURPLE, false), new FTC(ClaimItAPI.VERSION, YELLOW, false));
         sendMessage(sender, new FTC(BLUE, "Claiming item is "), new TextComponentString("" + RESET + GREEN + ITALIC + ClaimItConfig.claim_create_item_display));
         sendMessage(sender, AQUA, Form.BOLD, "Subcommands: ");
-        List<String> subCommands = Arrays.asList(new String[] {"claim", "group", "config", "claimblocks", "showborders", "admin", "help"});
+        List<String> subCommands = Arrays.asList(new String[] {"claim", "group", "subclaim", "config", "claimblocks", "showborders", "admin", "help"});
         for(String cmdT : subCommands) {
             String cmd = "/claimit " + cmdT;
             CommandCIBase subCmd = this.getSubCommand(cmdT);
             sendSMessage(sender, YELLOW + cmd, new AutoFillHelpChatStyle(cmd, subCmd, sender));
         }
-        sendMessage(sender, new FTC(AQUA, "Alias(es): "), new FTC(YELLOW, aliasList));
+        sendMessage(sender, new FTC(AQUA, "Alias(es): "), new FTC(YELLOW, "/ci"));
     }
 
     @Override

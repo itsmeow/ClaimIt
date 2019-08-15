@@ -10,7 +10,6 @@ import its_meow.claimit.command.claimit.claim.CommandSubClaimPermission;
 import its_meow.claimit.command.claimit.claim.CommandSubClaimSetName;
 import its_meow.claimit.command.claimit.claim.CommandSubClaimToggle;
 import net.minecraft.command.ICommandSender;
-import net.minecraft.server.MinecraftServer;
 
 public class CommandSubClaim extends CommandCITreeBase {
 	
@@ -40,11 +39,6 @@ public class CommandSubClaim extends CommandCITreeBase {
 	@Override
 	public String getUsage(ICommandSender sender) {
 		return "/claimit claim <subcommand>";
-	}
-
-	@Override
-	public boolean checkPermission(MinecraftServer server, ICommandSender sender) {
-		return true;
 	}
 
     @Override

@@ -290,7 +290,10 @@ public class ClaimManager {
 	    ADDED,
 	    OVERLAP,
 	    CANCELLED,
-	    TOO_LARGE;
+	    TOO_LARGE,
+	    SAME_NAME,
+	    ALREADY_EXISTS,
+	    OUT_OF_BOUNDS;
 	}
 	
 }

@@ -7,11 +7,15 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import org.apache.logging.log4j.Level;
 
 import com.google.common.collect.ImmutableMap;
 
 import its_meow.claimit.api.ClaimItAPI;
+import its_meow.claimit.api.claim.ClaimManager.ClaimAddResult;
 import its_meow.claimit.api.event.claim.ClaimCheckPermissionEvent;
 import its_meow.claimit.api.group.Group;
 import its_meow.claimit.api.group.GroupManager;
@@ -21,14 +25,16 @@ import its_meow.claimit.api.permission.ClaimPermissionToggle;
 import its_meow.claimit.api.permission.ClaimPermissions;
 import its_meow.claimit.api.util.nbt.ClaimNBTUtil;
 import its_meow.claimit.api.util.objects.ClaimChunkUtil;
-import its_meow.claimit.api.util.objects.MemberContainer;
 import its_meow.claimit.api.util.objects.ClaimChunkUtil.ClaimChunk;
+import its_meow.claimit.api.util.objects.MemberContainer;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.fml.common.eventhandler.Event.Result;
 
@@ -48,6 +54,7 @@ public class ClaimArea extends MemberContainer {
      * defaults to {@link name}**/
     protected String viewName;
     protected Map<ClaimPermissionToggle, Boolean> toggles;
+    public Set<SubClaimArea> subclaims;
 
     public ClaimArea(int dimID, int posX, int posZ, int sideLengthX, int sideLengthZ, EntityPlayer player) {
         this(dimID, posX, posZ, sideLengthX, sideLengthZ, player.getGameProfile().getId());
@@ -62,6 +69,7 @@ public class ClaimArea extends MemberContainer {
         this.sideLengthZ = sideLengthZ;
         this.ownerUUID = ownerUUID;
         this.toggles = new HashMap<ClaimPermissionToggle, Boolean>();
+        this.subclaims = new HashSet<SubClaimArea>();
         for(ClaimPermissionToggle perm : ClaimPermissionRegistry.getTogglePermissions()) {
             this.toggles.putIfAbsent(perm, perm.defaultValue);
         }
@@ -83,6 +91,72 @@ public class ClaimArea extends MemberContainer {
     public ClaimArea(int dimID, int posX, int posZ, int sideLengthX, int sideLengthZ, UUID ownerUUID, String trueViewName) {
         this(dimID, posX, posZ, sideLengthX, sideLengthZ, ownerUUID);
         this.viewName = trueViewName;
+    }
+    
+    public ClaimAddResult addSubClaim(SubClaimArea subclaim) {
+        if(this.subclaims.contains(subclaim)) return ClaimAddResult.ALREADY_EXISTS;
+        if(subclaim.getArea() == this.getArea()) return ClaimAddResult.TOO_LARGE;
+        if(subclaim.parent != this) throw new RuntimeException("Invalid parent for subclaim");
+        for(BlockPos corner : subclaim.getFourCorners()) {
+            if(!this.isBlockPosInClaim(corner)) {
+                return ClaimAddResult.OUT_OF_BOUNDS;
+            }
+        }
+        for(SubClaimArea subclaimI : this.subclaims) {
+            for(int i = 0; i <= subclaim.getSideLengthX(); i++) {
+                for(int j = 0; j <= subclaim.getSideLengthZ(); j++) {
+                    BlockPos toCheck = new BlockPos(subclaim.getMainPosition().getX() + i, 0, subclaim.getMainPosition().getZ() + j);
+                    if(subclaimI.isBlockPosInClaim(toCheck)) {
+                        return ClaimAddResult.OVERLAP;
+                    }
+                }
+            }
+            
+            for(int i = 0; i <= subclaimI.getSideLengthX(); i++) {
+                for(int j = 0; j <= subclaimI.getSideLengthZ(); j++) {
+                    BlockPos toCheck = new BlockPos(subclaimI.getMainPosition().getX() + i, 0, subclaimI.getMainPosition().getZ() + j);
+                    if(subclaim.isBlockPosInClaim(toCheck)) {
+                        return ClaimAddResult.OVERLAP;
+                    }
+                }
+            }
+        }
+        subclaims.add(subclaim);
+        return ClaimAddResult.ADDED;
+    }
+    
+    public boolean removeSubClaim(SubClaimArea subclaim) {
+        return subclaims.remove(subclaim);
+    }
+    
+    @Nonnull
+    public ClaimArea getMostSpecificClaim(BlockPos pos) {
+        for(SubClaimArea subclaim : this.subclaims) {
+            if(subclaim.isBlockPosInClaim(pos)) {
+                return subclaim;
+            }
+        }
+        return this;
+    }
+    
+    @Nullable
+    public SubClaimArea getSubClaimAtLocation(BlockPos pos) {
+        for(SubClaimArea subclaim : this.subclaims) {
+            if(subclaim.isBlockPosInClaim(pos)) {
+                return subclaim;
+            }
+        }
+        return null;
+    }
+    
+    @Nullable
+    public SubClaimArea getSubClaimWithName(String viewName) {
+        for(SubClaimArea subclaim : this.subclaims) {
+            if(subclaim.getDisplayedViewName().equals(viewName)) {
+                return subclaim;
+            }
+        }
+        return null;
     }
 
     public boolean isOwner(UUID owner) {
@@ -111,18 +185,12 @@ public class ClaimArea extends MemberContainer {
 
     @Override
     public boolean hasPermission(EntityPlayer player, ClaimPermissionMember permission) {
-        ClaimCheckPermissionEvent event = new ClaimCheckPermissionEvent(this, player, permission);
-        MinecraftForge.EVENT_BUS.post(event);
-        if(event.getResult() == Result.ALLOW) {
-            return true;
-        } else if(event.getResult() == Result.DENY) {
-            return false;
-        } else {
-            if(player instanceof FakePlayer) {
-                return this.isPermissionToggled(ClaimPermissions.ALLOW_FAKE_PLAYER_BYPASS);
+        if(player instanceof FakePlayer) {
+            if(this.isPermissionToggled(ClaimPermissions.ALLOW_FAKE_PLAYER_BYPASS)) {
+                return true;
             }
-            return (this.isOwner(player) || isMemberPermissionToggled(permission) || this.memberLists.getValues(permission).contains(player.getGameProfile().getId()) || hasPermissionFromGroup(permission, player));
         }
+        return hasPermission(player.getGameProfile().getId(), permission);
     }
 
     @Override
@@ -136,10 +204,6 @@ public class ClaimArea extends MemberContainer {
         } else {
             return (this.isOwner(uuid) || isMemberPermissionToggled(permission) || this.memberLists.getValues(permission).contains(uuid) || hasPermissionFromGroup(permission, uuid));
         }
-    }
-
-    private boolean hasPermissionFromGroup(ClaimPermissionMember permission, EntityPlayer player) {
-        return hasPermissionFromGroup(permission, player.getGameProfile().getId());
     }
 
     private boolean hasPermissionFromGroup(ClaimPermissionMember permission, UUID uuid) {
@@ -346,6 +410,7 @@ public class ClaimArea extends MemberContainer {
 
         data = super.writeMembers(data);
         data = ClaimNBTUtil.writeToggles(data, this.getToggles());
+        data = this.serializeSubClaims(data);
         return data;
     }
 
@@ -361,11 +426,25 @@ public class ClaimArea extends MemberContainer {
             ClaimArea claim = new ClaimArea(claimVals[1], claimVals[2], claimVals[3], claimVals[4], claimVals[5], owner, trueViewName);
             claim.addMembers(MemberContainer.readMembers(tag));
             claim.setToggles(ClaimNBTUtil.readToggles(tag));
+            if(tag.hasKey("SUBCLAIMS")) {
+                tag.getTagList("SUBCLAIMS", Constants.NBT.TAG_COMPOUND).forEach(base -> {
+                    claim.addSubClaim(SubClaimArea.deserialize(claim, ((NBTTagCompound) base)));
+                });
+            }
             return claim;
         } else {
             ClaimItAPI.logger.log(Level.FATAL, "Detected version that doesn't exist yet! Mod was downgraded? Claim cannot be loaded.");
             throw new RuntimeException("Canceled loading to prevent loss of claim data. If you recently downgraded versions, please upgrade or contact author.");
         }
+    }
+    
+    protected NBTTagCompound serializeSubClaims(NBTTagCompound data) {
+        NBTTagList subclaimData = new NBTTagList();
+        for(SubClaimArea subclaim : this.subclaims) {
+            subclaimData.appendTag(subclaim.serialize());
+        }
+        data.setTag("SUBCLAIMS", subclaimData);
+        return data;
     }
     
     @Override
