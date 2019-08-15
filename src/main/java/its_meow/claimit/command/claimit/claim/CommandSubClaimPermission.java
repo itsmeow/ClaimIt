@@ -37,6 +37,7 @@ public class CommandSubClaimPermission extends CommandCITreeBase {
     public List<String> getAliases() {
         ArrayList<String> list = new ArrayList<String>();
         list.add("perm");
+        list.add("player");
         return list;
     }
 

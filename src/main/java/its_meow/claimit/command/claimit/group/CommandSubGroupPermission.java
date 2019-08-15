@@ -34,8 +34,8 @@ public class CommandSubGroupPermission extends CommandCIBase {
     @Override
     public List<String> getAliases() {
         ArrayList<String> list = new ArrayList<String>();
-        list.add("permission");
         list.add("perm");
+        list.add("player");
         return list;
     }
 
