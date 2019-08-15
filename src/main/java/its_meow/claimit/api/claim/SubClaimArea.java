@@ -36,6 +36,11 @@ public class SubClaimArea extends ClaimArea {
     }
 
     @Override
+    protected boolean hasPermissionFromGroup(ClaimPermissionMember permission, UUID uuid) {
+        return false;
+    }
+
+    @Override
     public boolean setViewName(String nameIn) {
         boolean pass = true;
         for(SubClaimArea subclaim : this.parent.subclaims) {

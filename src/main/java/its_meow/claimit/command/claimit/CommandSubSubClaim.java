@@ -4,6 +4,7 @@ import its_meow.claimit.command.CommandCITreeBase;
 import its_meow.claimit.command.claimit.subclaim.CommandSubSubClaimDelete;
 import its_meow.claimit.command.claimit.subclaim.CommandSubSubClaimPermission;
 import its_meow.claimit.command.claimit.subclaim.CommandSubSubClaimSetName;
+import its_meow.claimit.command.claimit.subclaim.CommandSubSubClaimToggle;
 import net.minecraft.command.ICommandSender;
 
 public class CommandSubSubClaim extends CommandCITreeBase {
@@ -12,7 +13,8 @@ public class CommandSubSubClaim extends CommandCITreeBase {
         super(
             new CommandSubSubClaimDelete(),
             new CommandSubSubClaimSetName(),
-            new CommandSubSubClaimPermission()
+            new CommandSubSubClaimPermission(),
+            new CommandSubSubClaimToggle()
         );
     }
     

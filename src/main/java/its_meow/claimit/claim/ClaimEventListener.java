@@ -75,12 +75,12 @@ public class ClaimEventListener implements IWorldEventListener {
                     AxisAlignedBB box = new AxisAlignedBB(pos.add(-1, -1, -1), pos.add(1, 2, 1));
                     List<EntityPlayer> players = world.getEntitiesWithinAABB(EntityPlayer.class, box);
                     if(players != null && players.size() > 0) {
-                        int amountWithPerms = (int) players.stream().filter(player -> claim.canUse(player)).count();
+                        int amountWithPerms = (int) players.stream().filter(player -> claim.getMostSpecificClaim(pos).canUse(player)).count();
                         if(amountWithPerms < 1) {
                             world.setBlockState(pos, oldState);
                         }
                     } else {
-                        if(!claim.isPermissionToggled(ClaimItPermissions.PRESSURE_PLATE)) {
+                        if(!claim.getMostSpecificClaim(pos).isPermissionToggled(ClaimItPermissions.PRESSURE_PLATE)) {
                             world.setBlockState(pos, oldState);
                         }
                     }
@@ -91,8 +91,8 @@ public class ClaimEventListener implements IWorldEventListener {
             for(EnumFacing facing : EnumFacing.VALUES) {
                 BlockPos posF = pos.offset(facing);
                 ClaimArea claim = ClaimManager.getManager().getClaimAtLocation(world, posF);
-                if(claim != null && !claim.isPermissionToggled(ClaimItPermissions.FIRE_CREATE)) {
-                    if(!(world.getBlockState(pos.down()).getBlock() == Blocks.OBSIDIAN && claim.isPermissionToggled(ClaimItPermissions.FIRE_CREATE_ON_OBSIDIAN))) {
+                if(claim != null && !claim.getMostSpecificClaim(pos).isPermissionToggled(ClaimItPermissions.FIRE_CREATE)) {
+                    if(!(world.getBlockState(pos.down()).getBlock() == Blocks.OBSIDIAN && claim.getMostSpecificClaim(pos).isPermissionToggled(ClaimItPermissions.FIRE_CREATE_ON_OBSIDIAN))) {
                         world.setBlockState(pos, oldState);
                     }
                 }

@@ -206,7 +206,7 @@ public class ClaimArea extends MemberContainer {
         }
     }
 
-    private boolean hasPermissionFromGroup(ClaimPermissionMember permission, UUID uuid) {
+    protected boolean hasPermissionFromGroup(ClaimPermissionMember permission, UUID uuid) {
         for(Group group : GroupManager.getGroups()) {
             if(permission != ClaimPermissions.MANAGE_PERMS && group.hasPermissionInClaim(uuid, permission, this)) {
                 return true;

@@ -127,7 +127,7 @@ public class CommandUtils {
                 throw new CommandException("There is no subclaim with that name in that claim!");
             }
         }
-        if(args.length == startIndex && claim != null) {
+        if(args.length <= startIndex && claim != null) {
             subClaim = claim.getSubClaimAtLocation(sender.getPosition());
         }
         if(subClaim == null || claim == null) {
