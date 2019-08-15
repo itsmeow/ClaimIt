@@ -103,7 +103,7 @@ public class ProtectionEventHandler {
         ClaimArea claim = cm.getClaimAtLocation(world, pos);
         if(claim != null) {
             EntityPlayer player = e.getEntityPlayer();
-            e.setCanceled(!claim.canUse(player));
+            e.setCanceled(!claim.getMostSpecificClaim(pos).canUse(player));
             if(!(claim instanceof SubClaimArea) && ClaimIt.claiming_item != null && e.getItemStack().getItem() == ClaimIt.claiming_item && !world.isRemote && claim.hasPermission(e.getEntityPlayer(), ClaimPermissions.MANAGE_PERMS)) {
                 if(CommandUtils.checkDefaultNode(player, 0, "claimit.claim.create")) {
                     EnumHand hand = e.getHand();
@@ -220,7 +220,7 @@ public class ProtectionEventHandler {
         ClaimArea claim = cm.getClaimAtLocation(world, pos);
         if(claim != null) {
             EntityPlayer player = e.getPlayer();
-            e.setCanceled(!claim.canModify(player));
+            e.setCanceled(!claim.getMostSpecificClaim(pos).canModify(player));
         }
     }
 
@@ -232,7 +232,7 @@ public class ProtectionEventHandler {
         ClaimArea claim = cm.getClaimAtLocation(world, pos);
         if(claim != null) {
             EntityPlayer player = e.getPlayer();
-            if(!claim.canModify(player)) {
+            if(!claim.getMostSpecificClaim(pos).canModify(player)) {
                 e.setCanceled(true);
             }
         }
@@ -248,7 +248,7 @@ public class ProtectionEventHandler {
             Entity ent = e.getEntity();
             if(ent instanceof EntityPlayer) {
                 EntityPlayer player = (EntityPlayer) ent;
-                e.setCanceled(!claim.canModify(player));
+                e.setCanceled(!claim.getMostSpecificClaim(pos).canModify(player));
             } else {
                 e.setCanceled(true);
             }
@@ -264,17 +264,17 @@ public class ProtectionEventHandler {
         if(claim != null) {
             EntityPlayer player = e.getEntityPlayer();
             if(e.getTarget() instanceof EntityPlayer) {
-                e.setCanceled(!claim.canPVP(player)  || ClaimItConfig.forceNoPVPInClaim);
+                e.setCanceled(!claim.getMostSpecificClaim(pos).canPVP(player)  || ClaimItConfig.forceNoPVPInClaim);
             } else {
-                e.setCanceled(!claim.canEntity(player));
+                e.setCanceled(!claim.getMostSpecificClaim(pos).canEntity(player));
             }
         }
         ClaimArea claim2 = cm.getClaimAtLocation(world, e.getTarget().getPosition());
         if(claim2 != null) {
             if(e.getTarget() instanceof EntityPlayer) {
-                e.setCanceled(!claim2.canPVP(e.getEntityPlayer()) || e.isCanceled()  || ClaimItConfig.forceNoPVPInClaim);
+                e.setCanceled(!claim2.getMostSpecificClaim(pos).canPVP(e.getEntityPlayer()) || e.isCanceled()  || ClaimItConfig.forceNoPVPInClaim);
             } else {
-                e.setCanceled(!claim2.canEntity(e.getEntityPlayer()) || e.isCanceled());
+                e.setCanceled(!claim2.getMostSpecificClaim(pos).canEntity(e.getEntityPlayer()) || e.isCanceled());
             }
         }
     }
@@ -289,10 +289,10 @@ public class ProtectionEventHandler {
         ClaimArea claim = cm.getClaimAtLocation(world, pos);
         ClaimArea claim2 = cm.getClaimAtLocation(world, pos2);
         if(claim != null) {
-            e.setCanceled(!claim.canEntity(player) || !claim.canUse(player));
+            e.setCanceled(!claim.getMostSpecificClaim(pos).canEntity(player) || !claim.getMostSpecificClaim(pos).canUse(player));
         }
         if(claim2 != null) {
-            e.setCanceled(!claim2.canEntity(player) || !claim2.canUse(player) || e.isCanceled());
+            e.setCanceled(!claim2.getMostSpecificClaim(pos).canEntity(player) || !claim2.getMostSpecificClaim(pos).canUse(player) || e.isCanceled());
         }
     }
 
@@ -304,7 +304,7 @@ public class ProtectionEventHandler {
         ClaimArea claim = cm.getClaimAtLocation(world, pos);
         if(claim != null) {
             EntityPlayer player = e.getEntityPlayer();
-            e.setCanceled(!claim.canUse(player));
+            e.setCanceled(!claim.getMostSpecificClaim(pos).canUse(player));
         }
     }
 
@@ -316,7 +316,7 @@ public class ProtectionEventHandler {
         ClaimArea claim = cm.getClaimAtLocation(world, pos);
         if(claim != null) {
             EntityPlayer player = e.getEntityPlayer();
-            e.setCanceled(!claim.canUse(player));
+            e.setCanceled(!claim.getMostSpecificClaim(pos).canUse(player));
         }
     }
 
@@ -328,7 +328,7 @@ public class ProtectionEventHandler {
         ClaimArea claim = cm.getClaimAtLocation(world, pos);
         if(claim != null) {
             EntityPlayer player = e.getEntityPlayer();
-            e.setCanceled(!claim.canUse(player));
+            e.setCanceled(!claim.getMostSpecificClaim(pos).canUse(player));
         }
     }
 
@@ -354,9 +354,9 @@ public class ProtectionEventHandler {
         if(claim != null || cm.getClaimAtLocation(world, e.getEntityPlayer().getPosition()) != null) {
             EntityPlayer player = e.getEntityPlayer();
             if(e.getTarget() instanceof EntityPlayer) {
-                e.setCanceled(!claim.canPVP(player)  || ClaimItConfig.forceNoPVPInClaim);
+                e.setCanceled(!claim.getMostSpecificClaim(pos).canPVP(player)  || ClaimItConfig.forceNoPVPInClaim);
             } else {
-                e.setCanceled(!claim.canEntity(player));
+                e.setCanceled(!claim.getMostSpecificClaim(pos).canEntity(player));
             }
         }
     }
@@ -371,9 +371,9 @@ public class ProtectionEventHandler {
                 ClaimArea claim = ClaimManager.getManager().getClaimAtLocation(entity.getEntityWorld(), player.getPosition()); // Claim the damage-doer is in
                 ClaimArea claim2 = ClaimManager.getManager().getClaimAtLocation(entity.getEntityWorld(), entity.getPosition()); // Claim the damaged is in
                 if(entity instanceof EntityPlayer) { // whether the damaged is a player or not
-                    e.setCanceled((claim != null && !claim.canPVP(player)) || (claim2 != null && !claim2.canPVP(player))  || ClaimItConfig.forceNoPVPInClaim); // if either one disallows PVP block it
+                    e.setCanceled((claim != null && !claim.getMostSpecificClaim(player.getPosition()).canPVP(player)) || (claim2 != null && !claim2.getMostSpecificClaim(entity.getPosition()).canPVP(player))  || ClaimItConfig.forceNoPVPInClaim); // if either one disallows PVP block it
                 } else {
-                    e.setCanceled((claim != null && !claim.canEntity(player)) || (claim2 != null && !claim2.canEntity(player))); // if either one disallows entity block it
+                    e.setCanceled((claim != null && !claim.getMostSpecificClaim(player.getPosition()).canEntity(player)) || (claim2 != null && !claim2.getMostSpecificClaim(entity.getPosition()).canEntity(player))); // if either one disallows entity block it
                 }
             }
             ClaimArea claim = ClaimManager.getManager().getClaimAtLocation(entity.getEntityWorld(), entity.getPosition());
@@ -391,7 +391,7 @@ public class ProtectionEventHandler {
         ClaimArea claim = cm.getClaimAtLocation(world, pos);
         if(claim != null) {
             EntityPlayer player = e.getEntityPlayer();
-            e.setCanceled(!claim.canEntity(player));
+            e.setCanceled(!claim.getMostSpecificClaim(pos).canEntity(player));
         }
     }
 
@@ -402,7 +402,7 @@ public class ProtectionEventHandler {
         Set<BlockPos> removeList = new HashSet<BlockPos>();
         for(BlockPos pos : e.getAffectedBlocks()) {
             ClaimArea claim = cm.getClaimAtLocation(world, pos);
-            if(claim != null && !claim.isPermissionToggled(ClaimItPermissions.EXPLOSION)) {
+            if(claim != null && !claim.getMostSpecificClaim(pos).isPermissionToggled(ClaimItPermissions.EXPLOSION)) {
                 removeList.add(pos);
             }
         }
@@ -410,7 +410,7 @@ public class ProtectionEventHandler {
         for(Entity ent : e.getAffectedEntities()) {
             BlockPos pos = ent.getPosition();
             ClaimArea claim = cm.getClaimAtLocation(world, pos);
-            if(claim != null && !claim.isPermissionToggled(ClaimItPermissions.EXPLOSION)) {
+            if(claim != null && !claim.getMostSpecificClaim(pos).isPermissionToggled(ClaimItPermissions.EXPLOSION)) {
                 removeListE.add(ent);
             }
         }
@@ -432,10 +432,10 @@ public class ProtectionEventHandler {
         ClaimArea claim = cm.getClaimAtLocation(world, pos);
         if(claim != null) {
             if(!(e.getEntityLiving() instanceof EntityPlayer)) {
-                e.setCanceled(!claim.isPermissionToggled(ClaimItPermissions.LIVING_MODIFY));
+                e.setCanceled(!claim.getMostSpecificClaim(pos).isPermissionToggled(ClaimItPermissions.LIVING_MODIFY));
             } else if(e.getEntityLiving() instanceof EntityPlayer){
                 EntityPlayer player = (EntityPlayer) e.getEntityLiving();
-                e.setCanceled(!claim.canModify(player));
+                e.setCanceled(!claim.getMostSpecificClaim(pos).canModify(player));
             }
         }
     }
@@ -447,7 +447,7 @@ public class ProtectionEventHandler {
                 EntityPlayer player = (EntityPlayer) e.getEntityMounting();
                 ClaimArea claim = ClaimManager.getManager().getClaimAtLocation(e.getWorldObj(), e.getEntityBeingMounted().getPosition());
                 if(claim != null) {
-                    e.setCanceled(!claim.canEntity(player));
+                    e.setCanceled(!claim.getMostSpecificClaim(e.getEntityBeingMounted().getPosition()).canEntity(player));
                 }
             }
         }
@@ -461,7 +461,7 @@ public class ProtectionEventHandler {
         ClaimArea claim = ClaimManager.getManager().getClaimAtLocation(world, pos);
         if(claim != null) {
             if(!claim.isPermissionToggled(ClaimItPermissions.DROP_ITEM)) {
-                if(!claim.canUse(player)) {
+                if(!claim.getMostSpecificClaim(pos).canUse(player)) {
                     e.setCanceled(true);
                     player.addItemStackToInventory(e.getEntityItem().getItem()); // Re-add items because canceling event deletes items
                 }
@@ -476,8 +476,8 @@ public class ProtectionEventHandler {
         BlockPos pos = e.getItem().getPosition();
         ClaimArea claim = ClaimManager.getManager().getClaimAtLocation(world, pos);
         if(claim != null) {
-            if(!claim.isPermissionToggled(ClaimItPermissions.PICKUP_ITEM)) {
-                if(!claim.canUse(player)) {
+            if(!claim.getMostSpecificClaim(pos).isPermissionToggled(ClaimItPermissions.PICKUP_ITEM)) {
+                if(!claim.getMostSpecificClaim(pos).canUse(player)) {
                     e.setCanceled(true);
                 }
             }
@@ -512,7 +512,7 @@ public class ProtectionEventHandler {
                     if(j >= i / 16) {
                         ClaimArea claimAtLoc = ClaimManager.getManager().getClaimAtLocation(e.getWorld(), blockpos1);
                         if(e.getWorld().isAirBlock(blockpos1) && (claimAtLoc == null
-                                || (claimAtLoc == originalClaim && claimAtLoc.canModify(e.getEntityPlayer())))) {
+                                || (claimAtLoc == originalClaim && claimAtLoc.getMostSpecificClaim(blockpos1).canModify(e.getEntityPlayer())))) {
                             if(rand.nextInt(8) == 0) {
                                 e.getWorld().getBiome(blockpos1).plantFlower(e.getWorld(), rand, blockpos1);
                             } else {
@@ -550,7 +550,7 @@ public class ProtectionEventHandler {
             BlockPos pos = snap.getPos();
             ClaimArea claim = ClaimManager.getManager().getClaimAtLocation(world, pos);
             if(claim != null) {
-                e.setCanceled(!claim.canModify(player) || e.isCanceled());
+                e.setCanceled(!claim.getMostSpecificClaim(pos).canModify(player) || e.isCanceled());
             }
         }
     }
@@ -562,7 +562,7 @@ public class ProtectionEventHandler {
         BlockPos pos = player.getPosition();
         ClaimArea claim = ClaimManager.getManager().getClaimAtLocation(world, pos);
         if(claim != null) {
-            if(!claim.canUse(player) || ClaimItConfig.forceNoPVPInClaim) { 
+            if(!claim.getMostSpecificClaim(pos).canUse(player) || ClaimItConfig.forceNoPVPInClaim) { 
                 e.setAction(new ActionResult<ItemStack>(EnumActionResult.FAIL, e.getBow()));
             }
         }
@@ -575,7 +575,7 @@ public class ProtectionEventHandler {
             EntityLiving el = (EntityLiving) entity;
             ClaimArea claim = ClaimManager.getManager().getClaimAtLocation(el.world, el.getPosition());
             if(claim != null) {
-                if(!claim.isPermissionToggled(ClaimItPermissions.ALLOW_PROJECTILES)) {
+                if(!claim.getMostSpecificClaim(el.getPosition()).isPermissionToggled(ClaimItPermissions.ALLOW_PROJECTILES)) {
                     e.setCanceled(true);
                 }
             }
@@ -584,9 +584,10 @@ public class ProtectionEventHandler {
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public static void onEntitySpawn(LivingSpawnEvent.CheckSpawn e) {
-        ClaimArea claim = ClaimManager.getManager().getClaimAtLocation(e.getWorld(), new BlockPos(e.getX(), e.getY(), e.getZ()));
+        BlockPos pos = new BlockPos(e.getX(), e.getY(), e.getZ());
+        ClaimArea claim = ClaimManager.getManager().getClaimAtLocation(e.getWorld(), pos);
         if(claim != null) {
-            if(!claim.isPermissionToggled(ClaimItPermissions.ENTITY_SPAWN)) {
+            if(!claim.getMostSpecificClaim(pos).isPermissionToggled(ClaimItPermissions.ENTITY_SPAWN)) {
                 e.setResult(Result.DENY);
             }
         }

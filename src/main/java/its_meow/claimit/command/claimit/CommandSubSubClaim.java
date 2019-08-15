@@ -2,13 +2,17 @@ package its_meow.claimit.command.claimit;
 
 import its_meow.claimit.command.CommandCITreeBase;
 import its_meow.claimit.command.claimit.subclaim.CommandSubSubClaimDelete;
+import its_meow.claimit.command.claimit.subclaim.CommandSubSubClaimPermission;
+import its_meow.claimit.command.claimit.subclaim.CommandSubSubClaimSetName;
 import net.minecraft.command.ICommandSender;
 
 public class CommandSubSubClaim extends CommandCITreeBase {
     
     public CommandSubSubClaim() {
         super(
-            new CommandSubSubClaimDelete()
+            new CommandSubSubClaimDelete(),
+            new CommandSubSubClaimSetName(),
+            new CommandSubSubClaimPermission()
         );
     }
     

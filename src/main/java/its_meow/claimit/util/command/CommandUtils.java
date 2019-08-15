@@ -97,10 +97,10 @@ public class CommandUtils {
     }
     
     @Nonnull
-    public static SubClaimArea getSubClaimWithNames(int startIndex, String[] args, ICommandSender sender) throws CommandException {
+    public static SubClaimArea getSubClaimWithNamesOrLocation(int startIndex, String[] args, ICommandSender sender) throws CommandException {
         String claimName = null;
-        if(args.length >= 1) {
-            claimName = args[0];
+        if(args.length >= startIndex + 1) {
+            claimName = args[startIndex];
         }
         ClaimArea claim = CommandUtils.getClaimWithNameOrLocation(claimName, sender);
         if(claimName != null && claim == null) {
@@ -109,7 +109,7 @@ public class CommandUtils {
         SubClaimArea subClaim = null;
         if(claimName == null && claim == null) {
             throw new CommandException("There is no claim here!");
-        } else if(claim != null && claimName != null && args.length == 1) {
+        } else if(claim != null && claimName != null && args.length == startIndex + 1) {
             if(claim.getSubClaimWithName(claimName) != null) {
                 subClaim = claim.getSubClaimWithName(claimName);
             } else {
@@ -120,14 +120,14 @@ public class CommandUtils {
         }
 
         String subClaimName = null;
-        if(args.length == 2) {
-            subClaimName = args[1];
+        if(args.length == startIndex + 2) {
+            subClaimName = args[startIndex + 1];
             subClaim = claim.getSubClaimWithName(subClaimName);
             if(subClaim == null) {
                 throw new CommandException("There is no subclaim with that name in that claim!");
             }
         }
-        if(args.length == 0 && claim != null) {
+        if(args.length == startIndex && claim != null) {
             subClaim = claim.getSubClaimAtLocation(sender.getPosition());
         }
         if(subClaim == null || claim == null) {
@@ -271,6 +271,25 @@ public class CommandUtils {
     
     public static boolean checkDefaultNode(EntityPlayer player, int permLevel, String node) {
         return player.canUseCommand(permLevel, node) || !Loader.isModLoaded("sponge");
+    }
+    
+    public static List<String> getSubclaimCompletions(@Nullable List<String> list, int startIndex, String[] args, ICommandSender sender) {
+        if(list == null) {
+            list = new ArrayList<String>();
+        }
+        if(args.length == startIndex + 1) {
+            if(!ClaimManager.getManager().isBlockInAnyClaim(sender.getEntityWorld(), sender.getPosition())) {
+                list.addAll(CommandBase.getListOfStringsMatchingLastWord(args, CommandUtils.getOwnedClaimNames(null, sender)));
+            } else {
+                list.addAll(CommandBase.getListOfStringsMatchingLastWord(args, CommandUtils.getSubclaimNames(null, sender, ClaimManager.getManager().getClaimAtLocation(sender.getEntityWorld(), sender.getPosition()))));
+            }
+        } else if(args.length == startIndex + 2) {
+            ClaimArea claim = CommandUtils.getClaimWithName(args[startIndex], sender);
+            if(claim != null) {
+                list.addAll(CommandBase.getListOfStringsMatchingLastWord(args, CommandUtils.getSubclaimNames(null, sender, claim)));
+            }
+        }
+        return list;
     }
 
 }

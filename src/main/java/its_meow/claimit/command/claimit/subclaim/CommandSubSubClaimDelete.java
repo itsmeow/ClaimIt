@@ -41,9 +41,9 @@ public class CommandSubSubClaimDelete extends CommandCIBase {
     @Override
     public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
 
-        SubClaimArea subClaim = CommandUtils.getSubClaimWithNames(0, args, sender);
+        SubClaimArea subClaim = CommandUtils.getSubClaimWithNamesOrLocation(0, args, sender);
         ClaimArea claim = subClaim.getParent();
-        if(!CommandUtils.isAdminWithNodeOrOwner(sender, claim, "claimit.command.claimit.subclaim.delete.others")) {
+        if(!CommandUtils.isAdminWithNodeOrManage(sender, claim, "claimit.command.claimit.subclaim.delete.others")) {
             throw new CommandException("You do not have permission to delete this subclaim!");
         }
 
