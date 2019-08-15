@@ -64,7 +64,7 @@ public class CommandSubGroupClaim extends CommandCIBase {
                     // Add claim
                     if(!group.hasClaim(claim)) {
                         if(CommandUtils.isAdminWithNodeOrOwner(sender, claim, "claimit.claim.manage.others")) {
-                            if(CommandUtils.isAdminNoded(sender, "claimit.command.claimit.group.claim.others") || (sender instanceof EntityPlayer) && group.getMembers().containsKey(((EntityPlayer) sender).getGameProfile().getId())) {
+                            if(CommandUtils.isAdminNoded(sender, "claimit.command.claimit.group.claim.others") || ((sender instanceof EntityPlayer) && (group.getMembers().containsKey(((EntityPlayer) sender).getGameProfile().getId()) || group.isOwner(((EntityPlayer) sender))))) {
                                 group.addClaim(claim);
                                 sendMessage(sender, new FTC(GREEN, "Successfully added claim "), new FTC(YELLOW, claim.getDisplayedViewName()), new FTC(GREEN, " to group "), new FTC(DARK_GREEN, groupName));
                                 sendMessage(sender, new FTC(YELLOW, "Please make sure you trust " + CommandUtils.getNameForUUID(group.getOwner(), server) + " and the people they trust, as they will have full permission in this claim, as well as the ability to add more people!"));
