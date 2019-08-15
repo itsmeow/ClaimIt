@@ -7,11 +7,14 @@ import static net.minecraft.util.text.TextFormatting.RED;
 import static net.minecraft.util.text.TextFormatting.YELLOW;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 import its_meow.claimit.api.claim.ClaimArea;
 import its_meow.claimit.api.permission.ClaimPermissionMember;
+import its_meow.claimit.api.permission.ClaimPermissionRegistry;
 import its_meow.claimit.command.CommandCITreeBase;
 import its_meow.claimit.command.claimit.claim.permission.CommandSubClaimPermissionList;
 import its_meow.claimit.util.command.CommandUtils;
@@ -43,17 +46,12 @@ public class CommandSubClaimPermission extends CommandCITreeBase {
 
     @Override
     public String getHelp(ICommandSender sender) {
-        return "Both a tree command and a command. Add or remove members from a claim. Subcommand 'list' exists. First required argument is add or remove. Second is a member permission. Third is a username. Fourth, optional argument is a claim name. Otherwise, your current location is used.";
+        return "Both a tree command and a command. Add or remove members from a claim. Subcommand 'list' exists. First required argument is add or remove. Second is a member permission, supports seperation of multiple with commas or wildcards (*). Third is a username, supports seperation of multiple with commas or wildcards (*), which will give all current members of the claim. Fourth, optional argument is a claim name. Otherwise, your current location is used.";
     }
 
     @Override
     public String getUsage(ICommandSender sender) {
         return "/claimit claim permission <add/remove> <permission> <username> [claimname]";
-    }
-
-    @Override
-    public boolean isUsernameIndex(String[] args, int index) {
-        return args.length == 3;
     }
 
     @Override
@@ -71,30 +69,51 @@ public class CommandSubClaimPermission extends CommandCITreeBase {
         if(!action.equalsIgnoreCase("add") && !action.equalsIgnoreCase("remove")) {
             throw new CommandException("Invalid action! Specify add or remove. Usage: \n" + YELLOW + this.getUsage(sender));
         }
-        ClaimPermissionMember permission = CommandUtils.getPermissionMember(permissionStr, "\n" + YELLOW + this.getUsage(sender));
-        UUID id = CommandUtils.getUUIDForName(username, server);
+        Set<ClaimPermissionMember> permissions = CommandUtils.getMemberPermissionsForArgument(ClaimPermissionRegistry.getMemberPermissions(), this.getUsage(sender), permissionStr, sender, server);
         ClaimArea claim = CommandUtils.getClaimWithNameOrLocation(claimName, sender);
 
         if(claim != null) {
             if(!CommandUtils.isAdminWithNodeOrManage(sender, claim, "claimit.command.claimit.claim.permission.others")) {
                 throw new CommandException("You cannot modify members of this claim!");
             }
-            if(action.equals("add"))  {
-                // Add user
-                if(claim.addMember(id, permission)) {
-                    sendMessage(sender, new FTC(GREEN, "Successfully added "), new FTC(YELLOW, username), new FTC(GREEN, " to claim "), new FTC(DARK_GREEN, claim.getDisplayedViewName()), new FTC(GREEN, " with permission "), new FTC(AQUA, permission.parsedName));
+            Set<UUID> wildcard = claim.getMembers().keySet();
+            wildcard = new HashSet<UUID>(wildcard);
+            wildcard.remove(claim.getOwner());
+            Set<UUID> ids = CommandUtils.getUUIDsForArgument(wildcard, username, sender, server);
+            if(ids.size() == 0) {
+                sendMessage(sender, RED, "No members to " + action.toLowerCase() + "!");
+            }
+            for(UUID uuid : ids) {
+                username = CommandUtils.getNameForUUID(uuid, server);
+                if(action.equals("add"))  {
+                    // Add user
+                    for(ClaimPermissionMember permission : permissions) {
+                        if(!claim.isOwner(uuid)) {
+                            if(claim.addMember(uuid, permission)) {
+                                sendMessage(sender, new FTC(GREEN, "Successfully added "), new FTC(YELLOW, username), new FTC(GREEN, " to claim "), new FTC(DARK_GREEN, claim.getDisplayedViewName()), new FTC(GREEN, " with permission "), new FTC(AQUA, permission.parsedName));
+                            } else if(permissions.size() == 1) {
+                                sendMessage(sender, YELLOW, "This player already has that permission!");
+                            }
+                        } else {
+                            sendMessage(sender, YELLOW, "This player owns this claim!");
+                        }
+                    }
+                } else if(action.equals("remove")) {
+                    for(ClaimPermissionMember permission : permissions) {
+                        // Remove user
+                        if(!claim.isOwner(uuid)) {
+                            if(claim.removeMember(uuid, permission)) {
+                                sendMessage(sender, new FTC(GREEN, "Successfully removed permission "), new FTC(AQUA, permission.parsedName), new FTC(GREEN, " from user "), new FTC(YELLOW, username), new FTC(GREEN, " in claim "), new FTC(DARK_GREEN, claim.getDisplayedViewName()));
+                            } else if(permissions.size() == 1) {
+                                sendMessage(sender, YELLOW, "This player does not have that permission!");
+                            }
+                        } else {
+                            sendMessage(sender, YELLOW, "This player owns this claim!");
+                        }
+                    }
                 } else {
-                    sendMessage(sender, YELLOW, "This player already has that permission!");
+                    throw new CommandException("Invalid action! Specify add or remove. Usage: \n" + YELLOW + this.getUsage(sender));
                 }
-            } else if(action.equals("remove")) {
-                // Remove user
-                if(claim.removeMember(id, permission)) {
-                        sendMessage(sender, new FTC(GREEN, "Successfully removed permission "), new FTC(AQUA, permission.parsedName), new FTC(GREEN, " from user "), new FTC(YELLOW, username), new FTC(GREEN, " in claim "), new FTC(DARK_GREEN, claim.getDisplayedViewName()));
-                } else {
-                    sendMessage(sender, YELLOW, "This player does not have that permission!");
-                }
-            } else {
-                throw new CommandException("Invalid action! Specify add or remove. Usage: \n" + YELLOW + this.getUsage(sender));
             }
         } else {
             if(claimName != null && !claimName.equals("")) {
@@ -114,7 +133,7 @@ public class CommandSubClaimPermission extends CommandCITreeBase {
             list.add("list");
             return CommandBase.getListOfStringsMatchingLastWord(args, list);
         } else if(args.length == 2) {
-            return CommandBase.getListOfStringsMatchingLastWord(args, CommandUtils.getMemberPermissions(list));
+            return CommandBase.getListOfStringsMatchingLastWord(args, CommandUtils.getMemberPermissionsAndWildcard(list));
         } else if(args.length == 3) {
             return CommandBase.getListOfStringsMatchingLastWord(args, CommandUtils.getPossiblePlayers(list, server, sender, args));
         } else if(args.length == 4) {

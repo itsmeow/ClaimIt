@@ -4,6 +4,7 @@ import static net.minecraft.util.text.TextFormatting.AQUA;
 import static net.minecraft.util.text.TextFormatting.YELLOW;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -22,12 +23,14 @@ import its_meow.claimit.api.permission.ClaimPermissionMember;
 import its_meow.claimit.api.permission.ClaimPermissionRegistry;
 import its_meow.claimit.api.permission.ClaimPermissionToggle;
 import its_meow.claimit.command.CommandCIBase;
+import its_meow.claimit.util.text.FTC;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.command.PlayerNotFoundException;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fml.common.Loader;
 
 public class CommandUtils {
@@ -95,7 +98,7 @@ public class CommandUtils {
         }
         return permission;
     }
-    
+
     @Nonnull
     public static SubClaimArea getSubClaimWithNamesOrLocation(int startIndex, String[] args, ICommandSender sender) throws CommandException {
         String claimName = null;
@@ -159,6 +162,47 @@ public class CommandUtils {
         }
     }
 
+    public static Set<UUID> getUUIDsForArgument(Set<UUID> wildcard, String names, ICommandSender sender, MinecraftServer server) throws PlayerNotFoundException {
+        Set<UUID> uuids = new HashSet<UUID>();
+        if(names == null) {
+            return uuids;
+        }
+        if(names.contains(",")) {
+            for(String username : names.split(",")) {
+                GameProfile profile = server.getPlayerProfileCache().getGameProfileForUsername(username);
+                if(profile != null && profile.getName().equals(username)) { // Found the profile!
+                    uuids.add(profile.getId());
+                } else {
+                    sender.sendMessage(new FTC(TextFormatting.RED, "No such player " + username));
+                }
+            }
+        } else if(names.equals("*")) {
+            return wildcard;
+        } else {
+            uuids.add(CommandUtils.getUUIDForName(names, server));
+            return uuids;
+        }
+        return uuids;
+    }
+    
+    public static Set<ClaimPermissionMember> getMemberPermissionsForArgument(Set<ClaimPermissionMember> wildcard, String usage, String arg, ICommandSender sender, MinecraftServer server) throws CommandException {
+        Set<ClaimPermissionMember> set = new HashSet<ClaimPermissionMember>();
+        if(arg == null) {
+            return set;
+        }
+        if(arg.contains(",")) {
+            for(String arg1 : arg.split(",")) {
+                set.add(CommandUtils.getPermissionMember(arg1, "\n" + YELLOW + usage));
+            }
+        } else if(arg.equals("*")) {
+            return wildcard;
+        } else {
+            set.add(CommandUtils.getPermissionMember(arg, "\n" + YELLOW + usage));
+            return set;
+        }
+        return set;
+    }
+
     /** Attempts to get name from UUID cache. Requires World to get server instance. 
      * @param uuid - The UUID to attempt to retrieve the name for
      * @param server - The server instance
@@ -178,22 +222,22 @@ public class CommandUtils {
     public static boolean isAdmin(ICommandSender sender) {
         return isAdminNoded(sender, "");
     }
-    
+
     public static boolean isAdminNoded(ICommandSender sender, String permNode) {
         return (((!(sender instanceof EntityPlayer) && sender.canUseCommand(2, permNode)) || ((sender instanceof EntityPlayer) && AdminManager.isAdmin((EntityPlayer) sender) && sender.canUseCommand(0, permNode))));
     }
-    
+
     public static boolean isAdminNodedNeedsManage(ICommandSender sender, String permNode) {
         return (((!(sender instanceof EntityPlayer) && sender.canUseCommand(2, permNode) && sender.canUseCommand(2, "claimit.claim.manage.others")) || ((sender instanceof EntityPlayer) && AdminManager.isAdmin((EntityPlayer) sender) && sender.canUseCommand(0, "claimit.claim.manage.others") && sender.canUseCommand(0, permNode))));
     }
-    
+
     public static boolean isAdminWithNodeOrOwner(ICommandSender sender, ClaimArea claim, String permNode) {
         if(sender instanceof EntityPlayer) {
             return claim.isOwner((EntityPlayer) sender) || CommandUtils.isAdminNodedNeedsManage(sender, permNode);
         }
         return CommandUtils.isAdminNodedNeedsManage(sender, permNode);
     }
-    
+
     public static boolean isAdminWithNodeOrManage(ICommandSender sender, ClaimArea claim, String permNode) {
         if(sender instanceof EntityPlayer) {
             return claim.canManage((EntityPlayer) sender) || CommandUtils.isAdminNodedNeedsManage(sender, permNode);
@@ -216,13 +260,12 @@ public class CommandUtils {
         }
         return list;
     }
-    
+
     public static List<String> getSubclaimNames(@Nullable List<String> list, ICommandSender sender, ClaimArea parent) {
         if(list == null) {
             list = new ArrayList<String>();
         }
         if(sender instanceof EntityPlayer) {
-            EntityPlayer player = (EntityPlayer) sender;
             Set<SubClaimArea> owned = parent.subclaims;
             if(owned != null && owned.size() > 0) {
                 for(SubClaimArea subclaim : owned) {
@@ -232,7 +275,7 @@ public class CommandUtils {
         }
         return list;
     }
-    
+
     public static List<String> getRelevantGroupNames(ICommandSender sender) {
         if(sender instanceof EntityPlayer) {
             UUID uuid = ((EntityPlayer) sender).getGameProfile().getId();
@@ -248,6 +291,12 @@ public class CommandUtils {
         list.addAll(CommandBase.getListOfStringsMatchingLastWord(args, server.getOnlinePlayerNames()));
         return list;
     }
+
+    public static List<String> getMemberPermissionsAndWildcard(@Nullable List<String> list) {
+        list = getMemberPermissions(list);
+        list.add("*");
+        return list;
+    }
     
     public static List<String> getMemberPermissions(@Nullable List<String> list) {
         if(list == null) {
@@ -258,7 +307,7 @@ public class CommandUtils {
         }
         return list;
     }
-    
+
     public static List<String> getTogglePermissions(@Nullable List<String> list) {
         if(list == null) {
             list = new ArrayList<String>();
@@ -268,11 +317,11 @@ public class CommandUtils {
         }
         return list;
     }
-    
+
     public static boolean checkDefaultNode(EntityPlayer player, int permLevel, String node) {
         return player.canUseCommand(permLevel, node) || !Loader.isModLoaded("sponge");
     }
-    
+
     public static List<String> getSubclaimCompletions(@Nullable List<String> list, int startIndex, String[] args, ICommandSender sender) {
         if(list == null) {
             list = new ArrayList<String>();

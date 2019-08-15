@@ -1,3 +1,9 @@
+1.1.0
+-
+ - Added sub-claims
+ - Added chunk pruning via config
+ - Fixed alias for /ci appearing multiple times
+
 1.0.1
 -
  - Fixed bug where non-ops couldn't make claims without sponge installed (ok, I'm really sorry for this one, I swear, I thought it worked)
