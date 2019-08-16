@@ -16,6 +16,7 @@ import its_meow.claimit.api.claim.SubClaimArea;
 import its_meow.claimit.api.permission.ClaimPermissionMember;
 import its_meow.claimit.api.permission.ClaimPermissionRegistry;
 import its_meow.claimit.command.CommandCITreeBase;
+import its_meow.claimit.command.claimit.subclaim.permission.CommandSubSubClaimPermissionList;
 import its_meow.claimit.util.command.CommandUtils;
 import its_meow.claimit.util.text.FTC;
 import net.minecraft.command.CommandBase;
@@ -27,7 +28,7 @@ import net.minecraft.util.math.BlockPos;
 public class CommandSubSubClaimPermission extends CommandCITreeBase {
 
     public CommandSubSubClaimPermission() {
-        super();
+        super(new CommandSubSubClaimPermissionList());
     }
 
     @Override
