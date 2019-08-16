@@ -266,7 +266,7 @@ public class CommandUtils {
             list = new ArrayList<String>();
         }
         if(sender instanceof EntityPlayer) {
-            Set<SubClaimArea> owned = parent.subclaims;
+            Set<SubClaimArea> owned = parent.getSubClaims();
             if(owned != null && owned.size() > 0) {
                 for(SubClaimArea subclaim : owned) {
                     list.add(subclaim.getDisplayedViewName());

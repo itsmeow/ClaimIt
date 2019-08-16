@@ -13,6 +13,7 @@ import javax.annotation.Nullable;
 import org.apache.logging.log4j.Level;
 
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 
 import its_meow.claimit.api.ClaimItAPI;
 import its_meow.claimit.api.claim.ClaimManager.ClaimAddResult;
@@ -54,7 +55,7 @@ public class ClaimArea extends MemberContainer {
      * defaults to {@link name}**/
     protected String viewName;
     protected Map<ClaimPermissionToggle, Boolean> toggles;
-    public Set<SubClaimArea> subclaims;
+    private Set<SubClaimArea> subclaims;
 
     public ClaimArea(int dimID, int posX, int posZ, int sideLengthX, int sideLengthZ, EntityPlayer player) {
         this(dimID, posX, posZ, sideLengthX, sideLengthZ, player.getGameProfile().getId());
@@ -157,6 +158,10 @@ public class ClaimArea extends MemberContainer {
             }
         }
         return null;
+    }
+    
+    public ImmutableSet<SubClaimArea> getSubClaims() {
+        return ImmutableSet.copyOf(this.subclaims);
     }
 
     public boolean isOwner(UUID owner) {

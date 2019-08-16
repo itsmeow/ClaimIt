@@ -43,7 +43,7 @@ public class SubClaimArea extends ClaimArea {
     @Override
     public boolean setViewName(String nameIn) {
         boolean pass = true;
-        for(SubClaimArea subclaim : this.parent.subclaims) {
+        for(SubClaimArea subclaim : this.parent.getSubClaims()) {
             if(subclaim.getTrueViewName().equals(this.parent.hashCode() + "_" + nameIn) && subclaim != this) { // Claim has the same name, is not this claim, and is owned by the same player
                 pass = false;
             }
