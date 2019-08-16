@@ -41,7 +41,7 @@ public class CommandClaimIt extends CommandCITreeBase {
 	    super(
 	        new CommandSubClaim(),
 		    new CommandSubGroup(),
-		    new CommandSubSubClaim(),
+		    ClaimItConfig.enable_subclaims ? new CommandSubSubClaim() : null,
 		    new CommandSubAdmin(),
 		    new CommandSubConfirm(),
 		    new CommandSubCancel(),
@@ -79,7 +79,10 @@ public class CommandClaimIt extends CommandCITreeBase {
         sendMessage(sender, new FTC(GRAY, Form.BOLD, ClaimItAPI.NAME), new FTC(" Version ", DARK_PURPLE, false), new FTC(ClaimItAPI.VERSION, YELLOW, false));
         sendMessage(sender, new FTC(BLUE, "Claiming item is "), new TextComponentString("" + RESET + GREEN + ITALIC + ClaimItConfig.claim_create_item_display));
         sendMessage(sender, AQUA, Form.BOLD, "Subcommands: ");
-        List<String> subCommands = Arrays.asList(new String[] {"claim", "group", "subclaim", "config", "claimblocks", "showborders", "admin", "help"});
+        List<String> subCommands = Arrays.asList(new String[] {"claim", "group", "config", "claimblocks", "showborders", "admin", "help"});
+        if(ClaimItConfig.enable_subclaims) {
+            subCommands.add("subclaim");
+        }
         for(String cmdT : subCommands) {
             String cmd = "/claimit " + cmdT;
             CommandCIBase subCmd = this.getSubCommand(cmdT);

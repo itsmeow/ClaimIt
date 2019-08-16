@@ -29,9 +29,11 @@ public abstract class CommandCITreeBase extends CommandCIBase {
 
     public CommandCITreeBase(CommandCIBase... subcommands) {
         for(CommandCIBase cmd : subcommands) {
-            this.addSubcommand(cmd);
+            if(cmd != null) {
+                this.addSubcommand(cmd);
+            }
         }
-        
+
     }
 
     public void addSubcommand(CommandCIBase command) {

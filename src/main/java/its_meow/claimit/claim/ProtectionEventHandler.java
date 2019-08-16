@@ -105,7 +105,7 @@ public class ProtectionEventHandler {
             EntityPlayer player = e.getEntityPlayer();
             e.setCanceled(!claim.getMostSpecificClaim(pos).canUse(player));
             if(!(claim instanceof SubClaimArea) && ClaimIt.claiming_item != null && e.getItemStack().getItem() == ClaimIt.claiming_item && !world.isRemote && claim.hasPermission(e.getEntityPlayer(), ClaimPermissions.MANAGE_PERMS)) {
-                if(CommandUtils.checkDefaultNode(player, 0, "claimit.claim.create")) {
+                if(ClaimItConfig.enable_subclaims && CommandUtils.checkDefaultNode(player, 0, "claimit.subclaim.create")) {
                     EnumHand hand = e.getHand();
                     ItemStack stack = player.getHeldItem(hand);
                     NBTTagCompound data = stack.getTagCompound();
