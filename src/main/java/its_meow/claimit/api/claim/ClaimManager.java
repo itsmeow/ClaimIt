@@ -51,6 +51,7 @@ public class ClaimManager {
 	public boolean deleteClaim(ClaimArea claim) {
 	    if(!MinecraftForge.EVENT_BUS.post(new ClaimRemovedEvent(claim))) {
 	        if(claims.remove(claim)) {
+	            ClaimItAPI.logger.debug("Removed claim " + claim.hashCode());
 	            if(chunks.containsKey(claim.getDimensionID())) {
 	                chunks.get(claim.getDimensionID()).removeValueFromAll(claim);
 	            }
@@ -212,6 +213,7 @@ public class ClaimManager {
         MinecraftForge.EVENT_BUS.post(event);
 		claims.add(claim);
 		ownedClaims.put(claim.getOwner(), claim);
+		ClaimItAPI.logger.debug("Added claim " + claim.hashCode() + " owned by " + claim.getOwner());
 		for(ClaimChunk c : claim.getOverlappingChunks()) {
 		    chunks.putIfAbsent(claim.getDimensionID(), new BiMultiMap<ClaimChunk, ClaimArea>());
 		    chunks.get(claim.getDimensionID()).put(c, claim);
@@ -251,6 +253,7 @@ public class ClaimManager {
 			if(!event.isCanceled()) {
 				store.data.setTag("CLAIM_" + serialName, data);
 				store.markDirty();
+				ClaimItAPI.logger.debug("Serializing claim with hash " + serialName);
 			}
 		}
 	}
@@ -275,6 +278,8 @@ public class ClaimManager {
 	                ClaimItAPI.logger.debug("Event cancelled loading of this claim.");
 	            }
 			}
+		} else {
+		    ClaimItAPI.logger.warn("No claim data tag was found.");
 		}
 	}
 	
@@ -283,6 +288,7 @@ public class ClaimManager {
 	        claims.clear();
 	        ownedClaims.clear();
 	        chunks.clear();
+	        ClaimItAPI.logger.debug("Cleared claims list");
 	        MinecraftForge.EVENT_BUS.post(new ClaimsClearedEvent.Post());
 	}
 

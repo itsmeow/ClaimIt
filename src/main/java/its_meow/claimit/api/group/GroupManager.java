@@ -68,6 +68,7 @@ public class GroupManager {
         for(String groupName : groups.keySet()) {
             NBTTagCompound groupCompound = groups.get(groupName).serialize();
             groupsTag.setTag(groupName, groupCompound);
+            ClaimItAPI.logger.debug("Serializing group " + groupName);
         }
         comp.setTag("GROUPS", groupsTag);
         store.markDirty();
@@ -80,12 +81,14 @@ public class GroupManager {
         if(comp != null) {
             NBTTagCompound groupsTag = comp.getCompoundTag("GROUPS");
             for(String key : groupsTag.getKeySet()) {
-                ClaimItAPI.logger.debug("Loading " + key);
+                ClaimItAPI.logger.debug("Loading group " + key);
                 Group group = Group.deserialize(groupsTag.getCompoundTag(key));
                 if(!addGroup(group)) {
                     ClaimItAPI.logger.error("Duplicate group name of " + group.name + " failed to load! Was the data edited?");
                 }
             }
+        } else {
+            ClaimItAPI.logger.warn("Could not get group data tag.");
         }
     }
 
