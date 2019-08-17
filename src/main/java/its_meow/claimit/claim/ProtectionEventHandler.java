@@ -366,7 +366,7 @@ public class ProtectionEventHandler {
         EntityLivingBase entity = e.getEntityLiving();
         DamageSource source = e.getSource();
         if(entity != null && source != null) { // There is an actual damage happening
-            if(source.getTrueSource() instanceof EntityPlayer || source.getImmediateSource() instanceof EntityPlayer) { // Damage is caused by a player either indirectly or directly
+            if(source.getTrueSource() instanceof EntityPlayer) { // Damage is caused by a player either indirectly or directly
                 EntityPlayer player = (EntityPlayer) source.getTrueSource(); // Get the player
                 ClaimArea claim = ClaimManager.getManager().getClaimAtLocation(entity.getEntityWorld(), player.getPosition()); // Claim the damage-doer is in
                 ClaimArea claim2 = ClaimManager.getManager().getClaimAtLocation(entity.getEntityWorld(), entity.getPosition()); // Claim the damaged is in
