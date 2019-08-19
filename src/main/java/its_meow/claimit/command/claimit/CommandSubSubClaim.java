@@ -3,6 +3,7 @@ package its_meow.claimit.command.claimit;
 import its_meow.claimit.command.CommandCITreeBase;
 import its_meow.claimit.command.claimit.subclaim.CommandSubSubClaimDelete;
 import its_meow.claimit.command.claimit.subclaim.CommandSubSubClaimDeleteAll;
+import its_meow.claimit.command.claimit.subclaim.CommandSubSubClaimInfo;
 import its_meow.claimit.command.claimit.subclaim.CommandSubSubClaimList;
 import its_meow.claimit.command.claimit.subclaim.CommandSubSubClaimPermission;
 import its_meow.claimit.command.claimit.subclaim.CommandSubSubClaimSetName;
@@ -18,7 +19,8 @@ public class CommandSubSubClaim extends CommandCITreeBase {
             new CommandSubSubClaimPermission(),
             new CommandSubSubClaimToggle(),
             new CommandSubSubClaimDeleteAll(),
-            new CommandSubSubClaimList()
+            new CommandSubSubClaimList(),
+            new CommandSubSubClaimInfo()
         );
     }
     

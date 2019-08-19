@@ -78,6 +78,10 @@ public class FTC extends TextComponentStyled {
             return new Style().setBold(bold).setItalic(italic).setStrikethrough(strikethrough).setUnderlined(underline);
         }
         
+        public Style applyToStyle(Style style) {
+            return style.setBold(bold).setItalic(italic).setStrikethrough(strikethrough).setUnderlined(underline);
+        }
+        
         public String toString() {
             return "--(This is a bug, report this to ClaimIt with where you find it at)--";
         }

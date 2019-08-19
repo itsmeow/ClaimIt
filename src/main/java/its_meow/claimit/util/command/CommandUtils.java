@@ -42,9 +42,12 @@ public class CommandUtils {
         if(sender instanceof EntityPlayer) {
             EntityPlayer player = ((EntityPlayer) sender);
             claim = mgr.getClaimByNameAndOwner(claimName, player.getUniqueID());
+            ClaimArea trueC = mgr.getClaimByTrueName(claimName);
             if(claim == null && AdminManager.isAdmin(player)) {
                 CommandCIBase.sendMessage(sender, AQUA, "Using true name.");
                 claim = mgr.getClaimByTrueName(claimName);
+            } else if(claim == null && trueC != null && trueC.isOwner(player)) {
+                claim = trueC;
             }
         } else { // sender is console/commandblock
             if(sender.canUseCommand(2, "")) {

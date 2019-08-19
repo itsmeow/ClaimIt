@@ -19,12 +19,15 @@ import its_meow.claimit.util.text.CommandChatStyle;
 import its_meow.claimit.util.text.FTC;
 import its_meow.claimit.util.text.FTC.Form;
 import its_meow.claimit.util.text.TeleportXYChatStyle;
+import its_meow.claimit.util.text.TextComponentStyled;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.Style;
+import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
 
 public class CommandSubClaimInfo extends CommandCIBase {
@@ -68,7 +71,7 @@ public class CommandSubClaimInfo extends CommandCIBase {
         if(args.length == 1) {
             if(sender instanceof EntityPlayer) { 
                 EntityPlayer player = ((EntityPlayer) sender);
-                ClaimArea claim = ClaimManager.getManager().getClaimByNameAndOwner(args[0], EntityPlayer.getUUID(player.getGameProfile()));
+                ClaimArea claim = CommandUtils.getClaimWithName(args[0], player);
                 if(claim != null) {
                     outputClaimInfo(claim, player);
                 } else {
@@ -110,8 +113,10 @@ public class CommandSubClaimInfo extends CommandCIBase {
         sendMessage(sender, new FTC(BLUE, "Area: "), new FTC(AQUA, (claim.getSideLengthX() + 1) + ""), new FTC(BLUE, "x"), new FTC(AQUA, (claim.getSideLengthZ() + 1) + ""), new FTC(BLUE, " ("), new FTC(AQUA, claim.getArea() + ""), new FTC(BLUE, ")"));
         sendAdminStyleMessage(sender, BLUE + "Corner 1: " + DARK_PURPLE + (corners[0].getX()) + BLUE + ", " + DARK_PURPLE + (corners[0].getZ()), new TeleportXYChatStyle(claim.getDimensionID(), corners[0].getX(), corners[0].getZ()));
         sendAdminStyleMessage(sender, BLUE + "Corner 2: " + DARK_PURPLE + (corners[1].getX()) + BLUE + ", " + DARK_PURPLE + (corners[1].getZ()), new TeleportXYChatStyle(claim.getDimensionID(), corners[1].getX(), corners[1].getZ()));
-        if((sender instanceof EntityPlayer && claim.canManage((EntityPlayer) sender)) || CommandUtils.isAdmin(sender))
-            sendSMessage(sender, "View Members", new CommandChatStyle("/ci claim permission list " + (CommandUtils.isAdmin(sender) ? claim.getTrueViewName() : claim.getDisplayedViewName()), true, "Click to view claim members").setColor(GREEN).setUnderlined(true).setItalic(true));
+        Style viewSubclaimsStyle = new CommandChatStyle("/ci subclaim list " + (CommandUtils.isAdmin(sender) ? claim.getTrueViewName() : claim.getDisplayedViewName()), true, "Click to view subclaim list").setColor(YELLOW).setUnderlined(true).setItalic(true);
+        if(CommandUtils.isAdminWithNodeOrManage(sender, claim, "claimit.command.claimit.claim.permission.list.others")) {
+            sendMessage(sender, new TextComponentStyled("View Members", new CommandChatStyle("/ci claim permission list " + (CommandUtils.isAdmin(sender) ? claim.getTrueViewName() : claim.getDisplayedViewName()), true, "Click to view claim members").setColor(GREEN).setUnderlined(true).setItalic(true)).appendSibling(new TextComponentString(" ").setStyle(new Style().setUnderlined(false))).appendSibling(new TextComponentStyled("View Subclaims", viewSubclaimsStyle)));
+        }
     }
 
     @Override

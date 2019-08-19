@@ -2,7 +2,6 @@ package its_meow.claimit.command.claimit.subclaim;
 
 import static net.minecraft.util.text.TextFormatting.BLUE;
 import static net.minecraft.util.text.TextFormatting.DARK_BLUE;
-import static net.minecraft.util.text.TextFormatting.DARK_GREEN;
 import static net.minecraft.util.text.TextFormatting.GREEN;
 import static net.minecraft.util.text.TextFormatting.RED;
 
@@ -13,14 +12,15 @@ import its_meow.claimit.api.claim.ClaimArea;
 import its_meow.claimit.api.claim.SubClaimArea;
 import its_meow.claimit.command.CommandCIBase;
 import its_meow.claimit.util.command.CommandUtils;
-import its_meow.claimit.util.text.CommandChatStyle;
+import its_meow.claimit.util.text.ClaimInfoText;
 import its_meow.claimit.util.text.FTC;
-import its_meow.claimit.util.text.TextComponentStyled;
+import its_meow.claimit.util.text.FTC.Form;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextFormatting;
 
 public class CommandSubSubClaimList extends CommandCIBase {
 
@@ -56,9 +56,9 @@ public class CommandSubSubClaimList extends CommandCIBase {
             for(SubClaimArea subclaim : claim.getSubClaims()) {
                 i++;
                 if(i == 1) {
-                    sendMessage(sender, new FTC(DARK_BLUE, "Subclaim list for claim "), new FTC(GREEN, claim.getDisplayedViewName()), new FTC(DARK_BLUE, ":"));
+                    sendMessage(sender, new FTC(TextFormatting.BLUE, "Subclaim list for claim "), new ClaimInfoText(claim, GREEN, Form.BOLD_UNDERLINE), new FTC(DARK_BLUE, ":"));
                 }
-                sender.sendMessage(new TextComponentStyled(BLUE + "Name: " + DARK_GREEN + subclaim.getDisplayedViewName(), new CommandChatStyle("/ci subclaim info " + claim.getDisplayedViewName(), true, "Click for info.")));
+                sendMessage(sender, new FTC("Name: ", BLUE), new ClaimInfoText(subclaim, TextFormatting.DARK_GREEN));
             }
         } else {
             sendMessage(sender, RED, "There are no subclaims in this claim!");
