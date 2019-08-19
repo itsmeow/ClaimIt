@@ -16,6 +16,9 @@ nav:
     - Checking Admins: 'admins/admins.md'
   - User Configs:
     - About User Configs: 'userconfigs/index.md'
+  - Subclaims:
+    - Managing Subclaims: 'subclaims/subclaim_management.md'
+    - Permission in Subclaims: 'subclaims/subclaim_permissions.md'
 
 site_name: ClaimIt API
 theme:

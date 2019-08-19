@@ -64,12 +64,12 @@ The actual adding of a claim (and checking for overlaps!) is done like so:
 
 ```java
 // Event
-boolean added = ClaimManager.getManager().addClaim(claim);
+ClaimAddResult result = ClaimManager.getManager().addClaim(claim);
 // No Event
-boolean added = ClaimManager.getManager().addClaimNoEvent(claim);
+ClaimAddResult result = ClaimManager.getManager().addClaimNoEvent(claim);
 ```
 
-Both methods return false if the claim overlaps another or could not be added for any reason.
+The result can be any of the `ClaimAddResult`s, make sure they are handled properly when displaying output. `ADDED` means the claim was added successfully.
 
 ## Removing Claims
 
