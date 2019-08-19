@@ -14,6 +14,7 @@ import its_meow.claimit.api.claim.ClaimArea;
 import its_meow.claimit.api.claim.ClaimManager;
 import its_meow.claimit.api.claim.ClaimManager.ClaimAddResult;
 import its_meow.claimit.api.claim.SubClaimArea;
+import its_meow.claimit.api.config.ClaimItAPIConfig;
 import its_meow.claimit.api.event.claim.ClaimCheckPermissionEvent;
 import its_meow.claimit.api.permission.ClaimPermissions;
 import its_meow.claimit.config.ClaimItConfig;
@@ -105,7 +106,7 @@ public class ProtectionEventHandler {
             EntityPlayer player = e.getEntityPlayer();
             e.setCanceled(!claim.getMostSpecificClaim(pos).canUse(player));
             if(!(claim instanceof SubClaimArea) && ClaimIt.claiming_item != null && e.getItemStack().getItem() == ClaimIt.claiming_item && !world.isRemote && claim.hasPermission(e.getEntityPlayer(), ClaimPermissions.MANAGE_PERMS)) {
-                if(ClaimItConfig.enable_subclaims && CommandUtils.checkDefaultNode(player, 0, "claimit.subclaim.create")) {
+                if(ClaimItAPIConfig.enable_subclaims && CommandUtils.checkDefaultNode(player, 0, "claimit.subclaim.create")) {
                     EnumHand hand = e.getHand();
                     ItemStack stack = player.getHeldItem(hand);
                     NBTTagCompound data = stack.getTagCompound();

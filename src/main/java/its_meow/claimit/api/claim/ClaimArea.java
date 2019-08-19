@@ -17,6 +17,7 @@ import com.google.common.collect.ImmutableSet;
 
 import its_meow.claimit.api.ClaimItAPI;
 import its_meow.claimit.api.claim.ClaimManager.ClaimAddResult;
+import its_meow.claimit.api.config.ClaimItAPIConfig;
 import its_meow.claimit.api.event.claim.ClaimCheckPermissionEvent;
 import its_meow.claimit.api.group.Group;
 import its_meow.claimit.api.group.GroupManager;
@@ -415,7 +416,9 @@ public class ClaimArea extends MemberContainer {
 
         data = super.writeMembers(data);
         data = ClaimNBTUtil.writeToggles(data, this.getToggles());
-        data = this.serializeSubClaims(data);
+        if(ClaimItAPIConfig.enable_subclaims) {
+            data = this.serializeSubClaims(data);
+        }
         return data;
     }
 
@@ -431,7 +434,7 @@ public class ClaimArea extends MemberContainer {
             ClaimArea claim = new ClaimArea(claimVals[1], claimVals[2], claimVals[3], claimVals[4], claimVals[5], owner, trueViewName);
             claim.addMembers(MemberContainer.readMembers(tag));
             claim.setToggles(ClaimNBTUtil.readToggles(tag));
-            if(tag.hasKey("SUBCLAIMS")) {
+            if(tag.hasKey("SUBCLAIMS") && ClaimItAPIConfig.enable_subclaims) {
                 tag.getTagList("SUBCLAIMS", Constants.NBT.TAG_COMPOUND).forEach(base -> {
                     claim.addSubClaim(SubClaimArea.deserialize(claim, ((NBTTagCompound) base)));
                 });

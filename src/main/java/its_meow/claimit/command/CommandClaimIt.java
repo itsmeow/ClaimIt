@@ -17,6 +17,7 @@ import com.google.common.collect.Lists;
 
 import its_meow.claimit.ClaimIt;
 import its_meow.claimit.api.ClaimItAPI;
+import its_meow.claimit.api.config.ClaimItAPIConfig;
 import its_meow.claimit.command.claimit.CommandSubAdmin;
 import its_meow.claimit.command.claimit.CommandSubCancel;
 import its_meow.claimit.command.claimit.CommandSubClaim;
@@ -43,7 +44,7 @@ public class CommandClaimIt extends CommandCITreeBase {
 	    super(
 	        new CommandSubClaim(),
 		    new CommandSubGroup(),
-		    ClaimItConfig.enable_subclaims ? new CommandSubSubClaim() : null,
+		    ClaimItAPIConfig.enable_subclaims ? new CommandSubSubClaim() : null,
 		    new CommandSubAdmin(),
 		    new CommandSubConfirm(),
 		    new CommandSubCancel(),
@@ -82,7 +83,7 @@ public class CommandClaimIt extends CommandCITreeBase {
         sendMessage(sender, new FTC(BLUE, "Claiming item is "), new TextComponentString("" + RESET + GREEN + ITALIC + ClaimItConfig.claim_create_item_display));
         sendMessage(sender, AQUA, Form.BOLD, "Subcommands: ");
         List<String> subCommands = Lists.newArrayList("claim", "group", "config", "claimblocks", "showborders", "admin", "help");
-        if(ClaimItConfig.enable_subclaims) {
+        if(ClaimItAPIConfig.enable_subclaims) {
             subCommands.add("subclaim");
         }
         for(String cmdT : subCommands) {
