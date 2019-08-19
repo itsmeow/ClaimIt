@@ -13,6 +13,7 @@ import java.util.UUID;
 
 import its_meow.claimit.api.claim.ClaimArea;
 import its_meow.claimit.api.claim.ClaimManager;
+import its_meow.claimit.api.config.ClaimItAPIConfig;
 import its_meow.claimit.command.CommandCIBase;
 import its_meow.claimit.util.command.CommandUtils;
 import its_meow.claimit.util.text.CommandChatStyle;
@@ -26,6 +27,7 @@ import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
@@ -115,7 +117,11 @@ public class CommandSubClaimInfo extends CommandCIBase {
         sendAdminStyleMessage(sender, BLUE + "Corner 2: " + DARK_PURPLE + (corners[1].getX()) + BLUE + ", " + DARK_PURPLE + (corners[1].getZ()), new TeleportXYChatStyle(claim.getDimensionID(), corners[1].getX(), corners[1].getZ()));
         Style viewSubclaimsStyle = new CommandChatStyle("/ci subclaim list " + (CommandUtils.isAdmin(sender) ? claim.getTrueViewName() : claim.getDisplayedViewName()), true, "Click to view subclaim list").setColor(YELLOW).setUnderlined(true).setItalic(true);
         if(CommandUtils.isAdminWithNodeOrManage(sender, claim, "claimit.command.claimit.claim.permission.list.others")) {
-            sendMessage(sender, new TextComponentStyled("View Members", new CommandChatStyle("/ci claim permission list " + (CommandUtils.isAdmin(sender) ? claim.getTrueViewName() : claim.getDisplayedViewName()), true, "Click to view claim members").setColor(GREEN).setUnderlined(true).setItalic(true)).appendSibling(new TextComponentString(" ").setStyle(new Style().setUnderlined(false))).appendSibling(new TextComponentStyled("View Subclaims", viewSubclaimsStyle)));
+            ITextComponent viewMembers = new TextComponentStyled("View Members", new CommandChatStyle("/ci claim permission list " + (CommandUtils.isAdmin(sender) ? claim.getTrueViewName() : claim.getDisplayedViewName()), true, "Click to view claim members").setColor(GREEN).setUnderlined(true).setItalic(true));
+            if(ClaimItAPIConfig.enable_subclaims) {
+                viewMembers.appendSibling(new TextComponentString(" ").setStyle(new Style().setUnderlined(false))).appendSibling(new TextComponentStyled("View Subclaims", viewSubclaimsStyle));
+            }
+            sendMessage(sender, viewMembers);
         }
     }
 
