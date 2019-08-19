@@ -1,3 +1,9 @@
+1.1.0
+-
+ - Added `SubClaimArea`, and handling methods for it in `ClaimArea`
+ - Created second config using annotations
+ - Added some debugging messages throughout code
+
 1.0.1
 -
  - Moved `userconfig` package from ClaimIt to the API.

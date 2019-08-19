@@ -1,8 +1,13 @@
 1.1.0
 -
- - Added sub-claims
+ - Added sub-claims (can disable in API config 2)
  - Added chunk pruning via config
  - Fixed alias for /ci appearing multiple times
+ - Claim owners can now still use true names to reference their claims in various places
+ - Added wildcards (`*`) and multi-parsing to permission command. Ex: `/ci claim permission add modify,use Player23,Player43` or `/ci claim permission remove * *`
+ - Fixed crash with direct player attacks caused indirectly by another entity (happens with Twilight Forest ghast fireballs for some reason?)
+ - Fixed being unable to add claims to groups when you owned the group
+ - Added clickable "View Subclaims" in claim info
 
 1.0.1
 -
