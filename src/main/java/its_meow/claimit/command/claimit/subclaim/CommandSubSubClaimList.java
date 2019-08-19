@@ -75,7 +75,7 @@ public class CommandSubSubClaimList extends CommandCIBase {
 
     @Override
     public String getPermissionString() {
-        return "claimit.claim.list";
+        return "claimit.subclaim.list";
     }
 
 }

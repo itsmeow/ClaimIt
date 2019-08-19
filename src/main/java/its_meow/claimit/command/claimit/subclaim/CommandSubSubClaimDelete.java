@@ -25,7 +25,7 @@ public class CommandSubSubClaimDelete extends CommandCIBase {
 
     @Override
     public String getUsage(ICommandSender sender) {
-        return "/claimit subclaim delete [claimname (and/or) subclaimname]";
+        return "/claimit subclaim delete [claimname) (subclaimname]";
     }
 
     @Override
