@@ -1,5 +1,4 @@
 <h1 align="center">ClaimIt</h1>
-<img align="center" style="display:block;max-width:100px;max-height:100px;" src="https://media.forgecdn.net/avatars/207/69/636963311039618129.png" />
 <p style="text-align: center;">
 <a href='https://claimit.readthedocs.io/en/latest/?badge=latest'><img src='https://readthedocs.org/projects/claimit/badge/?version=latest' alt='Documentation Status' /></a>
 </p>
