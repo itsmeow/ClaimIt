@@ -202,7 +202,7 @@ ClaimIt provides many configurable features. Currently, there are three configs,
 #### API Configuration 1 (claimit_api.cfg)
 This configuration allows forcing values to toggles in all claims. This means you can for example force `pickup_item` to allowed (true) in all claims. Here's an example configuration for that:
 
-```json
+```
 claim_permissions {
     pickup_item {
         # Set true to force pickup_item in claims to the value of 'force_pickup_item_value' [default: false]
@@ -220,7 +220,7 @@ Setting `do_force_toggle_name_value` to true will ensure that all claims have `t
 
 Currently this configuration contains only one value.
 
-```json
+```
 general {
     # Enable or disable the entire subclaim system
     B:enable_subclaims=true
@@ -231,7 +231,7 @@ Setting `enable_subclaims` to false will remove any existing subclaims and destr
 #### ClaimIt Configuration (claimit.cfg)
 This is the most useful configuration for most users. This allows setting a variety of values.
 
-```json
+```
 general {
     # The amount of claim blocks to be rewarded to players every "claim_blocks_accrual_period" ticks
     I:claim_blocks_accrual_amount=0
