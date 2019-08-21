@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import its_meow.claimit.ClaimIt;
+import its_meow.claimit.api.ClaimItAPI;
 import its_meow.claimit.api.claim.ClaimArea;
 import its_meow.claimit.api.claim.ClaimManager;
 import its_meow.claimit.api.event.claim.ClaimAddedEvent;
@@ -44,16 +45,22 @@ public class ClaimEventListener implements IWorldEventListener {
     @SubscribeEvent
     public static void onClaimAdded(ClaimAddedEvent event) {
         World world = event.getClaim().getWorld();
-        ClaimEventListener listener = new ClaimEventListener(world.getMinecraftServer(), world);
-        world.addEventListener(listener);
-        listeners.put(world, listener);
+        if(world != null) {
+            ClaimEventListener listener = new ClaimEventListener(world.getMinecraftServer(), world);
+            world.addEventListener(listener);
+            listeners.put(world, listener);
+        } else {
+            ClaimItAPI.logger.warn("Attempted to add listener for " + event.getClaim().getTrueViewName() + " in dimension " + event.getClaim().getDimensionID() + ", but it was not loaded or did not exist!");
+        }
     }
     
     @SubscribeEvent
     public static void onClaimRemoved(ClaimRemovedEvent event) {
         World world = event.getClaim().getWorld();
-        if(listeners.containsKey(world)) {
+        if(world != null && listeners.containsKey(world)) {
             world.removeEventListener(listeners.remove(world));
+        } else {
+            ClaimItAPI.logger.warn("Attempted to remove listener for " + event.getClaim().getTrueViewName() + " in dimension " + event.getClaim().getDimensionID() + ", but it was not loaded or did not exist!");
         }
     }
     
