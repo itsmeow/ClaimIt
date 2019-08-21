@@ -59,6 +59,8 @@ ClaimIt includes an abundance of commands both for player use and admin use.
    * `/claimit claimblocks [subcommand]`
    * `/claimit config [config) (value]`
    * `/claimit confirm`
+   * `/claimit subclaim [subcommand]`
+   * `/claimit trust <username> [claimname]`
    * `/claimit group [subcommand]`
    * `/claimit help [subcommand]`
 
@@ -156,6 +158,7 @@ List of default permissions:
    * `claimit.command.claimit.subclaim.permission.list`
    * `claimit.command.claimit.subclaim.setname`
    * `claimit.command.claimit.subclaim.toggle`
+   * `claimit.command.claimit.trust`
 
 The list of non default admin permissions:
 

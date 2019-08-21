@@ -28,6 +28,7 @@ import its_meow.claimit.command.claimit.CommandSubGroup;
 import its_meow.claimit.command.claimit.CommandSubHelp;
 import its_meow.claimit.command.claimit.CommandSubShowBorders;
 import its_meow.claimit.command.claimit.CommandSubSubClaim;
+import its_meow.claimit.command.claimit.CommandSubTrust;
 import its_meow.claimit.config.ClaimItConfig;
 import its_meow.claimit.util.command.CommandHelpRegistry;
 import its_meow.claimit.util.text.AutoFillHelpChatStyle;
@@ -51,7 +52,8 @@ public class CommandClaimIt extends CommandCITreeBase {
 		    new CommandSubConfig(),
 		    new CommandSubClaimBlocks(),
 		    new CommandSubShowBorders(),
-		    new CommandSubHelp()
+		    new CommandSubHelp(),
+		    new CommandSubTrust()
 		);
 	    CommandHelpRegistry.registerHelp(this.getName(), this::getHelp);
 	}
@@ -82,7 +84,7 @@ public class CommandClaimIt extends CommandCITreeBase {
         sendMessage(sender, new FTC(GRAY, Form.BOLD, ClaimItAPI.NAME), new FTC(" Version ", DARK_PURPLE, false), new FTC(ClaimItAPI.VERSION, YELLOW, false));
         sendMessage(sender, new FTC(BLUE, "Claiming item is "), new TextComponentString("" + RESET + GREEN + ITALIC + ClaimItConfig.claim_create_item_display));
         sendMessage(sender, AQUA, Form.BOLD, "Subcommands: ");
-        List<String> subCommands = Lists.newArrayList("claim", "group", "config", "claimblocks", "showborders", "admin", "help");
+        List<String> subCommands = Lists.newArrayList("claim", "group", "trust", "config", "claimblocks", "showborders", "admin", "help");
         if(ClaimItAPIConfig.enable_subclaims) {
             subCommands.add("subclaim");
         }
