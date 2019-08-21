@@ -1,3 +1,8 @@
+1.1.1
+-
+ - Added /ci trust, shortcut for /ci claim permission add modify,use,entity,pvp <username> [claimname]
+ - Improved error handling while deserializing claims
+
 1.1.0
 -
  - Added sub-claims (can disable in API config 2)

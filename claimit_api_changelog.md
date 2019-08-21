@@ -1,3 +1,7 @@
+1.1.1
+-
+ - Improved error handling while deserializing claims
+
 1.1.0
 -
  - Added `SubClaimArea`, and handling methods for it in `ClaimArea`
