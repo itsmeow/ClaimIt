@@ -22,7 +22,6 @@ import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
 
 public class CommandSubSubClaimInfo extends CommandCIBase {
 
@@ -51,7 +50,6 @@ public class CommandSubSubClaimInfo extends CommandCIBase {
     }
 
     private static void outputClaimInfo(SubClaimArea subClaim, ICommandSender sender) {
-        World worldIn = sender.getEntityWorld();
         BlockPos[] corners = subClaim.getTwoMainClaimCorners();
 
         sendMessage(sender, new FTC(BLUE, Form.BOLD, "Information for subclaim of claim "), new ClaimInfoText(subClaim.getParent(), GREEN, Form.BOLD_UNDERLINE), new FTC(BLUE, Form.BOLD, ":"));
