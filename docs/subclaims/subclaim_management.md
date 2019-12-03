@@ -1,7 +1,7 @@
 # Subclaim Management
 This is a guide on managing (adding, removing, and retrieving) subclaims.
 
-## Getting Sublaims
+## Getting Subclaims
 This is a short guide on retrieving subclaim instances given a location in a claim, or name.
 <br><br>
 ### Retrieving Subclaims at a position in a claim
