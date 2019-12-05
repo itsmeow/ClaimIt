@@ -8,6 +8,7 @@ import static net.minecraft.util.text.TextFormatting.RED;
 import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
+import java.util.UUID;
 
 import its_meow.claimit.ClaimIt;
 import its_meow.claimit.api.claim.ClaimArea;
@@ -16,10 +17,14 @@ import its_meow.claimit.api.claim.ClaimManager.ClaimAddResult;
 import its_meow.claimit.api.claim.SubClaimArea;
 import its_meow.claimit.api.config.ClaimItAPIConfig;
 import its_meow.claimit.api.event.claim.ClaimCheckPermissionEvent;
+import its_meow.claimit.api.group.Group;
+import its_meow.claimit.api.group.GroupManager;
 import its_meow.claimit.api.permission.ClaimPermissions;
 import its_meow.claimit.config.ClaimItConfig;
 import its_meow.claimit.permission.ClaimItPermissions;
+import its_meow.claimit.serialization.ClaimItGlobalDataSerializer;
 import its_meow.claimit.util.command.CommandUtils;
+import its_meow.claimit.util.text.ColorUtil;
 import its_meow.claimit.util.text.FTC;
 import net.minecraft.block.BlockGrass;
 import net.minecraft.block.BlockTallGrass;
@@ -38,10 +43,13 @@ import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.BlockSnapshot;
+import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.event.ServerChatEvent;
 import net.minecraftforge.event.entity.EntityMountEvent;
 import net.minecraftforge.event.entity.ProjectileImpactEvent;
 import net.minecraftforge.event.entity.item.ItemTossEvent;
@@ -65,6 +73,31 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 @Mod.EventBusSubscriber(modid = ClaimIt.MOD_ID)
 public class ProtectionEventHandler {
+
+    @SubscribeEvent(priority = EventPriority.LOW)
+    public static void onChat(ServerChatEvent event) {
+        NBTTagCompound data = ClaimItGlobalDataSerializer.get().data;
+        if(data.hasKey("PRIMARY_GROUPS", Constants.NBT.TAG_COMPOUND)) {
+            NBTTagCompound tag = data.getCompoundTag("PRIMARY_GROUPS");
+            UUID uuid = event.getPlayer().getGameProfile().getId();
+            String uuidStr = uuid.toString();
+            if(tag.hasKey(uuidStr, Constants.NBT.TAG_STRING)) {
+                String groupName = tag.getString(uuidStr);
+                Group group = GroupManager.getGroup(groupName);
+                if(group != null) {
+                    if(group.getMembers().keySet().contains(uuid) || group.isOwner(uuid)) {
+                        if(group.getTag() != null) {
+                            if(ColorUtil.removeColorCodes(group.getTag()).length() <= ClaimItConfig.max_tag_length && ColorUtil.removeColorCodes(group.getTag()).length() >= ClaimItConfig.min_tag_length) {
+                                ITextComponent comp = ColorUtil.getGroupTagComponent(group);
+                                comp.getSiblings().add(new TextComponentString(" ").appendSibling(event.getComponent()));
+                                event.setComponent(comp);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
 
     @SubscribeEvent(priority = EventPriority.LOW)
     public static void onPermissionCheck(ClaimCheckPermissionEvent event) {

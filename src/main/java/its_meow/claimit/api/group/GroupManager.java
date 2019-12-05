@@ -12,6 +12,7 @@ import its_meow.claimit.api.event.group.GroupClaimAddedEvent;
 import its_meow.claimit.api.event.group.GroupClaimRemovedEvent;
 import its_meow.claimit.api.serialization.GlobalDataSerializer;
 import its_meow.claimit.api.util.objects.BiMultiMap;
+import its_meow.claimit.util.text.ColorUtil;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
@@ -55,6 +56,20 @@ public class GroupManager {
         groups.put(newName, group);
         group.name = newName;
         return true;
+    }
+    
+    public static boolean setGroupTag(Group group, String tag) {
+        String cleanTag = ColorUtil.removeColorCodes(tag);
+        boolean pass = true;
+        for(Group group1 : groups.values()) {
+            if(group1 != group && group1.getTag() != null && ColorUtil.removeColorCodes(group1.getTag()).equalsIgnoreCase(cleanTag)) {
+                pass = false;
+            }
+        }
+        if(pass) {
+            group.setTag(tag);
+        }
+        return pass;
     }
 
     public static ImmutableSet<Group> getGroups() {

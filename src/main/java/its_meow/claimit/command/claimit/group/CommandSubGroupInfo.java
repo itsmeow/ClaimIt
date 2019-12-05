@@ -19,6 +19,7 @@ import its_meow.claimit.api.group.GroupManager;
 import its_meow.claimit.api.permission.ClaimPermissionMember;
 import its_meow.claimit.command.CommandCIBase;
 import its_meow.claimit.util.command.CommandUtils;
+import its_meow.claimit.util.text.ColorUtil;
 import its_meow.claimit.util.text.FTC;
 import its_meow.claimit.util.text.FTC.Form;
 import net.minecraft.command.CommandBase;
@@ -73,7 +74,7 @@ public class CommandSubGroupInfo extends CommandCIBase {
 
         sendMessage(player, new FTC(BLUE, Form.BOLD, "Information for group owned by "), new FTC(GREEN, Form.BOLD, ownerName), new FTC(BLUE, Form.BOLD, ":"));
         sendMessage(player, new FTC(BLUE, "Group Name: "), new FTC(DARK_GREEN, group.getName()));
-  
+        sendMessage(player, new FTC(BLUE, "Group Tag: "), ColorUtil.getGroupTagComponent(group));
         ImmutableSetMultimap<UUID, ClaimPermissionMember> permMap = group.getMembers();
         if(permMap == null || permMap.isEmpty()) {
             sendMessage(player, YELLOW, "No members.");

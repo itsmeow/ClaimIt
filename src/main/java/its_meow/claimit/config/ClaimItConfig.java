@@ -36,5 +36,13 @@ public class ClaimItConfig {
     
     @Config.Comment("Deletes chunks that do not have claims present when enabled. After all region data has been pruned, this option does nothing until the server is restarted. DO NOT USE THIS WITHOUT BACKUPS OR AN UNDERSTANDING OF WHAT YOU ARE DOING. THIS WILL DELETE ANYTHING THAT IS NOT WITHIN A CHUNK THAT HAS A CLAIM AND RETURN IT TO THE DEFAULT GENERATION. I AM NOT RESPONSIBLE FOR ANY LOSS OF DATA. DO NOT ASK ME IF YOU CAN UNDO THIS, YOU CANNOT.")
     public static boolean prune_unclaimed_chunks = false;
+
+    @Config.Comment("Maximum length a tag can be. Must be greater than or equal to minimum.")
+    @Config.RangeInt(min = 1, max = 30)
+    public static int max_tag_length = 4;
+    
+    @Config.Comment("Minimum length a tag can be. Must be less than or equal to maximum.")
+    @Config.RangeInt(min = 1, max = 30)
+    public static int min_tag_length = 3;
     
 }

@@ -5,6 +5,8 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
+import javax.annotation.Nullable;
+
 import com.google.common.collect.ImmutableList;
 
 import its_meow.claimit.api.claim.ClaimArea;
@@ -16,18 +18,20 @@ import its_meow.claimit.api.util.objects.MemberContainer;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.util.Constants;
 
 public class Group extends MemberContainer {
 
     protected String name;
-    
+    protected String tag = null;
+
     protected Set<ClaimArea> claims = new HashSet<ClaimArea>();
 
     public Group(String name, UUID owner) {
         super(owner);
         this.name = name;
     }
-    
+
     /**
      * Removes a member's owned claims from the claims list
      * @param uuid - The member's UUID
@@ -37,7 +41,7 @@ public class Group extends MemberContainer {
         claims.forEach(c -> {if(c.isOwner(uuid)) toRemove.add(c);});
         toRemove.forEach(c -> claims.remove(c));
     }
-    
+
     @Override
     public boolean removeMember(UUID uuid, ClaimPermissionMember permission) {
         boolean result = super.removeMember(uuid, permission);
@@ -46,7 +50,7 @@ public class Group extends MemberContainer {
         }
         return result;
     }
-    
+
     /**
      * Adds a claim to the list
      * @param claim - The claim
@@ -55,7 +59,7 @@ public class Group extends MemberContainer {
     public boolean addClaim(ClaimArea claim) {
         return !MinecraftForge.EVENT_BUS.post(new GroupClaimAddedEvent(this, claim)) && claims.add(claim);
     }
-    
+
     /**
      * Removes a claim from the list
      * @param claim - The claim
@@ -64,7 +68,7 @@ public class Group extends MemberContainer {
     public boolean removeClaim(ClaimArea claim) {
         return !MinecraftForge.EVENT_BUS.post(new GroupClaimRemovedEvent(this, claim)) && claims.remove(claim);
     }
-    
+
     /**
      * Determines if a claim is present in the list
      * @param claim - The claim
@@ -73,7 +77,7 @@ public class Group extends MemberContainer {
     public boolean hasClaim(ClaimArea claim) {
         return claims.contains(claim);
     }
-    
+
     /**
      * Determines if a user is granted permission in a claim via this group
      * @param player - The player to test
@@ -84,7 +88,7 @@ public class Group extends MemberContainer {
     public boolean hasPermissionInClaim(EntityPlayer player, ClaimPermissionMember permission, ClaimArea claim) {
         return hasPermissionInClaim(player.getGameProfile().getId(), permission, claim);
     }
-    
+
     /**
      * Determines if a user is granted permission in a claim via this group
      * @param uuid - The UUID of the player to test
@@ -100,27 +104,27 @@ public class Group extends MemberContainer {
     public boolean hasPermission(UUID uuid, ClaimPermissionMember permission) {
         return this.memberLists.getKeys(uuid).contains(permission) || uuid.equals(this.ownerUUID);
     }
-    
+
     /**
      * @return An Immutable List containing all the claims that this group has
      */
     public ImmutableList<ClaimArea> getClaims() {
         return ImmutableList.copyOf(claims);
     }
-    
+
     /**
-     * @return The name of this claim, set by the user
+     * @return The name of this group, set by the user
      */
     public String getName() {
         return name;
     }
-    
+
     protected void addClaims(ArrayList<ClaimArea> claims) {
         claims.forEach(claim -> this.addClaim(claim));
     }
-    
+
     /**
-     * Writes this claim and its attributes to an NBT Compound
+     * Writes this group and its attributes to an NBT Compound
      * @return The claim represented in a compound
      */
     public NBTTagCompound serialize() {
@@ -129,9 +133,12 @@ public class Group extends MemberContainer {
         compound.setString("name", name);
         compound = super.writeMembers(compound);
         compound = ClaimNBTUtil.writeClaimNames(compound, this.claims);
+        if(tag != null) {
+            compound.setString("tag", tag);
+        }
         return compound;
     }
-    
+
     /**
      * Reads a compound and returns a group object with the saved members and claims
      * @param compound - The compound containing a claim object
@@ -143,14 +150,34 @@ public class Group extends MemberContainer {
         Group group = new Group(name, owner);
         group.addMembers(MemberContainer.readMembers(compound));
         group.addClaims(ClaimNBTUtil.readClaimNames(compound));
+        if(compound.hasKey("tag", Constants.NBT.TAG_STRING)) {
+            group.setTag(compound.getString("tag"));
+        }
         return group;
     }
 
     public void removeAllClaims() {
         this.claims.forEach(claim -> this.removeClaim(claim));
     }
-    
+
     public void removeAllMembers() {
         this.memberLists.getKeysToValues().forEach((key, value) -> this.memberLists.remove(key, value));
     }
+
+    /**
+     * Set a group's tag
+     * @param tag - The tag to set this group to
+     */
+    void setTag(String tag) {
+        this.tag = tag;
+    }
+
+    /**
+     * @return This group's tag
+     */
+    @Nullable
+    public String getTag() {
+        return tag;
+    }
+
 }
