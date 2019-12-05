@@ -30,6 +30,8 @@ public class ClaimItAPIConfig extends Configuration {
             boolean forceValue = cfg.getBoolean("force_" + toggle.parsedName + "_value", claimPermissions + "." + toggle.parsedName, true, "Set to whatever value you want this to be if 'do_force_" + toggle.parsedName + "_value' is true");
             toggle.setForceEnabled(doForce);
             toggle.setForceValue(forceValue);
+            boolean defaultValue = cfg.getBoolean("default_value", claimPermissions + "." + toggle.parsedName, toggle.getDefault(), "Sets the default value for this toggle in new claims and under the help information for this toggle.");
+            toggle.setDefault(defaultValue);
         }
     }
 
