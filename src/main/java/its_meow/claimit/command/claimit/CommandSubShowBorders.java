@@ -8,6 +8,7 @@ import com.google.common.collect.ImmutableSet;
 import its_meow.claimit.ClaimIt;
 import its_meow.claimit.api.claim.ClaimArea;
 import its_meow.claimit.api.claim.ClaimManager;
+import its_meow.claimit.api.claim.SubClaimArea;
 import its_meow.claimit.api.util.objects.ClaimChunkUtil;
 import its_meow.claimit.api.util.objects.ClaimChunkUtil.ClaimChunk;
 import its_meow.claimit.command.CommandCIBase;
@@ -59,7 +60,7 @@ public class CommandSubShowBorders extends CommandCIBase {
                 if(time < ClaimItConfig.max_show_borders_seconds * 20L) {
                     sendMessage(sender, TextFormatting.RED, "You are already viewing claim borders.");
                 } else if(time < (ClaimItConfig.show_borders_cooldown * 20L) + (ClaimItConfig.max_show_borders_seconds * 20L)) {
-                    sendMessage(sender, TextFormatting.RED, "You cannot view members for the next " + ClaimItConfig.show_borders_cooldown + " seconds.");
+                    sendMessage(sender, TextFormatting.RED, "You cannot view claim borders for the next " + ClaimItConfig.show_borders_cooldown + " seconds.");
                 } else {
                     borderTime.put(uuid, (long) player.ticksExisted);
                     sendMessage(sender, TextFormatting.GREEN, "Viewing claim borders for " + ClaimItConfig.max_show_borders_seconds + " seconds.");
@@ -104,22 +105,29 @@ public class CommandSubShowBorders extends CommandCIBase {
         ImmutableSet<ClaimArea> claims = ClaimManager.getManager().getClaimsInChunk(world.provider.getDimension(), chunk);
         if(claims != null && claims.size() > 0) {
             for(ClaimArea claim : claims) {
-                for(int i = 0; i < 4; i++) {
-                    BlockPos pos = claim.getFourCorners()[i];
-                    if(i == 1) {
-                        pos = pos.add(1, 0, 0);
-                    } else if(i == 2) {
-                        pos = pos.add(0, 0, 1);
-                    } else if(i == 3) {
-                        pos = pos.add(1, 0, 1);
-                    }
-                    spawnPathBetween(player, world, new BlockPos(pos.getX(), 0, pos.getZ()), new BlockPos(pos.getX(), world.getActualHeight(), pos.getZ()));
+                spawnParticlesOnCorners(player, claim, world, EnumParticleTypes.VILLAGER_HAPPY);
+                for(SubClaimArea subclaim : claim.getSubClaims()) {
+                    spawnParticlesOnCorners(player, subclaim, world, EnumParticleTypes.VILLAGER_ANGRY);
                 }
             }
         }
     }
+    
+    public static void spawnParticlesOnCorners(EntityPlayerMP player, ClaimArea claim, WorldServer world, EnumParticleTypes type) {
+        for(int i = 0; i < 4; i++) {
+            BlockPos pos = claim.getFourCorners()[i];
+            if(i == 1) {
+                pos = pos.add(1, 0, 0);
+            } else if(i == 2) {
+                pos = pos.add(0, 0, 1);
+            } else if(i == 3) {
+                pos = pos.add(1, 0, 1);
+            }
+            spawnPathBetween(player, world, new BlockPos(pos.getX(), 0, pos.getZ()), new BlockPos(pos.getX(), world.getActualHeight(), pos.getZ()), type);
+        }
+    }
 
-    public static void spawnPathBetween(EntityPlayerMP player, WorldServer world, BlockPos start, BlockPos dest) {
+    public static void spawnPathBetween(EntityPlayerMP player, WorldServer world, BlockPos start, BlockPos dest, EnumParticleTypes type) {
         final double stops = 3;
         double dirX = (dest.getX() - start.getX()) / stops;
         double dirY = (dest.getY() - start.getY()) / stops;
@@ -128,7 +136,7 @@ public class CommandSubShowBorders extends CommandCIBase {
         for(double i = 1; i <= stops; i++) {
             Vec3d posOff = dir.scale(i);
             Vec3d pos = posOff.add(start.getX(), start.getY(), start.getZ());
-            player.connection.sendPacket(new SPacketParticles(EnumParticleTypes.VILLAGER_HAPPY, false, (float) pos.x, (float) pos.y, (float) pos.z, 0F, 20F, 0F, 20F, 20));
+            player.connection.sendPacket(new SPacketParticles(type, false, (float) pos.x, (float) pos.y, (float) pos.z, 0F, 20F, 0F, 20F, 20));
         }
     }
 
