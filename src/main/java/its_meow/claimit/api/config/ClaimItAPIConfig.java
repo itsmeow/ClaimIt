@@ -24,7 +24,7 @@ public class ClaimItAPIConfig extends Configuration {
 
     public static void loadFields(Configuration cfg) {
         String claimPermissions = "claim_permissions";
-        cfg.addCustomCategoryComment(claimPermissions, "Force specific permissions to values");
+        cfg.addCustomCategoryComment(claimPermissions, "Configure toggle permissions and their values");
         for(ClaimPermissionToggle toggle : ClaimPermissionRegistry.getTogglePermissions()) {
             boolean doForce = cfg.getBoolean("do_force_" + toggle.parsedName + "_value", claimPermissions + "." + toggle.parsedName, false, "Set true to force " + toggle.parsedName + " in claims to the value of 'force_" + toggle.parsedName + "_value'");
             boolean forceValue = cfg.getBoolean("force_" + toggle.parsedName + "_value", claimPermissions + "." + toggle.parsedName, true, "Set to whatever value you want this to be if 'do_force_" + toggle.parsedName + "_value' is true");
