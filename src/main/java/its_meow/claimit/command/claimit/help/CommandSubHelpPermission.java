@@ -61,7 +61,7 @@ public class CommandSubHelpPermission extends CommandCIBase {
                 if(args.length == 1) {
                     sendMessage(sender, new FTC("Toggle Permissions:", GOLD, Form.UNDERLINE));
                     for(ClaimPermissionToggle perm : ClaimPermissionRegistry.getTogglePermissions()) {
-                        sendMessage(sender, new FTC(perm.parsedName + ": ", GREEN), new FTC(perm.helpInfo, YELLOW), new FTC(" (Default: " + perm.defaultValue + ")", BLUE));
+                        sendMessage(sender, new FTC(perm.parsedName + ": ", GREEN), new FTC(perm.helpInfo, YELLOW), new FTC(" (Default: " + perm.getDefault() + ")", BLUE));
                     }
                 } else if(args.length == 2) {
                     ClaimPermissionToggle perm = ClaimPermissionRegistry.getPermissionToggle(args[1]);

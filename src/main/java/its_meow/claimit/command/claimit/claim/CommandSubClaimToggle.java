@@ -55,7 +55,7 @@ public class CommandSubClaimToggle extends CommandCIBase {
 				for(ClaimPermissionToggle toggle : ClaimPermissionRegistry.getTogglePermissions()) {
 					boolean toggled = claim.isPermissionToggled(toggle);
 					String toggledStr = toggled ? "ON" : "OFF";
-					toggledStr = toggle.defaultValue == toggled ? GREEN + toggledStr : RED + toggledStr;
+					toggledStr = toggle.getDefault() == toggled ? GREEN + toggledStr : RED + toggledStr;
 					sendSMessage(sender, YELLOW + toggle.parsedName + BLUE + ": " + toggledStr, new CommandChatStyle("/claimit claim toggle " + toggle.parsedName, true, getHoverFor(toggle, claim)));
 				}
 				return;
@@ -89,7 +89,7 @@ public class CommandSubClaimToggle extends CommandCIBase {
 	
 	private static String getStringFor(ClaimPermissionToggle perm, boolean toggled) {
         String toggledStr = toggled ? "ON" : "OFF";
-        return perm.defaultValue == toggled ? GREEN + toggledStr : RED + toggledStr;
+        return perm.getDefault() == toggled ? GREEN + toggledStr : RED + toggledStr;
 	}
 	
 	private static String getHoverFor(ClaimPermissionToggle perm, ClaimArea claim) {

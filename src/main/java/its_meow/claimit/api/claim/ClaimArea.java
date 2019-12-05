@@ -73,7 +73,7 @@ public class ClaimArea extends MemberContainer {
         this.toggles = new HashMap<ClaimPermissionToggle, Boolean>();
         this.subclaims = new HashSet<SubClaimArea>();
         for(ClaimPermissionToggle perm : ClaimPermissionRegistry.getTogglePermissions()) {
-            this.toggles.putIfAbsent(perm, perm.defaultValue);
+            this.toggles.putIfAbsent(perm, perm.getDefault());
         }
 
         // Simplify main corner to the lowest x and y value
@@ -234,7 +234,7 @@ public class ClaimArea extends MemberContainer {
             return perm.getForceValue();
         }
         if(!toggles.containsKey(perm)) {
-            return perm.defaultValue;
+            return perm.getDefault();
         }
         return this.toggles.get(perm);
     }
