@@ -56,3 +56,13 @@ You can do this yourself, but there's a built in method.
 ```java
 GroupManager.renameGroup(oldName, newName);
 ```
+
+## Tagging Groups
+
+You can set the tags of groups like so:
+
+```java
+GroupManager.setGroupTag(group, tag);
+```
+
+If the operation succeeds the method will return true. Otherwise, it means another group has that tag.
