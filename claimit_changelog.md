@@ -1,13 +1,22 @@
+1.2.0
+-
+ - Added group tags using `/ci group settag` and `/ci group setprimary`
+ - Made toggle defaults configurable
+ - Made entry/exit messages configurable
+ - Added subclaims to `/ci showborders`
+ - Added tab completes to `/ci trust`
+ - Config changes through the Forge Config GUI will now sync to the game
+
 1.1.1
 -
- - Added /ci trust, shortcut for /ci claim permission add modify,use,entity,pvp <username> [claimname]
+ - Added `/ci trust`, shortcut for `/ci claim permission add modify,use,entity,pvp <username> [claimname]`
  - Improved error handling while deserializing claims
 
 1.1.0
 -
  - Added sub-claims (can disable in API config 2)
  - Added chunk pruning via config
- - Fixed alias for /ci appearing multiple times
+ - Fixed alias for `/ci` appearing multiple times
  - Claim owners can now still use true names to reference their claims in various places
  - Added wildcards (`*`) and multi-parsing to permission command. Ex: `/ci claim permission add modify,use Player23,Player43` or `/ci claim permission remove * *`
  - Fixed crash with direct player attacks caused indirectly by another entity (happens with Twilight Forest ghast fireballs for some reason?)

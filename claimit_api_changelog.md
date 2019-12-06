@@ -1,3 +1,9 @@
+1.2.0
+-
+ - Toggle permissions now have mutable defaults accessed through `getDefault()` and `setDefault(value)`
+ - Groups now have tags accessible via `group.getTag()` and publicly mutable via `GroupManager.setGroupTag(group, tag)`
+ - Added config sync
+
 1.1.1
 -
  - Improved error handling while deserializing claims
