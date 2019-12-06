@@ -1,16 +1,13 @@
 package its_meow.claimit.util.text;
 
-import java.util.regex.Pattern;
-
+import its_meow.claimit.api.claim.ClaimArea;
 import its_meow.claimit.api.group.Group;
+import its_meow.claimit.config.ClaimItConfig;
+import its_meow.claimit.util.command.CommandUtils;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextComponentString;
-import net.minecraft.util.text.TextFormatting;
 
 public class ColorUtil {
-    
-    private static final Pattern COLOR_REGEX = Pattern.compile("(?i)&([0-9A-Fa-f])");
     
     public static String convertFromColorCodes(String text) {
         if(text == null) {
@@ -26,8 +23,62 @@ public class ColorUtil {
         return text.replaceAll("&([0-9a-f])", "");
     }
     
+    public static String convertFromColorFormattingCodes(String text) {
+        if(text == null) {
+            return "";
+        }
+        return text.replaceAll("&([0-9a-fkl-or])", "\u00A7$1");
+    }
+    
+    public static String removeColorFormattingCodes(String text) {
+        if(text == null) {
+            return "";
+        }
+        return text.replaceAll("&([0-9a-fkl-or])", "");
+    }
+    
+    public static String convertFromFormattingCodes(String text) {
+        if(text == null) {
+            return "";
+        }
+        return text.replaceAll("&([kl-or])", "\u00A7$1");
+    }
+    
+    public static String removeFormattingCodes(String text) {
+        if(text == null) {
+            return "";
+        }
+        return text.replaceAll("&([kl-or])", "");
+    }
+    
     public static ITextComponent getGroupTagComponent(Group group) {
-        return (new TextComponentString("[").setStyle(new Style().setColor(TextFormatting.GREEN)).appendSibling(new TextComponentString(convertFromColorCodes(group.getTag()))).appendSibling(new TextComponentString(TextFormatting.GREEN + "]" + TextFormatting.RESET)));
+        return new TextComponentString(convertFromColorFormattingCodes(ClaimItConfig.tag_prefix + group.getTag() + ClaimItConfig.tag_suffix));
+    }
+    
+    public static String getFormattedClaimMessage(String text, ClaimArea claim) {
+        return ColorUtil.convertFromColorFormattingCodes(text).replaceAll("%1", CommandUtils.getNameForUUID(claim.getOwner(), claim.getWorld().getMinecraftServer())).replaceAll("%2", claim.getDisplayedViewName());
+    }
+    
+    public static String removeTextForPermission(String text, boolean canUseColors, boolean canUseFormatting) {
+        String output = text;
+        if(canUseColors) {
+            output = removeColorCodes(output);
+        }
+        if(canUseFormatting) {
+            output = removeFormattingCodes(output);
+        }
+        return output;
+    }
+    
+    public static String convertTextForPermission(String text, boolean canUseColors, boolean canUseFormatting) {
+        String output = text;
+        if(canUseColors) {
+            output = convertFromColorCodes(output);
+        }
+        if(canUseFormatting) {
+            output = convertFromFormattingCodes(output);
+        }
+        return output;
     }
 
 }

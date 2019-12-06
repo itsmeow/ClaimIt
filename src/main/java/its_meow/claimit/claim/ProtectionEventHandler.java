@@ -87,9 +87,9 @@ public class ProtectionEventHandler {
                 if(group != null) {
                     if(group.getMembers().keySet().contains(uuid) || group.isOwner(uuid)) {
                         if(group.getTag() != null) {
-                            if(ColorUtil.removeColorCodes(group.getTag()).length() <= ClaimItConfig.max_tag_length && ColorUtil.removeColorCodes(group.getTag()).length() >= ClaimItConfig.min_tag_length) {
+                            if(ColorUtil.removeColorFormattingCodes(group.getTag()).length() <= ClaimItConfig.max_tag_length && ColorUtil.removeColorFormattingCodes(group.getTag()).length() >= ClaimItConfig.min_tag_length) {
                                 ITextComponent comp = ColorUtil.getGroupTagComponent(group);
-                                comp.getSiblings().add(new TextComponentString(" ").appendSibling(event.getComponent()));
+                                comp.getSiblings().add(event.getComponent());
                                 event.setComponent(comp);
                             }
                         }

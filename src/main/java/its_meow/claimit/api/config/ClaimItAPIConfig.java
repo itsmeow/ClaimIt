@@ -4,14 +4,26 @@ import its_meow.claimit.api.ClaimItAPI;
 import its_meow.claimit.api.permission.ClaimPermissionRegistry;
 import its_meow.claimit.api.permission.ClaimPermissionToggle;
 import net.minecraftforge.common.config.Config;
+import net.minecraftforge.common.config.ConfigManager;
 import net.minecraftforge.common.config.Configuration;
+import net.minecraftforge.fml.client.event.ConfigChangedEvent;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 @Config(modid = ClaimItAPI.MOD_ID, name = ClaimItAPI.MOD_ID + "-2")
+@Mod.EventBusSubscriber(modid = ClaimItAPI.MOD_ID)
 public class ClaimItAPIConfig extends Configuration {
-    
+
     @Config.Comment("Enable or disable the entire subclaim system")
     public static boolean enable_subclaims = true;
-    
+
+    @SubscribeEvent
+    public static void onConfigChanged(ConfigChangedEvent event) {
+        if(event.getModID().equals(ClaimItAPI.MOD_ID)) {
+            ConfigManager.sync(event.getModID(), Config.Type.INSTANCE);
+        }
+    }
+
     /* BEGIN LEGACY CONFIG */
 
     public static void readConfig(Configuration cfg) {

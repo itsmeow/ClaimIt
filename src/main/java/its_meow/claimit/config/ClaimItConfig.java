@@ -2,8 +2,13 @@ package its_meow.claimit.config;
 
 import its_meow.claimit.ClaimIt;
 import net.minecraftforge.common.config.Config;
+import net.minecraftforge.common.config.ConfigManager;
+import net.minecraftforge.fml.client.event.ConfigChangedEvent;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 @Config(modid = ClaimIt.MOD_ID)
+@Mod.EventBusSubscriber(modid = ClaimIt.MOD_ID)
 public class ClaimItConfig {
     
     @Config.Comment("Disables the ability to have any PVP in claims.")
@@ -44,5 +49,24 @@ public class ClaimItConfig {
     @Config.Comment("Minimum length a tag can be. Must be less than or equal to maximum.")
     @Config.RangeInt(min = 1, max = 30)
     public static int min_tag_length = 3;
+    
+    @Config.Comment("The text placed before the tag in chat. Supports & color codes.")
+    public static String tag_prefix = "&a[";
+    
+    @Config.Comment("The text placed after the tag in chat. Supports & color/formatting codes.")
+    public static String tag_suffix = "&a] ";
+    
+    @Config.Comment("The text shown in the action bar upon entering a claim. Supports & color/formatting codes. Use %1 for owner name/uuid and %2 for claim name.")
+    public static String claim_entry_message = "&dEntering: &c%2&d - owned by: &e%1";
+    
+    @Config.Comment("The text shown in the action bar upon exiting a claim. Supports & color/formatting codes. Use %1 for owner name/uuid and %2 for claim name.")
+    public static String claim_exit_message = "&6Exiting: &c%2&6 - owned by: &e%1";
+    
+    @SubscribeEvent
+    public static void onConfigChanged(ConfigChangedEvent event) {
+        if(event.getModID().equals(ClaimIt.MOD_ID)) {
+            ConfigManager.sync(event.getModID(), Config.Type.INSTANCE);
+        }
+    }
     
 }

@@ -41,7 +41,10 @@ public class CommandSubGroupSetTag extends CommandCIBase {
             Group group = GroupManager.getGroup(groupname);
             if(group != null) {
                 if(CommandUtils.isAdminNoded(sender, "claimit.command.claimit.group.settag.others") || (sender instanceof EntityPlayer && group.isOwner((EntityPlayer)sender))) {
-                    if(ColorUtil.removeColorCodes(tag).length() <= ClaimItConfig.max_tag_length && ColorUtil.removeColorCodes(tag).length() >= ClaimItConfig.min_tag_length) {
+                    boolean canUseColors = CommandUtils.isAdmin(sender) || (sender instanceof EntityPlayer && CommandUtils.checkDefaultNode((EntityPlayer) sender, 0, "claimit.command.claimit.group.settag.color"));
+                    boolean canUseFormatting = CommandUtils.isAdmin(sender) || (sender instanceof EntityPlayer && CommandUtils.checkDefaultNode((EntityPlayer) sender, 0, "claimit.command.claimit.group.settag.formatting"));
+                    String strippedTag = ColorUtil.removeTextForPermission(tag, canUseColors, canUseFormatting);
+                    if(strippedTag.length() <= ClaimItConfig.max_tag_length && strippedTag.length() >= ClaimItConfig.min_tag_length) {
                         boolean pass = GroupManager.setGroupTag(group, tag);
                         if(pass) {
                             sendMessage(sender, new FTC(AQUA, "Set this group's tag to: "), ColorUtil.getGroupTagComponent(group));

@@ -8,6 +8,7 @@ import org.apache.logging.log4j.LogManager;
 
 import its_meow.claimit.api.AdminManager;
 import its_meow.claimit.api.ClaimItAPI;
+import its_meow.claimit.api.claim.ClaimArea;
 import its_meow.claimit.api.claim.ClaimManager;
 import its_meow.claimit.api.userconfig.UserConfigManager;
 import its_meow.claimit.api.userconfig.UserConfigTypeRegistry;
@@ -18,12 +19,11 @@ import its_meow.claimit.config.ClaimItConfig;
 import its_meow.claimit.permission.ClaimItPermissions;
 import its_meow.claimit.util.UserClaimBlocks;
 import its_meow.claimit.util.command.ConfirmationManager;
-import net.minecraft.entity.player.EntityPlayer;
+import its_meow.claimit.util.text.ColorUtil;
 import net.minecraft.item.Item;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
-import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.event.world.WorldEvent;
@@ -83,30 +83,29 @@ public class ClaimIt {
         UserClaimBlocks.serialize();
     }
 
-    private static HashMap<EntityPlayer, Integer> tickJoined = new HashMap<EntityPlayer, Integer>();
+    private static HashMap<UUID, Integer> tickJoined = new HashMap<UUID, Integer>();
 
     @SubscribeEvent
     public static void onPlayerJoin(PlayerLoggedInEvent e) {
-        tickJoined.put(e.player, e.player.world.getMinecraftServer().getTickCounter());
+        tickJoined.put(e.player.getGameProfile().getId(), e.player.world.getMinecraftServer().getTickCounter());
     }
 
     @SubscribeEvent
     public static void onPlayerLeave(PlayerLoggedOutEvent e) {
-        tickJoined.remove(e.player);
-        lastMsPos.remove(e.player);
+        tickJoined.remove(e.player.getGameProfile().getId());
+        lastMsPos.remove(e.player.getGameProfile().getId());
         AdminManager.removeAdmin(e.player);
         ConfirmationManager.getManager().removeConfirm(e.player);
     }
 
-    private static HashMap<EntityPlayer, BlockPos> lastMsPos = new HashMap<EntityPlayer, BlockPos>();
+    private static HashMap<UUID, BlockPos> lastMsPos = new HashMap<UUID, BlockPos>();
 
     @SubscribeEvent
     public static void onPlayerTick(PlayerTickEvent e) {
-        ClaimManager mgr = ClaimManager.getManager();
         if(!e.player.world.isRemote) {
             if(ClaimItConfig.claim_blocks_accrual_period > 0) {
                 int curTick = e.player.world.getMinecraftServer().getTickCounter();
-                int joinedTick = tickJoined.getOrDefault(e.player, 0);
+                int joinedTick = tickJoined.getOrDefault(e.player.getGameProfile().getId(), 0);
                 if(curTick != joinedTick && (curTick - joinedTick) % ClaimItConfig.claim_blocks_accrual_period == 0) {
                     UUID uuid = e.player.getGameProfile().getId();
                     int oldAllowed = UserClaimBlocks.getClaimBlocksAllowed(uuid);
@@ -120,26 +119,28 @@ public class ClaimIt {
                 if(e.player.ticksExisted % 2500 == 0) {
                     lastMsPos.clear();
                 }
-                if(lastMsPos.get(e.player) == null) {
-                    lastMsPos.put(e.player, e.player.getPosition());
+                if(lastMsPos.get(e.player.getGameProfile().getId()) == null) {
+                    lastMsPos.put(e.player.getGameProfile().getId(), e.player.getPosition());
                 }
                 BlockPos pos = e.player.getPosition();
-                if(mgr.isBlockInAnyClaim(e.player.world, lastMsPos.get(e.player))) {
-                    if(!mgr.isBlockInAnyClaim(e.player.world, pos)) {
+                ClaimArea lastMsClaim = ClaimManager.getManager().getClaimAtLocation(e.player.world, lastMsPos.get(e.player.getGameProfile().getId()));
+                ClaimArea currClaim = ClaimManager.getManager().getClaimAtLocation(e.player.world, pos);
+                if(lastMsClaim != null) {
+                    if(currClaim == null) {
                         Boolean value = UserConfigTypeRegistry.BOOLEAN.storage.getValueFor(UserConfigs.EXIT_MESSAGE, e.player.getGameProfile().getId());
                         if(value == null || value) {
-                            e.player.sendStatusMessage(new TextComponentString(TextFormatting.GOLD + "You are no longer in a claimed area."), true);
+                            e.player.sendStatusMessage(new TextComponentString(ColorUtil.getFormattedClaimMessage(ClaimItConfig.claim_exit_message, lastMsClaim)), true);
                         }
                     }
                 } else {
-                    if(mgr.isBlockInAnyClaim(e.player.world, pos)) {
+                    if(currClaim != null) {
                         Boolean value = UserConfigTypeRegistry.BOOLEAN.storage.getValueFor(UserConfigs.ENTRY_MESSAGE, e.player.getGameProfile().getId());
                         if((value == null || value)) {
-                            e.player.sendStatusMessage(new TextComponentString(TextFormatting.LIGHT_PURPLE + "You are now in a claimed area."), true);
+                            e.player.sendStatusMessage(new TextComponentString(ColorUtil.getFormattedClaimMessage(ClaimItConfig.claim_entry_message, currClaim)), true);
                         }
                     }
                 }
-                lastMsPos.put(e.player, pos);
+                lastMsPos.put(e.player.getGameProfile().getId(), pos);
             }
         }
     }
