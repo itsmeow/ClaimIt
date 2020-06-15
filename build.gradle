@@ -5,23 +5,18 @@ buildscript {
     }
     dependencies {
         classpath 'net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT'
-        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.7'
     }
 }
 apply plugin: 'net.minecraftforge.gradle.forge'
-apply plugin: 'com.jfrog.bintray'
-apply plugin: 'maven'
 apply plugin: 'maven-publish'
-
 version = "${project.mc_version}-${project.mod_version}"
-group = project.maven_group
-archivesBaseName = project.mod_id
-
-sourceCompatibility = targetCompatibility = '1.8'
-compileJava {
-    sourceCompatibility = targetCompatibility = '1.8'
+group = "${project.maven_group}"
+archivesBaseName = "${project.mod_id}"
+def at_name = project.hasProperty('at_name') ? "${project.at_name}" : ""
+sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8'
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
 }
-
 minecraft {
     version = "${project.mc_version}-${project.forge_version}"
     runDir = "run"
@@ -31,11 +26,6 @@ minecraft {
     replace "after-required:claimitapi", "after-required:claimitapi@[${project.mc_version}-${project.api_version}]"
     makeObfSourceJar = false
 }
-
-dependencies {
-
-}
-
 // API build task
 task apiJar(type: Jar) {
     onlyIf {
@@ -49,6 +39,8 @@ task apiJar(type: Jar) {
             "Built-On-Java": "${System.getProperty('java.vm.version')} + (${System.getProperty('java.vm.vendor')})",
             "Implementation-Title": project.name + '-api',
             "Implementation-Version": "${project.mc_version}-${project.api_version}",
+            "Implementation-Vendor": "its_meow",
+            "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
             "Maven-Artifact": "${project.group}:${project.archivesBaseName}:${project.mc_version}-${project.api_version}:api",
             "Built-On": "${mc_version}-${forge_version}"
     )
@@ -89,12 +81,23 @@ artifacts {
 
 jar {
     from "LICENSE"
-    manifest.mainAttributes(
-            "Implementation-Title": project.name,
-            "Implementation-Version": "${project.version}",
-            "Built-On": "${project.mc_version}-${project.forge_version}",
-            "Maven-Artifact": "${project.group}:${project.archivesBaseName}:${project.version}"
-    )
+    manifest {
+        mainAttributes(
+            "Maven-Artifact": "${project.maven_group}:${project.archivesBaseName}:${project.version}",
+            "Specification-Title": archivesBaseName,
+            "Specification-Vendor": "its_meow",
+            "Specification-Version": "1",
+            "Implementation-Title": archivesBaseName,
+            "Implementation-Version": "${project.mod_version}",
+            "Implementation-Vendor": "its_meow",
+            "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
+            "Built-On-Java": "${System.getProperty('java.vm.version')} (${System.getProperty('java.vm.vendor')})",
+            "Built-On": "${project.mc_version}-${project.forge_version}"
+        )
+    }
+    if(!"".equals(at_name)) {
+        manifest.mainAttributes("FMLAT": at_name)
+    }
     if (project.hasProperty('api_package')) {
         exclude String.valueOf(findProperty('api_package')).replace(".", "/") + "/**"
     }
@@ -103,51 +106,91 @@ jar {
 
 publishing {
     publications {
-        publishBaseJar(MavenPublication) {
-			from components.java
-            artifact srcJar
+        baseJar(MavenPublication) {
             groupId project.maven_group
-            artifactId project.mod_id
+            artifactId project.archivesBaseName
             version project.version
+            from components.java
+            artifact srcJar {
+                classifier 'sources'
+            }
+            pom {
+                name = project.name
+                url = project.url
+                packaging = 'jar'
+                scm {
+                    connection = "scm:git:git://github.com/" + project.github + ".git"
+                    developerConnection = "scm:git:git@github.com:" + project.github + ".git"
+                    url = "https://github.com/" + project.github
+                }
+                issueManagement {
+                    system = 'github'
+                    url = "https://github.com/" + project.github + ".git/issues"
+                }
+                organization {
+                    name = 'itsmeow Mods'
+                    url = 'https://itsmeow.dev/'
+                }
+            }
         }
-
         publishApiJar(MavenPublication) {
-            artifact apiSrcJar
+            artifact apiSrcJar {
+                classifier 'sources'
+            }
             artifact apiJar
             groupId project.maven_group
             artifactId "claimitapi"
             version "${project.mc_version}-${api_version}"
+            pom {
+                name = project.name
+                url = project.url
+                packaging = 'jar'
+                scm {
+                    connection = "scm:git:git://github.com/" + project.github + ".git"
+                    developerConnection = "scm:git:git@github.com:" + project.github + ".git"
+                    url = "https://github.com/" + project.github
+                }
+                issueManagement {
+                    system = 'github'
+                    url = "https://github.com/" + project.github + ".git/issues"
+                }
+                organization {
+                    name = 'itsmeow Mods'
+                    url = 'https://itsmeow.dev/'
+                }
+            }
+        }
+    }
+    repositories {
+        maven {
+            if ((System.getenv("MAVEN_USER") != '') && (System.getenv("MAVEN_PASSWORD") != '')) {
+                credentials {
+                    username System.getenv("MAVEN_USER")
+                    password System.getenv("MAVEN_PASSWORD")
+                }
+            }
+            if (System.getenv("MAVEN_URL") != '') {
+                url System.getenv("MAVEN_URL")
+            } else {
+                url "file:///${project.buildDir}/repo"
+            }
         }
     }
 }
-
-bintray {
-	user = project.hasProperty('bintrayUser') ? project.property('bintrayUser') : ''
-	key = project.hasProperty('bintrayApiKey') ? project.property('bintrayApiKey') : ''
-	publications = ['publishBaseJar', 'publishApiJar']
-	pkg {
-        repo = 'maven'
-        name = 'ClaimIt'
-		
-		version {
-            name = project.version
-            released  = new Date()
-        }
-    }
-}
-
-
+import groovy.json.JsonSlurper
+import groovy.json.JsonOutput
 processResources {
-    inputs.property "version", project.version
-    inputs.property "mcversion", project.minecraft.version
-
-    from(sourceSets.main.resources.srcDirs) {
-        include 'mcmod.info'
-                
-        expand 'version':project.mod_version, 'mcversion':project.minecraft.version
-    }
-        
-    from(sourceSets.main.resources.srcDirs) {
-        exclude 'mcmod.info'
+    doLast {
+        def jsonMinifyStart = System.currentTimeMillis()
+        def jsonMinified = 0
+        def jsonBytesSaved = 0
+        fileTree(dir: outputs.files.asPath, include: '**/*.json').each {
+            File file = it
+            jsonMinified++
+            def oldLength = file.length()
+            file.text = JsonOutput.toJson(new JsonSlurper().parse(file))
+            jsonBytesSaved += oldLength - file.length()
+        }
+        println('Minified ' + jsonMinified + ' json files. Saved ' + jsonBytesSaved + ' bytes. Took ' + (System.currentTimeMillis() - jsonMinifyStart) + 'ms.')
     }
 }
