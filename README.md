@@ -46,6 +46,8 @@ Toggle permissions are a subclass of permission that can be enabled or disabled 
  - `fire_create` (Default OFF): Enabling allows fire to be created and spread inside/on the border of the claim.
  - `fire_create_on_obsidian` (Default ON): Allows creation of fire on obsidian blocks, mostly for nether portals.
  - `allow_fake_player_bypass` (Default ON): Grants fake players permissions in the claim. This applies to things like BC Quarries or "Block Breakers"
+ - `mob_grief` (Default OFF): Allows mobgriefing (respecting gamerule) within claim.
+ - `mob_grief_villager` (Default ON): Allows mobgriefing (not respecting gamerule) from villagers.
 
 ## Member Toggle Permissions
 There can also be toggle perms sharing names with member perms. Toggling these "member toggles" to ON makes that member permission publicly available. E.g. toggling the `modify` toggle will allow anyone to place and break blocks in that claim. Not all member permissions have a toggle.

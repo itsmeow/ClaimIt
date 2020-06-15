@@ -26,7 +26,9 @@ By default all Forge build scripts already include jcenter, but if needed in you
 
 ```
 repositories {
-	jcenter()
+	maven {
+	    url = "https://maven.itsmeow.dev/"
+	}
 }
 ```
 

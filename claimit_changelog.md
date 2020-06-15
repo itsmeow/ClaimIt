@@ -1,3 +1,9 @@
+1.2.1
+-
+ - Add mob_grief and mob_grief_villager toggles
+ - Fixed crash caused by infinite recursion of fire setting itself back to fire, instead of the previous state or air.
+ - Internal improvements
+
 1.2.0
 -
  - Added group tags using `/ci group settag` and `/ci group setprimary`

@@ -1,3 +1,7 @@
+1.2.1
+-
+ - Internal improvements
+
 1.2.0
 -
  - Toggle permissions now have mutable defaults accessed through `getDefault()` and `setDefault(value)`
